@@ -78,12 +78,16 @@ footer{padding:30px 0;color:var(--tenue);font-size:12.5px}
     <input type="file" id="fich" accept=".csv,.tsv,.txt,.htm,.html" multiple style="display:none">
     <select id="demo">
       <option value="">— o carga un ejemplo —</option>
-      <option value="brugge.csv">Club Brugge (84)</option>
-      <option value="leeds.csv">Leeds United (78)</option>
-      <option value="everton.csv">Everton (75)</option>
+      <option value="brugge.csv|Club Brugge">Club Brugge (84)</option>
+      <option value="leeds.csv|Leeds United">Leeds United (78)</option>
+      <option value="everton.csv|Everton">Everton (75)</option>
     </select>
-    <button id="bReset">Vaciar</button>
+    <input id="clubNom" placeholder="Nombre del club" style="font-family:'IBM Plex Sans';font-size:14px;
+      padding:9px 14px;border-radius:3px;border:1px solid var(--linea);background:var(--panel);color:var(--tiza);width:200px">
+    <button id="bReset">Vaciar todo</button>
   </div>
+  <p class="sub" style="margin:10px 0 0">El nombre del club agrupa las vistas: carga las cinco de un club con el
+     mismo nombre y se cruzan entre sí. Cambia el nombre para cargar otro club sin perder el anterior.</p>
 
   <textarea id="entrada" spellcheck="false" placeholder="…o pega aquí una tabla. La primera fila debe ser la de cabeceras: Jugador, Edad, Marcaje, Remate…"></textarea>
   <div class="fila"><button id="bAdd">Añadir tabla pegada</button></div>
@@ -103,6 +107,11 @@ footer{padding:30px 0;color:var(--tenue);font-size:12.5px}
 </section>
 
 <div id="salida" class="oculto">
+
+<section style="padding-bottom:18px">
+  <div class="paso">CLUB EN PANTALLA</div>
+  <div class="fila" id="selClubes" style="margin-top:10px"></div>
+</section>
 
 <section>
   <div class="paso">PASO 2 — ALINEACIÓN</div>
@@ -130,7 +139,7 @@ footer{padding:30px 0;color:var(--tenue);font-size:12.5px}
   <h2>Notas por perfil</h2>
   <p class="sub">Nota = media de los diez atributos clave del perfil (cinco en portería). Verde 14 o más,
      ámbar de 12 a 13,9, gris por debajo. En laterales y delanteros la nota de banda se calcula pero no decide.</p>
-  <div class="tabla-scroll"><table id="tPlantilla"><thead><tr><th>#</th><th>Jugador</th><th>Mejor pos.</th>
+  <div class="tabla-scroll"><table id="tPlantilla"><thead><tr><th>#</th><th>Jugador</th><th class="colClub">Club</th><th>Mejor pos.</th>
     <th class="n">Edad</th><th class="n">Nota</th><th>Perfil</th><th>Todas las notas</th></tr></thead><tbody></tbody></table></div>
   <div class="fila"><button id="bCsv">Descargar CSV con las notas</button></div>
 </section>
@@ -198,33 +207,45 @@ function partirCSV(txt){
   return filas.length>1?filas:null;
 }
 
-let JUG={},VISTAS=[];
+let JUG={},VISTAS=[],CLUB_VER="__todos__";
 const cel=document.getElementById.bind(document);
-function ingerir(filas,etq){
+function ingerir(filas,etq,club){
   const cab=filas[0].map(canon),iJ=cab.indexOf("Jugador");
   if(iJ<0) return {ok:false,msg:"No encuentro la columna «Jugador» en la primera fila."};
+  club=(club||"Sin nombre").trim()||"Sin nombre";
   let nuevos=0,leidas=0;
   for(let f=1;f<filas.length;f++){const fl=filas[f];
     const n=(fl[iJ]||"").replace(/\s+/g," ").trim();
     if(!n||n.length<3) continue;
-    if(!JUG[n]){JUG[n]={Jugador:n};nuevos++;} leidas++;
+    const k=club+"|"+n;
+    if(!JUG[k]){JUG[k]={Jugador:n,_club:club};nuevos++;} leidas++;
     cab.forEach((c,i)=>{ if(c==="Jugador"||i>=fl.length) return;
       const v=fl[i]; if(v===""||v==="-") return;
-      if(c==="Calidad"||c==="Potencial"){const e=ESTRELLAS(v); if(e!==null) JUG[n][c]=e; return;}
-      JUG[n][c]=/^-?\d+([.,]\d+)?$/.test(v)?Number(v.replace(",",".")):v; });}
-  VISTAS.push(etq||("vista "+(VISTAS.length+1)));
-  return {ok:true,nuevos,leidas};
+      if(c==="Calidad"||c==="Potencial"){const e=ESTRELLAS(v); if(e!==null) JUG[k][c]=e; return;}
+      JUG[k][c]=/^-?\d+([.,]\d+)?$/.test(v)?Number(v.replace(",",".")):v; });}
+  VISTAS.push((etq||"vista")+" → "+club);
+  return {ok:true,nuevos,leidas,club};
+}
+const clubes=()=>[...new Set(Object.values(JUG).map(j=>j._club))].sort();
+const visibles=()=>Object.values(JUG).filter(j=>CLUB_VER==="__todos__"||j._club===CLUB_VER);
+function pintarSelector(){
+  const cs=clubes(), cont=cel("selClubes"); if(!cont) return;
+  const bot=(v,t,n)=>`<button class="cbtn ${CLUB_VER===v?'pri':''}" data-c="${v}">${t} <span
+     style="opacity:.65;font-family:'IBM Plex Mono';font-size:12px">${n}</span></button>`;
+  cont.innerHTML=(cs.length>1?bot("__todos__","Todos",Object.keys(JUG).length):"")
+    + cs.map(c=>bot(c,c,Object.values(JUG).filter(j=>j._club===c).length)).join("");
+  cont.querySelectorAll(".cbtn").forEach(b=>b.onclick=()=>{CLUB_VER=b.dataset.c;pintarTodo();});
+  document.querySelectorAll(".colClub").forEach(e=>e.style.display=CLUB_VER==="__todos__"?"":"none");
 }
 function diagnostico(){
-  const n=Object.keys(JUG).length; if(!n){cel("diag").innerHTML="";return;}
-  const uno=Object.values(JUG);
+  const uno=visibles(); if(!uno.length){cel("diag").innerHTML="";return;}
   const html=Object.keys(PERFILES).map(p=>{
     const faltan=PERFILES[p].filter(a=>!uno.some(j=>typeof j[a]==="number"));
     return `<span class="chip ${faltan.length?'no':'ok'}" title="${faltan.join(', ')||'completo'}">${p}${faltan.length?' · faltan '+faltan.length:''}</span>`;}).join("");
   cel("diag").innerHTML=`<div class="estado" style="margin-top:10px">Perfiles calculables (pasa el ratón para ver qué falta):</div>${html}`;
 }
-function pintarEstado(m){const n=Object.keys(JUG).length;
-  cel("estado").textContent=m||(n?`${n} jugadores en memoria.`:"Sin datos todavía.");
+function pintarEstado(m){const n=Object.keys(JUG).length,c=clubes().length;
+  cel("estado").textContent=m||(n?`${n} jugadores en memoria · ${c} club${c===1?"":"es"}.`:"Sin datos todavía.");
   cel("chips").innerHTML=VISTAS.map(v=>`<span class="chip ok">${v}</span>`).join("")+(n?`<span class="chip">${n} jugadores</span>`:"");
   diagnostico();}
 
@@ -242,12 +263,12 @@ function grupo(mp){const m=String(mp||"").toUpperCase().replace(/\s/g,"");
 const PERFIL_DE={POR:["POR"],DFC:["DFC"],LATD:["LAT"],LATI:["LAT"],MC:["MC","MP"],MPC:["MP","BAN"],
   MPD:["BAN","MP"],MPI:["BAN","MP"],DL:["DL"],"?":["MC","MP","BAN","DFC","LAT","DL","POR"]};
 function analizar(){const out=[];
-  for(const n in JUG){const j=JUG[n],g=grupo(j["Mejor pos."]),todas={};
+  for(const j of visibles()){const n=j.Jugador,g=grupo(j["Mejor pos."]),todas={};
     for(const p in PERFILES){const v=nota(j,p);if(v!==null)todas[p]=v;}
     const cand={};for(const p of (PERFIL_DE[g]||[]))if(todas[p]!==undefined)cand[p]=todas[p];
     const pool=Object.keys(cand).length?cand:todas;
     let mejor=null,val=-1;for(const p in pool)if(pool[p]>val){val=pool[p];mejor=p;}
-    if(mejor)out.push({n,j,g,mejor,nota:val,todas});}
+    if(mejor)out.push({n,j,g,mejor,nota:val,todas,club:j._club});}
   return out.sort((a,b)=>b.nota-a.nota);}
 const proyeccion=(nt,ed,det,pot)=>{const f=Math.min(Math.max(det/13,0.6),1.35);
   const c=(ed<19?Math.max(0,19-ed)*0.8*f:0)+Math.max(0,24-Math.max(ed,19))*1.5*f;
@@ -281,7 +302,7 @@ const apellido=n=>{const t=n.replace(/-/g," ").split(" ").filter(Boolean);
   let i=t.length-1; if(t.length>2&&par.includes(t[t.length-2].toLowerCase()))i=t.length-2;
   return t.slice(i).join(" ").toUpperCase();};
 const colorNota=v=>v>=14?"#4CAF6A":(v>=12?"#E0A340":"#93A79E");
-function dibujarCampo(once,titulo,media){
+function dibujarCampo(once,titulo,media,club){
   const c=cel("lienzo"),g=c.getContext("2d"),W=c.width,H=c.height;
   const M=70,px=M,py=170,pw=W-2*M,ph=H-py-64;
   g.fillStyle="#0E1A17";g.fillRect(0,0,W,H);
@@ -296,7 +317,7 @@ function dibujarCampo(once,titulo,media){
   g.beginPath();g.arc(px+pw/2,py+aH*.66,6,0,7);g.fill();
   g.beginPath();g.arc(px+pw/2,py+ph-aH*.66,6,0,7);g.fill();
   g.textAlign="left";g.fillStyle="#F2D06B";g.font="600 24px 'IBM Plex Mono', monospace";
-  g.fillText("ONCE PROPUESTO",M,60);
+  g.fillText(("ONCE PROPUESTO · "+club).toUpperCase(),M,60);
   g.fillStyle="#E8EDE9";g.font="700 78px 'Barlow Condensed', sans-serif";g.fillText(titulo,M,132);
   g.textAlign="right";g.fillStyle="#7E938A";g.font="500 28px 'Barlow Condensed', sans-serif";
   g.fillText("MEDIA DEL ONCE",W-M,88);
@@ -329,7 +350,8 @@ function pintarOnce(d,k){
      <td class="n ${clase(o.nota)}">${f1(o.nota)}</td><td class="n">${o.d.j.Edad??""}</td></tr>`);});
   const media=s/once.length;
   cel("mediaOnce").textContent=f1(media);
-  const pintar=()=>dibujarCampo(once,FORMACIONES[k].nombre,media);
+  const club=CLUB_VER==="__todos__"?(clubes().length>1?"Combinado":clubes()[0]||""):CLUB_VER;
+  const pintar=()=>dibujarCampo(once,FORMACIONES[k].nombre,media,club);
   pintar(); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(pintar);
 }
 function pintarTodo(){
@@ -338,7 +360,8 @@ function pintarTodo(){
   cel("salida").classList.remove("oculto");
   const tb=cel("tPlantilla").querySelector("tbody");tb.innerHTML="";
   d.forEach((x,i)=>{const t=Object.entries(x.todas).sort((a,b)=>b[1]-a[1]).map(([p,v])=>`${p} ${f1(v)}`).join(" · ");
-    tb.insertAdjacentHTML("beforeend",`<tr><td class="n">${i+1}</td><td>${x.n}</td><td>${x.j["Mejor pos."]??""}</td>
+    tb.insertAdjacentHTML("beforeend",`<tr><td class="n">${i+1}</td><td>${x.n}</td>
+     <td class="colClub" style="color:var(--tenue)">${x.club}</td><td>${x.j["Mejor pos."]??""}</td>
      <td class="n">${x.j.Edad??""}</td><td class="n ${clase(x.nota)}">${f1(x.nota)}</td><td>${x.mejor}</td>
      <td style="color:var(--tenue);font-size:12px">${t}</td></tr>`);});
   const tj=cel("tJovenes").querySelector("tbody");tj.innerHTML="";
@@ -350,33 +373,38 @@ function pintarTodo(){
      <td class="n">${x.j["Determinación"]}</td><td class="r${r}">${r}</td><td class="n">${f1(x.nota)}</td>
      <td class="n ${clase(x.pr)}">${f1(x.pr)}</td><td class="n">+${f1(x.pr-x.nota)}</td></tr>`);});
   window.__d=d;
+  pintarSelector();
   pintarOnce(d,document.querySelector(".fbtn.pri")?.dataset.f||"4231");
   pintarEstado();
 }
 
 cel("bAdd").onclick=()=>{const f=partirCSV(cel("entrada").value);
   if(!f){pintarEstado("Pega al menos una fila de cabeceras y una de datos.");return;}
-  const r=ingerir(f); if(!r.ok){pintarEstado(r.msg);return;}
-  cel("entrada").value="";pintarTodo();pintarEstado(`Añadido: ${r.leidas} filas, ${r.nuevos} jugadores nuevos.`);};
+  const r=ingerir(f,"pegado",cel("clubNom").value); if(!r.ok){pintarEstado(r.msg);return;}
+  cel("entrada").value="";CLUB_VER=r.club;pintarTodo();
+  pintarEstado(`Añadido a ${r.club}: ${r.leidas} filas, ${r.nuevos} jugadores nuevos.`);};
 cel("fich").onchange=async e=>{
   for(const f of e.target.files){const t=await f.text();let filas=null;
     if(/<table/i.test(t)){const doc=new DOMParser().parseFromString(t,"text/html"),tb=doc.querySelector("table");
       if(tb)filas=[...tb.querySelectorAll("tr")].map(tr=>[...tr.querySelectorAll("th,td")].map(c=>c.textContent.trim()));}
     else filas=partirCSV(t);
-    if(filas){const r=ingerir(filas,f.name);if(!r.ok){pintarEstado(r.msg);continue;}}}
+    const nom=(cel("clubNom").value.trim())||f.name.replace(/\.[^.]+$/,"");
+    if(filas){const r=ingerir(filas,f.name,nom);if(!r.ok){pintarEstado(r.msg);continue;}CLUB_VER=r.club;}}
   pintarTodo();e.target.value="";};
-cel("demo").onchange=async e=>{const v=e.target.value;if(!v)return;
-  try{const r=await fetch(v);if(!r.ok)throw 0;
-    JUG={};VISTAS=[];const f=partirCSV(await r.text());
-    if(f){ingerir(f,v);pintarTodo();}}
-  catch{pintarEstado(`No encuentro ${v}. Debe estar en la misma carpeta que esta página, y abierta desde un servidor web (no con doble clic).`);}
+cel("demo").onchange=async e=>{const val=e.target.value;if(!val)return;
+  const [fich,nombre]=val.split("|");
+  try{const r=await fetch(fich);if(!r.ok)throw 0;
+    const f=partirCSV(await r.text());
+    if(f){const res=ingerir(f,fich,nombre);CLUB_VER=res.club;pintarTodo();
+      pintarEstado(`${nombre} cargado: ${res.nuevos} jugadores.`);}}
+  catch{pintarEstado(`No encuentro ${fich}. Debe estar junto a esta página y abierta desde un servidor web.`);}
   e.target.value="";};
 document.querySelectorAll(".fbtn").forEach(b=>b.onclick=()=>{
   document.querySelectorAll(".fbtn").forEach(x=>x.classList.remove("pri"));
   b.classList.add("pri"); if(window.__d)pintarOnce(window.__d,b.dataset.f);});
-cel("bReset").onclick=()=>{JUG={};VISTAS=[];cel("salida").classList.add("oculto");pintarEstado();};
+cel("bReset").onclick=()=>{JUG={};VISTAS=[];CLUB_VER="__todos__";cel("salida").classList.add("oculto");pintarEstado();};
 cel("bPng").onclick=()=>{const a=document.createElement("a");
-  a.href=cel("lienzo").toDataURL("image/png");a.download="once.png";a.click();};
+  a.href=cel("lienzo").toDataURL("image/png");a.download=(CLUB_VER==="__todos__"?"once":CLUB_VER.toLowerCase().replace(/\s+/g,"_"))+".png";a.click();};
 cel("bCsv").onclick=()=>{const d=window.__d||[];if(!d.length)return;
   const P=["POR","LAT","DFC","MC","MP","BAN","DL"];
   const cab=["Jugador","Mejor pos.","Edad","Nota","Perfil",...P,"Calidad","Potencial","Determinación"];
