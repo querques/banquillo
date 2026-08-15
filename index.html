@@ -877,7 +877,10 @@ function urgencia(rad,refTitular=UMBRAL_TITULAR){
 }
 function motivosVenta(x,rango,stats){
   const j=x.j, m=[], meses=mesesHasta(j.Final);
-  if(j.Edad>=30&&meses!==null&&meses<=12&&rango>=3) m.push({tipo:"VENDER",peso:5,key:"mv_a",vars:{edad:j.Edad,meses,rango}});
+  // meses negativos casi siempre significan que la "fecha de referencia" de arriba no coincide con la
+  // fecha real de tu partida, no un contrato de verdad caducado: no debe contar como urgencia.
+  const contratoCorto=(tope)=>meses!==null&&meses>=0&&meses<=tope;
+  if(j.Edad>=30&&contratoCorto(12)&&rango>=3) m.push({tipo:"VENDER",peso:5,key:"mv_a",vars:{edad:j.Edad,meses,rango}});
   if(rango>=4&&j.Edad>=25&&x.nota>=13) m.push({tipo:"VENDER",peso:4,key:"mv_b",vars:{rango}});
   const sueldo=parseImporte(j.Sueldo);
   if(sueldo!==null&&stats.p90Sueldo!==null&&sueldo>=stats.p90Sueldo&&rango>=3) m.push({tipo:"VENDER",peso:4,key:"mv_c"});
@@ -885,7 +888,9 @@ function motivosVenta(x,rango,stats){
   const idx=typeof j.Profesionalidad==="number"?indiceDesarrollo(j["Determinación"],j.Profesionalidad):null;
   if(j.Edad<=23&&j.Potencial>=4.5&&idx!==null&&idx<=10&&valor!==null&&stats.p80Valor!==null&&valor>=stats.p80Valor)
     m.push({tipo:"VENDER",peso:5,key:"mv_d"});
-  if(String(j.Inf||"").includes("NoI")&&meses!==null&&meses<=18) m.push({tipo:"VENDER",peso:3,key:"mv_e"});
+  // "No inscrito" es el estado normal de casi cualquier jugador de filial o cantera: solo es señal de
+  // venta real a partir de una cierta edad, cuando ya debería estar peleando por un hueco y no lo tiene.
+  if(j.Edad>=22&&String(j.Inf||"").includes("NoI")&&contratoCorto(18)) m.push({tipo:"VENDER",peso:3,key:"mv_e"});
   if(x.nota<10.3&&(j.Edad>=22||(j.Potencial??5)<=2.5)) m.push({tipo:j.Edad<=21?"CEDER":"DESCARTE",peso:3,key:"mv_f"});
   return m;
 }
@@ -919,7 +924,7 @@ function cesiones(datos,rangos,mediaOnce){
 function urgenciasContrato(datos,mediaOnce){
   return datos.filter(x=>{
     const meses=mesesHasta(x.j.Final);
-    return meses!==null&&meses<=12&&(x.nota>=12||(x.j.Potencial??0)>=4);
+    return meses!==null&&meses>=0&&meses<=12&&(x.nota>=12||(x.j.Potencial??0)>=4);
   }).map(x=>({...x,meses:mesesHasta(x.j.Final),accion:x.nota>=mediaOnce?"renovar_vender":"renovar_ceder"}))
     .sort((a,b)=>a.meses-b.meses);
 }
