@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 :root{--cesped:#0E1A17;--panel:#16241F;--panel2:#1D2F28;--linea:#2C453B;--tiza:#E8EDE9;--tenue:#7E938A;
   --verde:#4CAF6A;--ambar:#E0A340;--gris:#6B7A73;--cal:#F2D06B;--rojo:#D96B6B}
@@ -31,6 +32,7 @@ button,select{font-family:'Barlow Condensed',sans-serif;text-transform:uppercase
   font-weight:600;padding:9px 18px;border-radius:3px;border:1px solid var(--linea);background:var(--panel2);color:var(--tiza);cursor:pointer}
 button:hover{border-color:var(--cal)}
 button.pri{background:var(--cal);color:#14201C;border-color:var(--cal)}
+button:disabled{opacity:.4;cursor:not-allowed}
 .estado{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--tenue);margin-top:12px}
 .chip{display:inline-block;background:var(--panel2);border:1px solid var(--linea);border-radius:2px;padding:2px 9px;
   margin:3px 5px 3px 0;font-family:'IBM Plex Mono',monospace;font-size:11.5px}
@@ -80,14 +82,33 @@ footer{padding:30px 0;color:var(--tenue);font-size:12.5px}
 </header>
 
 <section>
+  <div class="paso">HERRAMIENTA APARTE · NO TOCA LA PLANTILLA DE ABAJO</div>
+  <h2>Convertidor CSV/Excel → Excel</h2>
+  <p class="sub">Solo para juntar los CSV que exportes del juego (pueden ser 2, 5 o los que sean) en un único .xlsx
+     para usar fuera de aquí. No alimenta el análisis de plantilla, el once ni la proyección de jóvenes de más abajo:
+     es una herramienta independiente con su propia memoria.</p>
+
+  <div class="fila">
+    <button class="pri" onclick="document.getElementById('convFich').click()">Cargar CSV/Excel</button>
+    <input type="file" id="convFich" accept=".csv,.tsv,.txt,.htm,.html,.xlsx,.xls" multiple style="display:none">
+    <input id="convClubNom" placeholder="Nombre del club (para el nombre del fichero)" style="font-family:'IBM Plex Sans';
+      font-size:14px;padding:9px 14px;border-radius:3px;border:1px solid var(--linea);background:var(--panel);
+      color:var(--tiza);width:260px">
+    <button id="convReset">Vaciar</button>
+  </div>
+  <div class="estado" id="convEstado">Sin archivos todavía.</div>
+  <div class="fila"><button id="convDescargar" class="pri" disabled>Descargar Excel</button></div>
+</section>
+
+<section>
   <div class="paso">PASO 1 — CARGAR DATOS</div>
   <h2>Plantilla</h2>
-  <p class="sub">Carga un CSV o pega una tabla. Puedes cargar varias vistas seguidas: se cruzan por el nombre
-     del jugador.</p>
+  <p class="sub">Carga un CSV, un Excel (.xlsx) o pega una tabla. Puedes cargar varias vistas seguidas: se cruzan por
+     el nombre del jugador.</p>
 
   <div class="fila">
     <button class="pri" onclick="document.getElementById('fich').click()">Cargar fichero</button>
-    <input type="file" id="fich" accept=".csv,.tsv,.txt,.htm,.html" multiple style="display:none">
+    <input type="file" id="fich" accept=".csv,.tsv,.txt,.htm,.html,.xlsx,.xls" multiple style="display:none">
     <select id="demo">
       <option value="">— o carga un ejemplo —</option>
       <option value="brugge.csv|Club Brugge">Club Brugge (84)</option>
@@ -98,8 +119,9 @@ footer{padding:30px 0;color:var(--tenue);font-size:12.5px}
       padding:9px 14px;border-radius:3px;border:1px solid var(--linea);background:var(--panel);color:var(--tiza);width:200px">
     <button id="bReset">Vaciar todo</button>
   </div>
-  <p class="sub" style="margin:10px 0 0">El nombre del club agrupa las vistas: carga las cinco de un club con el
-     mismo nombre y se cruzan entre sí. Cambia el nombre para cargar otro club sin perder el anterior.</p>
+  <p class="sub" style="margin:10px 0 0">El nombre del club agrupa las vistas: carga las que quieras de un club con
+     el mismo nombre (pueden ser 2, 4 o las que exportes) y se cruzan entre sí por el nombre del jugador. Cambia el
+     nombre para cargar otro club sin perder el anterior.</p>
 
   <textarea id="entrada" spellcheck="false" placeholder="…o pega aquí una tabla. La primera fila debe ser la de cabeceras: Jugador, Edad, Marcaje, Remate…"></textarea>
   <div class="fila"><button id="bAdd">Añadir tabla pegada</button></div>
@@ -110,8 +132,11 @@ footer{padding:30px 0;color:var(--tenue);font-size:12.5px}
 
   <details>
     <summary>Formato esperado</summary>
-    <p>Una fila de cabeceras y luego una fila por jugador. Separador coma, punto y coma o tabulador: se detecta
-       solo, y respeta las comillas y las comas decimales del español.</p>
+    <p>CSV/TSV: una fila de cabeceras y luego una fila por jugador. Separador coma, punto y coma o tabulador: se
+       detecta solo, y respeta las comillas y las comas decimales del español.</p>
+    <p>Excel (.xlsx): se busca automáticamente la fila que contiene la cabecera <code>Jugador</code> en la primera
+       hoja cuyo nombre incluya «jugador» (o la primera hoja si ninguna coincide), así que no importa si hay una
+       fila de agrupación por encima (Físico / Mental / Técnica) como en la base de datos exportada antes.</p>
     <p>Obligatoria: <code>Jugador</code>. Para el once, <code>Mejor pos.</code>. Para la proyección,
        <code>Edad</code>, <code>Potencial</code> y <code>Determinación</code>. Los nombres recortados del juego
        («Mando en el…», «Concentrac…») se reconocen igual.</p>
@@ -251,30 +276,63 @@ function partirCSV(txt){
   return filas.length>1?filas:null;
 }
 
-let JUG={},VISTAS=[],CLUB_VER="__todos__",MANUAL={};
+function filasDesdeAOA(aoa){
+  let hIdx=-1;
+  for(let i=0;i<aoa.length;i++){ if((aoa[i]||[]).some(c=>norm(String(c??""))==="jugador")){hIdx=i;break;} }
+  if(hIdx<0) return null;
+  const filas=[aoa[hIdx].map(c=>String(c??"").trim())];
+  for(let r=hIdx+1;r<aoa.length;r++){
+    const fila=(aoa[r]||[]).map(c=>c===undefined||c===null?"":String(c).trim());
+    if(fila.some(x=>x!=="")) filas.push(fila);
+  }
+  return filas.length>1?filas:null;
+}
+async function leerXLSX(file){
+  if(typeof XLSX==="undefined") throw new Error("no se ha podido cargar el lector de Excel (sin conexión al CDN)");
+  const buf=await file.arrayBuffer();
+  const wb=XLSX.read(buf,{type:"array"});
+  const hoja=wb.SheetNames.find(n=>/jugador/i.test(n))||wb.SheetNames[0];
+  const aoa=XLSX.utils.sheet_to_json(wb.Sheets[hoja],{header:1,raw:true,defval:""});
+  return filasDesdeAOA(aoa);
+}
+let JUG={},VISTAS=[],CLUB_VER="__todos__",MANUAL={},ORDEN_COLS=[];
 const LLAVE="banquillo.v1";
-function guardar(){ try{ localStorage.setItem(LLAVE,JSON.stringify({JUG,VISTAS,MANUAL,CLUB_VER})); }
+function guardar(){ try{ localStorage.setItem(LLAVE,JSON.stringify({JUG,VISTAS,MANUAL,CLUB_VER,ORDEN_COLS})); }
   catch(e){ pintarEstado("No he podido guardar en este navegador: "+e.message); } }
 function recuperar(){ try{ const d=JSON.parse(localStorage.getItem(LLAVE)||"null");
   if(d&&d.JUG&&Object.keys(d.JUG).length){ JUG=d.JUG; VISTAS=d.VISTAS||[]; MANUAL=d.MANUAL||{};
-    CLUB_VER=d.CLUB_VER||"__todos__"; return true; } }catch(e){} return false; }
+    CLUB_VER=d.CLUB_VER||"__todos__"; ORDEN_COLS=d.ORDEN_COLS||[]; return true; } }catch(e){} return false; }
 const cel=document.getElementById.bind(document);
-function ingerir(filas,etq,club){
+async function leerArchivoATablas(file){
+  if(/\.xlsx?$/i.test(file.name)) return await leerXLSX(file);
+  const t=await file.text();
+  if(/<table/i.test(t)){const doc=new DOMParser().parseFromString(t,"text/html"),tb=doc.querySelector("table");
+    if(tb)return[...tb.querySelectorAll("tr")].map(tr=>[...tr.querySelectorAll("th,td")].map(c=>c.textContent.trim()));
+    return null;}
+  return partirCSV(t);
+}
+function fusionarEnObjeto(filas,club,destino,ordenCols){
   const cab=filas[0].map(canon),iJ=cab.indexOf("Jugador");
   if(iJ<0) return {ok:false,msg:"No encuentro la columna «Jugador» en la primera fila."};
   club=(club||"Sin nombre").trim()||"Sin nombre";
+  ordenCols.push(...cab.filter(c=>c!=="Jugador"&&!ordenCols.includes(c)));
   let nuevos=0,leidas=0;
   for(let f=1;f<filas.length;f++){const fl=filas[f];
     const n=(fl[iJ]||"").replace(/\s+/g," ").trim();
     if(!n||n.length<3) continue;
     const k=club+"|"+n;
-    if(!JUG[k]){JUG[k]={Jugador:n,_club:club};nuevos++;} leidas++;
+    if(!destino[k]){destino[k]={Jugador:n,_club:club};nuevos++;} leidas++;
     cab.forEach((c,i)=>{ if(c==="Jugador"||i>=fl.length) return;
       const v=fl[i]; if(v===""||v==="-") return;
-      if(c==="Calidad"||c==="Potencial"){const e=ESTRELLAS(v); if(e!==null) JUG[k][c]=e; return;}
-      JUG[k][c]=/^-?\d+([.,]\d+)?$/.test(v)?Number(v.replace(",",".")):v; });}
-  VISTAS.push((etq||"vista")+" → "+club);
+      if(c==="Calidad"||c==="Potencial"){const e=ESTRELLAS(v); if(e!==null) destino[k][c]=e; return;}
+      destino[k][c]=/^-?\d+([.,]\d+)?$/.test(v)?Number(v.replace(",",".")):v; });}
   return {ok:true,nuevos,leidas,club};
+}
+function ingerir(filas,etq,club){
+  const r=fusionarEnObjeto(filas,club,JUG,ORDEN_COLS);
+  if(!r.ok) return r;
+  VISTAS.push((etq||"vista")+" → "+r.club);
+  return r;
 }
 const clubes=()=>[...new Set(Object.values(JUG).map(j=>j._club))].sort();
 const visibles=()=>Object.values(JUG).filter(j=>CLUB_VER==="__todos__"||j._club===CLUB_VER);
@@ -287,12 +345,28 @@ function pintarSelector(){
   cont.querySelectorAll(".cbtn").forEach(b=>b.onclick=()=>{CLUB_VER=b.dataset.c;guardar();pintarTodo();});
   document.querySelectorAll(".colClub").forEach(e=>e.style.display=CLUB_VER==="__todos__"?"":"none");
 }
+function nombresRepetidosEntreClubes(){
+  const porNombre={};
+  Object.values(JUG).forEach(j=>{ (porNombre[j.Jugador]=porNombre[j.Jugador]||new Set()).add(j._club); });
+  return Object.entries(porNombre).filter(([n,cs])=>cs.size>1).map(([n])=>n);
+}
 function diagnostico(){
   const uno=visibles(); if(!uno.length){cel("diag").innerHTML="";return;}
   const html=Object.keys(PERFILES).map(p=>{
     const faltan=PERFILES[p].filter(a=>!uno.some(j=>typeof j[a]==="number"));
-    return `<span class="chip ${faltan.length?'no':'ok'}" title="${faltan.join(', ')||'completo'}">${p}${faltan.length?' · faltan '+faltan.length:''}</span>`;}).join("");
-  cel("diag").innerHTML=`<div class="estado" style="margin-top:10px">Perfiles calculables (pasa el ratón para ver qué falta):</div>${html}`;
+    let tip=faltan.join(', ')||'completo';
+    if(p==="POR"&&faltan.length) tip+=" — son atributos de portero: en el juego están en su propia categoría "
+      +"(«Portero»), no en Técnica/Física/Mental. Exporta esa vista aparte si quieres calcular POR.";
+    return `<span class="chip ${faltan.length?'no':'ok'}" title="${tip}">${p}${faltan.length?' · faltan '+faltan.length:''}</span>`;}).join("");
+  let aviso="";
+  if(clubes().length>1){
+    const rep=nombresRepetidosEntreClubes();
+    if(rep.length) aviso=`<div class="estado" style="margin-top:8px;color:var(--rojo)">⚠ ${rep.length} jugador(es) aparecen
+      bajo más de un nombre de club (p.ej. «${rep[0]}»). Si en realidad son el mismo club, vuelve a cargar esas vistas
+      escribiendo el mismo nombre de club en el campo de arriba antes de cargarlas — si no, sus atributos no se cruzan
+      y por eso salen perfiles «no calculables» de más.</div>`;
+  }
+  cel("diag").innerHTML=`<div class="estado" style="margin-top:10px">Perfiles calculables (pasa el ratón para ver qué falta):</div>${html}${aviso}`;
 }
 function pintarEstado(m){const n=Object.keys(JUG).length,c=clubes().length;
   cel("estado").textContent=m||(n?`${n} jugadores en memoria · ${c} club${c===1?"":"es"}.`:"Sin datos todavía.");
@@ -492,16 +566,23 @@ function pintarTodo(){
 cel("bAdd").onclick=()=>{const f=partirCSV(cel("entrada").value);
   if(!f){pintarEstado("Pega al menos una fila de cabeceras y una de datos.");return;}
   const r=ingerir(f,"pegado",cel("clubNom").value); if(!r.ok){pintarEstado(r.msg);return;}
-  cel("entrada").value="";CLUB_VER=r.club;guardar();pintarTodo();
+  cel("entrada").value="";CLUB_VER=r.club;cel("clubNom").value=r.club;guardar();pintarTodo();
   pintarEstado(`Añadido a ${r.club}: ${r.leidas} filas, ${r.nuevos} jugadores nuevos.`);};
 cel("fich").onchange=async e=>{
-  for(const f of e.target.files){const t=await f.text();let filas=null;
-    if(/<table/i.test(t)){const doc=new DOMParser().parseFromString(t,"text/html"),tb=doc.querySelector("table");
-      if(tb)filas=[...tb.querySelectorAll("tr")].map(tr=>[...tr.querySelectorAll("th,td")].map(c=>c.textContent.trim()));}
-    else filas=partirCSV(t);
-    const nom=(cel("clubNom").value.trim())||f.name.replace(/\.[^.]+$/,"");
-    if(filas){const r=ingerir(filas,f.name,nom);if(!r.ok){pintarEstado(r.msg);continue;}CLUB_VER=r.club;}}
-  guardar();pintarTodo();e.target.value="";};
+  if(!e.target.files.length) return;
+  // un único nombre de club para TODO el lote seleccionado a la vez, aunque el campo esté vacío:
+  // así "Cargar fichero" con las 4-5 vistas del juego a la vez se cruzan solas sin que se te olvide escribir el nombre.
+  const nomLote=cel("clubNom").value.trim()||e.target.files[0].name.replace(/\.[^.]+$/,"");
+  let club=null,fallos=0;
+  for(const f of e.target.files){let filas=null;
+    try{ filas=await leerArchivoATablas(f); }
+    catch(err){ pintarEstado("No he podido leer "+f.name+": "+err.message); fallos++; continue; }
+    if(!filas){pintarEstado("No he encontrado datos utilizables en "+f.name+" (¿falta la columna «Jugador»?).");fallos++;continue;}
+    const r=ingerir(filas,f.name,nomLote);if(!r.ok){pintarEstado(r.msg);fallos++;continue;}CLUB_VER=r.club;club=r.club;}
+  if(club) cel("clubNom").value=club;
+  guardar();pintarTodo();
+  if(club&&!fallos) pintarEstado(`${e.target.files.length} archivo(s) cargados en «${club}».`);
+  e.target.value="";};
 cel("demo").onchange=async e=>{const val=e.target.value;if(!val)return;
   const [fich,nombre]=val.split("|");
   try{const r=await fetch(fich);if(!r.ok)throw 0;
@@ -511,9 +592,55 @@ cel("demo").onchange=async e=>{const val=e.target.value;if(!val)return;
   catch{pintarEstado(`No encuentro ${fich}. Debe estar junto a esta página y abierta desde un servidor web.`);}
   e.target.value="";};
 cel("formacion").onchange=e=>{ if(window.__d) pintarOnce(window.__d,e.target.value); };
-cel("bReset").onclick=()=>{JUG={};VISTAS=[];MANUAL={};CLUB_VER="__todos__";
+cel("bReset").onclick=()=>{JUG={};VISTAS=[];MANUAL={};CLUB_VER="__todos__";ORDEN_COLS=[];
   try{localStorage.removeItem(LLAVE);}catch(e){}
   cel("salida").classList.add("oculto");pintarEstado();};
+function descargarExcelDesde(objDatos,ordenCols,nombreArchivo){
+  if(typeof XLSX==="undefined") throw new Error("no se ha podido cargar el lector/escritor de Excel (sin conexión al CDN)");
+  const datos=Object.values(objDatos);
+  const cols=["Jugador","Club",...ordenCols.filter(c=>datos.some(j=>j[c]!==undefined))];
+  const aoa=[cols,...datos.map(j=>cols.map(c=>{
+    if(c==="Jugador") return j.Jugador;
+    if(c==="Club") return j._club;
+    const v=j[c]; return v===undefined?"":v; }))];
+  const ws=XLSX.utils.aoa_to_sheet(aoa);
+  ws["!cols"]=cols.map(c=>({wch:c==="Jugador"?22:(c==="Club"?16:12)}));
+  ws["!autofilter"]={ref:XLSX.utils.encode_range({s:{r:0,c:0},e:{r:aoa.length-1,c:cols.length-1}})};
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,"Jugadores");
+  XLSX.writeFile(wb,nombreArchivo);
+  return {jugadores:datos.length,columnas:cols.length};
+}
+
+// --- Convertidor CSV/Excel → Excel: herramienta aparte, con su propio estado, no toca JUG ---
+let CONV_JUG={},CONV_COLS=[],CONV_ARCHIVOS=0;
+function pintarConvEstado(msg){
+  const n=Object.keys(CONV_JUG).length;
+  cel("convEstado").textContent=msg||(n?`${CONV_ARCHIVOS} archivo(s) · ${n} jugador(es) · ${CONV_COLS.length} columna(s) de atributos.`:"Sin archivos todavía.");
+  cel("convDescargar").disabled=!n;
+}
+cel("convFich").onchange=async e=>{
+  if(!e.target.files.length) return;
+  const nomLote=cel("convClubNom").value.trim()||e.target.files[0].name.replace(/\.[^.]+$/,"");
+  for(const f of e.target.files){let filas=null;
+    try{ filas=await leerArchivoATablas(f); }
+    catch(err){ pintarConvEstado("No he podido leer "+f.name+": "+err.message); continue; }
+    if(!filas){ pintarConvEstado("No he encontrado datos utilizables en "+f.name+" (¿falta la columna «Jugador»?)."); continue; }
+    const r=fusionarEnObjeto(filas,nomLote,CONV_JUG,CONV_COLS);
+    if(!r.ok){ pintarConvEstado(r.msg); continue; }
+    CONV_ARCHIVOS++;
+  }
+  if(cel("convClubNom").value.trim()==="") cel("convClubNom").value=nomLote;
+  pintarConvEstado();
+  e.target.value="";};
+cel("convReset").onclick=()=>{CONV_JUG={};CONV_COLS=[];CONV_ARCHIVOS=0;cel("convClubNom").value="";pintarConvEstado();};
+cel("convDescargar").onclick=()=>{
+  try{
+    const nombre=(cel("convClubNom").value.trim()||"jugadores").toLowerCase().replace(/\s+/g,"_")+"_base_de_datos.xlsx";
+    const res=descargarExcelDesde(CONV_JUG,CONV_COLS,nombre);
+    pintarConvEstado(`Excel descargado (${nombre}): ${res.jugadores} jugadores, ${res.columnas} columnas.`);
+  }catch(err){ pintarConvEstado("No se pudo generar el Excel: "+err.message); }
+};
 cel("bPng").onclick=()=>{const a=document.createElement("a");
   a.href=cel("lienzo").toDataURL("image/png");a.download=(CLUB_VER==="__todos__"?"once":CLUB_VER.toLowerCase().replace(/\s+/g,"_"))+".png";a.click();};
 cel("bCsv").onclick=()=>{const d=window.__d||[];if(!d.length)return;
