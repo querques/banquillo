@@ -54,6 +54,18 @@ details p{font-size:13.5px;color:var(--tenue)}
 code{font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--panel2);padding:1px 5px;border-radius:2px}
 .oculto{display:none}
 footer{padding:30px 0;color:var(--tenue);font-size:12.5px}
+.velo{position:fixed;inset:0;background:rgba(6,12,10,.82);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+.velo.on{display:flex}
+.modal{background:var(--panel);border:1px solid var(--linea);border-radius:4px;width:min(620px,100%);max-height:82vh;
+  display:flex;flex-direction:column;padding:20px}
+.modal input{width:100%;margin:12px 0;background:var(--panel2);border:1px solid var(--linea);border-radius:3px;
+  padding:10px 13px;color:var(--tiza);font-family:'IBM Plex Sans';font-size:14px}
+.lista{overflow-y:auto;flex:1;margin:0 -6px}
+.opt{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:8px 10px;border-radius:3px;cursor:pointer}
+.opt:hover{background:var(--panel2)}
+.opt small{color:var(--tenue);font-family:'IBM Plex Mono';font-size:11.5px}
+.tagclub{font-family:'IBM Plex Mono';font-size:10.5px;border:1px solid var(--linea);border-radius:2px;padding:1px 6px;color:var(--tenue)}
+.fijado{color:var(--cal)}
 </style>
 </head>
 <body>
@@ -146,9 +158,13 @@ footer{padding:30px 0;color:var(--tenue);font-size:12.5px}
           </optgroup>
         </select>
       </div>
-      <div class="tabla-scroll"><table id="tOnce"><thead><tr><th>Puesto</th><th>Jugador</th><th>Perfil</th>
-        <th class="n">Nota</th><th class="n">Edad</th></tr></thead><tbody></tbody></table></div>
-      <div class="fila"><button id="bPng">Descargar el campo (PNG)</button></div>
+      <div class="tabla-scroll"><table id="tOnce"><thead><tr><th>Puesto</th><th>Jugador</th><th>Club</th><th class="n">Nota</th>
+        <th class="n">Edad</th><th></th></tr></thead><tbody></tbody></table></div>
+      <div class="fila"><button id="bPng">Descargar el campo (PNG)</button>
+        <button id="bLibre">Vaciar el once manual</button></div>
+      <p class="sub" style="margin-top:12px">Pulsa <b style="color:var(--tiza)">Cambiar</b> en cualquier puesto para
+         poner ahí al jugador que quieras, aunque sea de otro club. Los puestos fijados se marcan en amarillo y el
+         resto los sigue eligiendo la app.</p>
     </div>
     <div><canvas id="lienzo" width="1120" height="1560"></canvas></div>
   </div>
@@ -177,6 +193,14 @@ footer{padding:30px 0;color:var(--tenue);font-size:12.5px}
 </section>
 
 </div>
+
+<div class="velo" id="velo"><div class="modal">
+  <div class="disp" style="font-size:22px" id="mTitulo">Elegir jugador</div>
+  <div class="sub" style="margin:4px 0 0" id="mSub"></div>
+  <input id="mBuscar" placeholder="Buscar por nombre o club…" autocomplete="off">
+  <div class="lista" id="mLista"></div>
+  <div class="fila"><button id="mAuto">Dejar que lo elija la app</button><button id="mCerrar">Cancelar</button></div>
+</div></div>
 
 <footer>Las notas salen de los atributos visibles. Las estrellas son relativas a tu plantilla y al criterio de tu
   cuerpo técnico, así que dos clubes no se comparan sin tenerlo en cuenta.</footer>
@@ -227,7 +251,13 @@ function partirCSV(txt){
   return filas.length>1?filas:null;
 }
 
-let JUG={},VISTAS=[],CLUB_VER="__todos__";
+let JUG={},VISTAS=[],CLUB_VER="__todos__",MANUAL={};
+const LLAVE="banquillo.v1";
+function guardar(){ try{ localStorage.setItem(LLAVE,JSON.stringify({JUG,VISTAS,MANUAL,CLUB_VER})); }
+  catch(e){ pintarEstado("No he podido guardar en este navegador: "+e.message); } }
+function recuperar(){ try{ const d=JSON.parse(localStorage.getItem(LLAVE)||"null");
+  if(d&&d.JUG&&Object.keys(d.JUG).length){ JUG=d.JUG; VISTAS=d.VISTAS||[]; MANUAL=d.MANUAL||{};
+    CLUB_VER=d.CLUB_VER||"__todos__"; return true; } }catch(e){} return false; }
 const cel=document.getElementById.bind(document);
 function ingerir(filas,etq,club){
   const cab=filas[0].map(canon),iJ=cab.indexOf("Jugador");
@@ -254,7 +284,7 @@ function pintarSelector(){
      style="opacity:.65;font-family:'IBM Plex Mono';font-size:12px">${n}</span></button>`;
   cont.innerHTML=(cs.length>1?bot("__todos__","Todos",Object.keys(JUG).length):"")
     + cs.map(c=>bot(c,c,Object.values(JUG).filter(j=>j._club===c).length)).join("");
-  cont.querySelectorAll(".cbtn").forEach(b=>b.onclick=()=>{CLUB_VER=b.dataset.c;pintarTodo();});
+  cont.querySelectorAll(".cbtn").forEach(b=>b.onclick=()=>{CLUB_VER=b.dataset.c;guardar();pintarTodo();});
   document.querySelectorAll(".colClub").forEach(e=>e.style.display=CLUB_VER==="__todos__"?"":"none");
 }
 function diagnostico(){
@@ -282,13 +312,13 @@ function grupo(mp){const m=String(mp||"").toUpperCase().replace(/\s/g,"");
   if(m.startsWith("DL"))return"DL"; return"?";}
 const PERFIL_DE={POR:["POR"],DFC:["DFC"],LATD:["LAT"],LATI:["LAT"],MC:["MC","MP"],MPC:["MP","BAN"],
   MPD:["BAN","MP"],MPI:["BAN","MP"],DL:["DL"],"?":["MC","MP","BAN","DFC","LAT","DL","POR"]};
-function analizar(){const out=[];
-  for(const j of visibles()){const n=j.Jugador,g=grupo(j["Mejor pos."]),todas={};
+function analizar(lista){const out=[];
+  for(const j of (lista||visibles())){const n=j.Jugador,g=grupo(j["Mejor pos."]),todas={};
     for(const p in PERFILES){const v=nota(j,p);if(v!==null)todas[p]=v;}
     const cand={};for(const p of (PERFIL_DE[g]||[]))if(todas[p]!==undefined)cand[p]=todas[p];
     const pool=Object.keys(cand).length?cand:todas;
     let mejor=null,val=-1;for(const p in pool)if(pool[p]>val){val=pool[p];mejor=p;}
-    if(mejor)out.push({n,j,g,mejor,nota:val,todas,club:j._club});}
+    if(mejor)out.push({n,j,g,mejor,nota:val,todas,club:j._club,clave:j._club+"|"+n});}
   return out.sort((a,b)=>b.nota-a.nota);}
 const proyeccion=(nt,ed,det,pot)=>{const f=Math.min(Math.max(det/13,0.6),1.35);
   const c=(ed<19?Math.max(0,19-ed)*0.8*f:0)+Math.max(0,24-Math.max(ed,19))*1.5*f;
@@ -333,14 +363,19 @@ const FORMACIONES={
    ["ED","BAN",["MPD","MPI"],18,27],["DC","DL",["DL"],50,16],["EI","BAN",["MPI","MPD"],82,27]]},
  541:{nombre:"5-4-1",p:[P,...D5,["MD","BAN",["MPD","MPI"],19,48],["MC","MC",["MC"],40,52],["MC","MC",["MC"],60,52],
    ["MI","BAN",["MPI","MPD"],81,48],["DC","DL",["DL"],50,16]]}};
-function elegirOnce(d,k){const F=FORMACIONES[k],u=new Set(),once=[];
-  for(const [etq,perf,grs,x,y] of F.p){let m=null;
-    for(const p of d){if(u.has(p.n)||!grs.includes(p.g)||p.todas[perf]===undefined)continue;
+function elegirOnce(d,k,todos){const F=FORMACIONES[k],u=new Set(),once=new Array(F.p.length);
+  const fij=MANUAL[k]||{};
+  F.p.forEach((s,i)=>{ const cl=fij[i]; if(!cl) return;
+    const p=(todos||d).find(x=>x.clave===cl); if(!p) return;
+    u.add(p.clave); once[i]={etq:s[0],perf:s[1],x:s[3],y:s[4],d:p,nota:p.todas[s[1]]??p.nota,fijo:true}; });
+  F.p.forEach((s,i)=>{ if(once[i]) return;
+    const [etq,perf,grs,x,y]=s; let m=null;
+    for(const p of d){if(u.has(p.clave)||!grs.includes(p.g)||p.todas[perf]===undefined)continue;
       if(!m||p.todas[perf]>m.todas[perf])m=p;}
-    if(!m)for(const p of d){if(u.has(p.n)||p.todas[perf]===undefined)continue;
+    if(!m)for(const p of d){if(u.has(p.clave)||p.todas[perf]===undefined)continue;
       if(!m||p.todas[perf]>m.todas[perf])m=p;}
-    if(m){u.add(m.n);once.push({etq,perf,x,y,d:m,nota:m.todas[perf]});}}
-  return once;}
+    if(m){u.add(m.clave);once[i]={etq,perf,x,y,d:m,nota:m.todas[perf]};}});
+  return once.filter(Boolean);}
 
 const apellido=n=>{const t=n.replace(/-/g," ").split(" ").filter(Boolean);
   const par=["de","van","der","den","el","al","da","dos","di"];
@@ -380,19 +415,50 @@ function dibujarCampo(once,titulo,media,club){
     const an=g.measureText(nm).width;
     g.fillStyle="rgba(11,20,17,.88)";g.fillRect(x-an/2-10,y+r+11,an+20,36);
     g.fillStyle="#E8EDE9";g.fillText(nm,x,y+r+37);
-    g.fillStyle="#7E938A";g.font="500 22px 'Barlow Condensed', sans-serif";g.fillText(o.etq,x,y+r+64);});
+    g.fillStyle=o.fijo?"#F2D06B":"#7E938A";g.font="500 22px 'Barlow Condensed', sans-serif";
+    const pie=(club&&o.d.club!==club&&club!=="Combinado")?o.etq+" · "+o.d.club:o.etq;
+    g.fillText(pie,x,y+r+64);});
   g.textAlign="left";g.fillStyle="#7E938A";g.font="400 20px 'IBM Plex Sans', sans-serif";
   g.fillText("Nota = media de los atributos clave del perfil de cada puesto · Banquillo FM26",M,H-22);
 }
 
 const clase=v=>v>=14?"v":(v>=12?"a":"g"),f1=v=>v.toFixed(1).replace(".",",");
+let PICK=null;
+function abrirPicker(i){
+  PICK=i; const F=FORMACIONES[window.__k], s=F.p[i];
+  cel("mTitulo").textContent="Puesto "+s[0];
+  cel("mSub").textContent="Perfil "+s[1]+" · ordenados por su nota en ese perfil, de todos los clubes cargados";
+  cel("mBuscar").value=""; listarPicker(""); cel("velo").classList.add("on"); cel("mBuscar").focus();
+}
+function listarPicker(q){
+  const s=FORMACIONES[window.__k].p[PICK], perf=s[1];
+  const usados=new Set(window.__once.filter((_,j)=>j!==PICK).map(o=>o.d.clave));
+  q=q.toLowerCase();
+  const l=window.__todos.filter(p=>p.todas[perf]!==undefined)
+    .filter(p=>!q||p.n.toLowerCase().includes(q)||p.club.toLowerCase().includes(q))
+    .sort((a,b)=>b.todas[perf]-a.todas[perf]).slice(0,120);
+  cel("mLista").innerHTML=l.map(p=>`<div class="opt" data-c="${p.clave}">
+     <span>${p.n} ${usados.has(p.clave)?'<small>· ya alineado</small>':''}<br>
+       <small>${p.club} · ${p.j["Mejor pos."]??"?"} · ${p.j.Edad??"?"} años</small></span>
+     <span class="num ${clase(p.todas[perf])}" style="font-weight:600">${f1(p.todas[perf])}</span></div>`).join("")
+   ||'<div class="opt"><small>Ningún jugador con datos para este perfil.</small></div>';
+  cel("mLista").querySelectorAll(".opt[data-c]").forEach(e=>e.onclick=()=>{
+    MANUAL[window.__k]=MANUAL[window.__k]||{}; MANUAL[window.__k][PICK]=e.dataset.c;
+    cerrarPicker(); guardar(); pintarOnce(window.__d,window.__k);});
+}
+function cerrarPicker(){cel("velo").classList.remove("on");}
 function pintarOnce(d,k){
-  const once=elegirOnce(d,k); if(!once.length) return;
+  const todos=analizar(Object.values(JUG));
+  const once=elegirOnce(d,k,todos); if(!once.length) return;
+  window.__k=k; window.__todos=todos; window.__once=once;
   cel("tituloFormacion").textContent=FORMACIONES[k].nombre;
   const tb=cel("tOnce").querySelector("tbody");tb.innerHTML="";let s=0;
-  once.forEach(o=>{s+=o.nota;tb.insertAdjacentHTML("beforeend",
-    `<tr><td>${o.etq}</td><td>${o.d.n}</td><td>${o.perf}</td>
-     <td class="n ${clase(o.nota)}">${f1(o.nota)}</td><td class="n">${o.d.j.Edad??""}</td></tr>`);});
+  once.forEach((o,i)=>{s+=o.nota;tb.insertAdjacentHTML("beforeend",
+    `<tr><td class="${o.fijo?'fijado':''}">${o.etq}${o.fijo?' ●':''}</td><td>${o.d.n}</td>
+     <td><span class="tagclub">${o.d.club}</span></td>
+     <td class="n ${clase(o.nota)}">${f1(o.nota)}</td><td class="n">${o.d.j.Edad??""}</td>
+     <td><button class="cambiar" data-i="${i}" style="font-size:13px;padding:3px 10px">Cambiar</button></td></tr>`);});
+  tb.querySelectorAll(".cambiar").forEach(b=>b.onclick=()=>abrirPicker(+b.dataset.i));
   const media=s/once.length;
   cel("mediaOnce").textContent=f1(media);
   const club=CLUB_VER==="__todos__"?(clubes().length>1?"Combinado":clubes()[0]||""):CLUB_VER;
@@ -426,7 +492,7 @@ function pintarTodo(){
 cel("bAdd").onclick=()=>{const f=partirCSV(cel("entrada").value);
   if(!f){pintarEstado("Pega al menos una fila de cabeceras y una de datos.");return;}
   const r=ingerir(f,"pegado",cel("clubNom").value); if(!r.ok){pintarEstado(r.msg);return;}
-  cel("entrada").value="";CLUB_VER=r.club;pintarTodo();
+  cel("entrada").value="";CLUB_VER=r.club;guardar();pintarTodo();
   pintarEstado(`Añadido a ${r.club}: ${r.leidas} filas, ${r.nuevos} jugadores nuevos.`);};
 cel("fich").onchange=async e=>{
   for(const f of e.target.files){const t=await f.text();let filas=null;
@@ -435,17 +501,19 @@ cel("fich").onchange=async e=>{
     else filas=partirCSV(t);
     const nom=(cel("clubNom").value.trim())||f.name.replace(/\.[^.]+$/,"");
     if(filas){const r=ingerir(filas,f.name,nom);if(!r.ok){pintarEstado(r.msg);continue;}CLUB_VER=r.club;}}
-  pintarTodo();e.target.value="";};
+  guardar();pintarTodo();e.target.value="";};
 cel("demo").onchange=async e=>{const val=e.target.value;if(!val)return;
   const [fich,nombre]=val.split("|");
   try{const r=await fetch(fich);if(!r.ok)throw 0;
     const f=partirCSV(await r.text());
-    if(f){const res=ingerir(f,fich,nombre);CLUB_VER=res.club;pintarTodo();
+    if(f){const res=ingerir(f,fich,nombre);CLUB_VER=res.club;guardar();pintarTodo();
       pintarEstado(`${nombre} cargado: ${res.nuevos} jugadores.`);}}
   catch{pintarEstado(`No encuentro ${fich}. Debe estar junto a esta página y abierta desde un servidor web.`);}
   e.target.value="";};
 cel("formacion").onchange=e=>{ if(window.__d) pintarOnce(window.__d,e.target.value); };
-cel("bReset").onclick=()=>{JUG={};VISTAS=[];CLUB_VER="__todos__";cel("salida").classList.add("oculto");pintarEstado();};
+cel("bReset").onclick=()=>{JUG={};VISTAS=[];MANUAL={};CLUB_VER="__todos__";
+  try{localStorage.removeItem(LLAVE);}catch(e){}
+  cel("salida").classList.add("oculto");pintarEstado();};
 cel("bPng").onclick=()=>{const a=document.createElement("a");
   a.href=cel("lienzo").toDataURL("image/png");a.download=(CLUB_VER==="__todos__"?"once":CLUB_VER.toLowerCase().replace(/\s+/g,"_"))+".png";a.click();};
 cel("bCsv").onclick=()=>{const d=window.__d||[];if(!d.length)return;
@@ -456,7 +524,16 @@ cel("bCsv").onclick=()=>{const d=window.__d||[];if(!d.length)return;
   const csv=[cab,...filas].map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(";")).join("\n");
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}));
   a.download="notas.csv";a.click();};
-pintarEstado();
+cel("mBuscar").oninput=e=>listarPicker(e.target.value);
+cel("mCerrar").onclick=cerrarPicker;
+cel("velo").onclick=e=>{if(e.target===cel("velo"))cerrarPicker();};
+document.addEventListener("keydown",e=>{if(e.key==="Escape")cerrarPicker();});
+cel("mAuto").onclick=()=>{ if(MANUAL[window.__k]) delete MANUAL[window.__k][PICK];
+  cerrarPicker(); guardar(); pintarOnce(window.__d,window.__k); };
+cel("bLibre").onclick=()=>{ MANUAL={}; guardar(); pintarOnce(window.__d,window.__k); };
+
+if(recuperar()){ pintarTodo(); pintarEstado("Recuperado de la última sesión."); }
+else pintarEstado();
 </script>
 </body>
 </html>
