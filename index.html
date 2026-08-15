@@ -38,6 +38,10 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .cbtn-x{font-family:'IBM Plex Mono',monospace;font-size:13px;padding:9px 12px;border-radius:0 3px 3px 0;
   border:1px solid var(--linea);border-left:none;background:var(--panel2);color:var(--tenue);cursor:pointer;line-height:1}
 .cbtn-x:hover{background:var(--rojo);color:#14201C;border-color:var(--rojo)}
+.idbtn{font-family:'IBM Plex Mono',monospace;font-size:12px;padding:5px 10px;border-radius:3px;
+  border:1px solid var(--linea);background:var(--panel2);color:var(--tenue);cursor:pointer;letter-spacing:.05em}
+.idbtn.act{background:var(--cal);color:#14201C;border-color:var(--cal);font-weight:600}
+.topfila{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .estado{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--tenue);margin-top:12px}
 .chip{display:inline-block;background:var(--panel2);border:1px solid var(--linea);border-radius:2px;padding:2px 9px;
   margin:3px 5px 3px 0;font-family:'IBM Plex Mono',monospace;font-size:11.5px}
@@ -79,108 +83,117 @@ footer{padding:30px 0;color:var(--tenue);font-size:12.5px}
 <div class="wrap">
 
 <header>
-  <div class="marca">BANQUILLO · FM26</div>
-  <h1>Carga la plantilla.<br>Sale el once.</h1>
-  <p>Calcula las notas por perfil, dibuja la alineación sobre el campo y proyecta a los jóvenes.
+  <div class="topfila">
+    <div class="marca">BANQUILLO · FM26</div>
+    <div class="fila" id="idiomaSwitch" style="margin-top:0">
+      <button class="idbtn" data-lang="es">ES</button>
+      <button class="idbtn" data-lang="en">EN</button>
+    </div>
+  </div>
+  <h1 data-i18n-html="title_html">Carga la plantilla.<br>Sale el once.</h1>
+  <p data-i18n-html="desc_html">Calcula las notas por perfil, dibuja la alineación sobre el campo y proyecta a los jóvenes.
      Todo ocurre en tu navegador: no se envía nada a ningún servidor y no interviene ninguna IA.
      <b style="color:var(--tiza)">No lee capturas de pantalla</b>: necesita los datos como texto.</p>
 </header>
 
 <section>
-  <div class="paso">HERRAMIENTA APARTE · NO TOCA LA PLANTILLA DE ABAJO</div>
-  <h2>Convertidor CSV/Excel → Excel</h2>
-  <p class="sub">Solo para juntar los CSV que exportes del juego (pueden ser 2, 5 o los que sean) en un único .xlsx
+  <div class="paso" data-i18n="conv_badge">HERRAMIENTA APARTE · NO TOCA LA PLANTILLA DE ABAJO</div>
+  <h2 data-i18n="conv_title">Convertidor CSV/Excel → Excel</h2>
+  <p class="sub" data-i18n="conv_desc">Solo para juntar los CSV que exportes del juego (pueden ser 2, 5 o los que sean) en un único .xlsx
      para usar fuera de aquí. No alimenta el análisis de plantilla, el once ni la proyección de jóvenes de más abajo:
      es una herramienta independiente con su propia memoria.</p>
 
   <div class="fila">
-    <button class="pri" onclick="document.getElementById('convFich').click()">Cargar CSV/Excel</button>
+    <button class="pri" data-i18n="conv_cargar_btn" onclick="document.getElementById('convFich').click()">Cargar CSV/Excel</button>
     <input type="file" id="convFich" accept=".csv,.tsv,.txt,.htm,.html,.xlsx,.xls" multiple style="display:none">
-    <input id="convClubNom" placeholder="Nombre del club (para el nombre del fichero)" style="font-family:'IBM Plex Sans';
+    <input id="convClubNom" data-i18n-placeholder="conv_club_placeholder" placeholder="Nombre del club (para el nombre del fichero)" style="font-family:'IBM Plex Sans';
       font-size:14px;padding:9px 14px;border-radius:3px;border:1px solid var(--linea);background:var(--panel);
       color:var(--tiza);width:260px">
-    <button id="convReset">Vaciar</button>
+    <button id="convReset" data-i18n="conv_vaciar_btn">Vaciar</button>
   </div>
-  <div class="estado" id="convEstado">Sin archivos todavía.</div>
-  <div class="fila"><button id="convDescargar" class="pri" disabled>Descargar Excel</button></div>
+  <div class="estado" id="convEstado" data-i18n="conv_sin_archivos">Sin archivos todavía.</div>
+  <div class="fila"><button id="convDescargar" class="pri" disabled data-i18n="conv_descargar_btn">Descargar Excel</button></div>
 </section>
 
 <section>
-  <div class="paso">PASO 1 — CARGAR DATOS</div>
-  <h2>Plantilla</h2>
-  <p class="sub">Carga un CSV, un Excel (.xlsx) o pega una tabla. Puedes cargar varias vistas seguidas: se cruzan por
+  <div class="paso" data-i18n="p1_badge">PASO 1 — CARGAR DATOS</div>
+  <h2 data-i18n="p1_title">Plantilla</h2>
+  <p class="sub" data-i18n="p1_desc">Carga un CSV, un Excel (.xlsx) o pega una tabla. Puedes cargar varias vistas seguidas: se cruzan por
      el nombre del jugador.</p>
 
   <div class="fila">
-    <button class="pri" onclick="document.getElementById('fich').click()">Cargar fichero</button>
+    <button class="pri" data-i18n="p1_cargar_btn" onclick="document.getElementById('fich').click()">Cargar fichero</button>
     <input type="file" id="fich" accept=".csv,.tsv,.txt,.htm,.html,.xlsx,.xls" multiple style="display:none">
     <select id="demo">
-      <option value="">— o carga un ejemplo —</option>
+      <option value="" data-i18n="demo_placeholder">— o carga un ejemplo —</option>
       <option value="brugge.csv|Club Brugge">Club Brugge (84)</option>
       <option value="leeds.csv|Leeds United">Leeds United (78)</option>
       <option value="everton.csv|Everton">Everton (75)</option>
     </select>
-    <input id="clubNom" placeholder="Nombre del club" style="font-family:'IBM Plex Sans';font-size:14px;
+    <input id="clubNom" data-i18n-placeholder="club_placeholder" placeholder="Nombre del club" style="font-family:'IBM Plex Sans';font-size:14px;
       padding:9px 14px;border-radius:3px;border:1px solid var(--linea);background:var(--panel);color:var(--tiza);width:200px">
-    <button id="bReset">Vaciar todo</button>
+    <button id="bReset" data-i18n="p1_vaciar_todo_btn">Vaciar todo</button>
   </div>
-  <p class="sub" style="margin:10px 0 0">El nombre del club agrupa las vistas: carga las que quieras de un club con
+  <p class="sub" style="margin:10px 0 0" data-i18n="p1_desc2">El nombre del club agrupa las vistas: carga las que quieras de un club con
      el mismo nombre (pueden ser 2, 4 o las que exportes) y se cruzan entre sí por el nombre del jugador. Cambia el
      nombre para cargar otro club sin perder el anterior.</p>
 
-  <textarea id="entrada" spellcheck="false" placeholder="…o pega aquí una tabla. La primera fila debe ser la de cabeceras: Jugador, Edad, Marcaje, Remate…"></textarea>
-  <div class="fila"><button id="bAdd">Añadir tabla pegada</button></div>
+  <textarea id="entrada" spellcheck="false" data-i18n-placeholder="textarea_placeholder" placeholder="…o pega aquí una tabla. La primera fila debe ser la de cabeceras: Jugador, Edad, Marcaje, Remate…"></textarea>
+  <div class="fila"><button id="bAdd" data-i18n="bAdd_btn">Añadir tabla pegada</button></div>
 
-  <div class="estado" id="estado">Sin datos todavía.</div>
+  <div class="estado" id="estado" data-i18n="estado_sin_datos">Sin datos todavía.</div>
   <div id="chips"></div>
   <div id="diag"></div>
 
   <details>
-    <summary>Formato esperado</summary>
-    <p>CSV/TSV: una fila de cabeceras y luego una fila por jugador. Separador coma, punto y coma o tabulador: se
+    <summary data-i18n="formato_esperado_summary">Formato esperado</summary>
+    <p data-i18n-html="formato_p1">CSV/TSV: una fila de cabeceras y luego una fila por jugador. Separador coma, punto y coma o tabulador: se
        detecta solo, y respeta las comillas y las comas decimales del español.</p>
-    <p>Excel (.xlsx): se busca automáticamente la fila que contiene la cabecera <code>Jugador</code> en la primera
+    <p data-i18n-html="formato_p2">Excel (.xlsx): se busca automáticamente la fila que contiene la cabecera <code>Jugador</code> en la primera
        hoja cuyo nombre incluya «jugador» (o la primera hoja si ninguna coincide), así que no importa si hay una
        fila de agrupación por encima (Físico / Mental / Técnica) como en la base de datos exportada antes.</p>
-    <p>Obligatoria: <code>Jugador</code>. Para el once, <code>Mejor pos.</code>. Para la proyección,
+    <p data-i18n-html="formato_p3">Obligatoria: <code>Jugador</code>. Para el once, <code>Mejor pos.</code>. Para la proyección,
        <code>Edad</code>, <code>Potencial</code> y <code>Determinación</code>. Los nombres recortados del juego
        («Mando en el…», «Concentrac…») se reconocen igual.</p>
+    <p data-i18n-html="formato_p4">Los nombres de columna (<code>Jugador</code>, <code>Marcaje</code>, <code>Remate</code>…) se mantienen
+       siempre en español, sea cual sea el idioma que elijas aquí — es el idioma que usa la exportación de FM. Esto
+       solo cambia el idioma de la propia interfaz, no el de tus datos.</p>
   </details>
 </section>
 
 <div id="salida" class="oculto">
 
 <section style="padding-bottom:18px">
-  <div class="paso">CLUB EN PANTALLA</div>
+  <div class="paso" data-i18n="club_pantalla_badge">CLUB EN PANTALLA</div>
   <div class="fila" id="selClubes" style="margin-top:10px"></div>
 </section>
 
 <section>
-  <div class="paso">PASO 2 — ALINEACIÓN</div>
+  <div class="paso" data-i18n="p2_badge">PASO 2 — ALINEACIÓN</div>
   <div class="grid2">
     <div>
       <h2 id="tituloFormacion">4-2-3-1</h2>
-      <p class="sub">Para cada puesto se elige al jugador con mejor nota en ese perfil, respetando su mejor
+      <p class="sub" data-i18n-html="p2_desc">Para cada puesto se elige al jugador con mejor nota en ese perfil, respetando su mejor
          posición real. Media del once: <b class="num" id="mediaOnce" style="color:var(--cal)"></b></p>
       <div class="fila" style="margin-bottom:16px">
         <select id="formacion" style="width:100%;max-width:320px">
-          <optgroup label="Defensa de 3">
+          <optgroup label="Defensa de 3" data-i18n-label="def3">
             <option value="343">3-4-3</option>
             <option value="3421">3-4-2-1</option>
             <option value="3412">3-4-1-2</option>
             <option value="352">3-5-2</option>
           </optgroup>
-          <optgroup label="Defensa de 4">
+          <optgroup label="Defensa de 4" data-i18n-label="def4">
             <option value="4231" selected>4-2-3-1</option>
             <option value="433">4-3-3</option>
             <option value="442">4-4-2</option>
-            <option value="4132">4-1-2-1-2 (rombo)</option>
+            <option value="4132" data-i18n="form_4132">4-1-2-1-2 (rombo)</option>
             <option value="4141">4-1-4-1</option>
             <option value="451">4-5-1</option>
             <option value="4312">4-3-1-2</option>
             <option value="4222">4-2-2-2</option>
           </optgroup>
-          <optgroup label="Defensa de 5">
+          <optgroup label="Defensa de 5" data-i18n-label="def5">
             <option value="532">5-3-2</option>
             <option value="5131">5-1-3-1</option>
             <option value="523">5-2-3</option>
@@ -188,11 +201,11 @@ footer{padding:30px 0;color:var(--tenue);font-size:12.5px}
           </optgroup>
         </select>
       </div>
-      <div class="tabla-scroll"><table id="tOnce"><thead><tr><th>Puesto</th><th>Jugador</th><th>Club</th><th class="n">Nota</th>
-        <th class="n">Edad</th><th></th></tr></thead><tbody></tbody></table></div>
-      <div class="fila"><button id="bPng">Descargar el campo (PNG)</button>
-        <button id="bLibre">Vaciar el once manual</button></div>
-      <p class="sub" style="margin-top:12px">Pulsa <b style="color:var(--tiza)">Cambiar</b> en cualquier puesto para
+      <div class="tabla-scroll"><table id="tOnce"><thead><tr><th data-i18n="th_puesto">Puesto</th><th data-i18n="th_jugador">Jugador</th><th data-i18n="th_club">Club</th><th class="n" data-i18n="th_nota">Nota</th>
+        <th class="n" data-i18n="th_edad">Edad</th><th></th></tr></thead><tbody></tbody></table></div>
+      <div class="fila"><button id="bPng" data-i18n="btn_png">Descargar el campo (PNG)</button>
+        <button id="bLibre" data-i18n="btn_vaciar_once">Vaciar el once manual</button></div>
+      <p class="sub" style="margin-top:12px" data-i18n-html="p2_desc2">Pulsa <b style="color:var(--tiza)">Cambiar</b> en cualquier puesto para
          poner ahí al jugador que quieras, aunque sea de otro club. Los puestos fijados se marcan en amarillo y el
          resto los sigue eligiendo la app.</p>
     </div>
@@ -201,42 +214,283 @@ footer{padding:30px 0;color:var(--tenue);font-size:12.5px}
 </section>
 
 <section>
-  <div class="paso">PASO 3 — PLANTILLA ORDENADA</div>
-  <h2>Notas por perfil</h2>
-  <p class="sub">Nota = media de los diez atributos clave del perfil (cinco en portería). Verde 14 o más,
+  <div class="paso" data-i18n="p3_badge">PASO 3 — PLANTILLA ORDENADA</div>
+  <h2 data-i18n="p3_title">Notas por perfil</h2>
+  <p class="sub" data-i18n="p3_desc">Nota = media de los diez atributos clave del perfil (cinco en portería). Verde 14 o más,
      ámbar de 12 a 13,9, gris por debajo. En laterales y delanteros la nota de banda se calcula pero no decide.</p>
-  <div class="tabla-scroll"><table id="tPlantilla"><thead><tr><th>#</th><th>Jugador</th><th class="colClub">Club</th><th>Mejor pos.</th>
-    <th class="n">Edad</th><th class="n">Nota</th><th>Perfil</th><th>Todas las notas</th></tr></thead><tbody></tbody></table></div>
-  <div class="fila"><button id="bCsv">Descargar CSV con las notas</button></div>
+  <div class="tabla-scroll"><table id="tPlantilla"><thead><tr><th data-i18n="th_num">#</th><th data-i18n="th_jugador">Jugador</th><th class="colClub" data-i18n="th_club">Club</th><th data-i18n="th_mejorpos">Mejor pos.</th>
+    <th class="n" data-i18n="th_edad">Edad</th><th class="n" data-i18n="th_nota">Nota</th><th data-i18n="th_perfil">Perfil</th><th data-i18n="th_todas_notas">Todas las notas</th></tr></thead><tbody></tbody></table></div>
+  <div class="fila"><button id="bCsv" data-i18n="btn_csv">Descargar CSV con las notas</button></div>
 </section>
 
 <section>
-  <div class="paso">PASO 4 — JÓVENES</div>
-  <h2>Proyección a los 24</h2>
-  <p class="sub">Heurístico, no es el motor del juego. El crecimiento se multiplica por Determinación ÷ 13 y el
+  <div class="paso" data-i18n="p4_badge">PASO 4 — JÓVENES</div>
+  <h2 data-i18n="p4_title">Proyección a los 24</h2>
+  <p class="sub" data-i18n="p4_desc">Heurístico, no es el motor del juego. El crecimiento se multiplica por Determinación ÷ 13 y el
      resultado se limita a 10 + 1,3 × estrellas de potencial. Casi todos chocan con ese techo, así que manda el
      potencial. Profesionalidad y Consistencia son atributos ocultos que no salen en las vistas: sin ellos el riesgo
      es orientativo y falla en los extremos.</p>
-  <div class="tabla-scroll"><table id="tJovenes"><thead><tr><th>Jugador</th><th class="n">Edad</th><th class="n">Pot.</th>
-    <th class="n">Det.</th><th>Riesgo</th><th class="n">Hoy</th><th class="n">A los 24</th><th class="n">Margen</th>
+  <div class="tabla-scroll"><table id="tJovenes"><thead><tr><th data-i18n="th_jugador">Jugador</th><th class="n" data-i18n="th_edad">Edad</th><th class="n" data-i18n="th_pot">Pot.</th>
+    <th class="n" data-i18n="th_det">Det.</th><th data-i18n="th_riesgo">Riesgo</th><th class="n" data-i18n="th_hoy">Hoy</th><th class="n" data-i18n="th_a24">A los 24</th><th class="n" data-i18n="th_margen">Margen</th>
     </tr></thead><tbody></tbody></table></div>
 </section>
 
 </div>
 
 <div class="velo" id="velo"><div class="modal">
-  <div class="disp" style="font-size:22px" id="mTitulo">Elegir jugador</div>
+  <div class="disp" style="font-size:22px" id="mTitulo" data-i18n="modal_titulo">Elegir jugador</div>
   <div class="sub" style="margin:4px 0 0" id="mSub"></div>
-  <input id="mBuscar" placeholder="Buscar por nombre o club…" autocomplete="off">
+  <input id="mBuscar" data-i18n-placeholder="modal_buscar_placeholder" placeholder="Buscar por nombre o club…" autocomplete="off">
   <div class="lista" id="mLista"></div>
-  <div class="fila"><button id="mAuto">Dejar que lo elija la app</button><button id="mCerrar">Cancelar</button></div>
+  <div class="fila"><button id="mAuto" data-i18n="modal_auto_btn">Dejar que lo elija la app</button><button id="mCerrar" data-i18n="modal_cancelar_btn">Cancelar</button></div>
 </div></div>
 
-<footer>Las notas salen de los atributos visibles. Las estrellas son relativas a tu plantilla y al criterio de tu
+<footer data-i18n="footer_txt">Las notas salen de los atributos visibles. Las estrellas son relativas a tu plantilla y al criterio de tu
   cuerpo técnico, así que dos clubes no se comparan sin tenerlo en cuenta.</footer>
 </div>
 
 <script>
+const I18N={
+ es:{
+  title_html:`Carga la plantilla.<br>Sale el once.`,
+  desc_html:`Calcula las notas por perfil, dibuja la alineación sobre el campo y proyecta a los jóvenes.
+     Todo ocurre en tu navegador: no se envía nada a ningún servidor y no interviene ninguna IA.
+     <b style="color:var(--tiza)">No lee capturas de pantalla</b>: necesita los datos como texto.`,
+  conv_badge:"HERRAMIENTA APARTE · NO TOCA LA PLANTILLA DE ABAJO",
+  conv_title:"Convertidor CSV/Excel → Excel",
+  conv_desc:`Solo para juntar los CSV que exportes del juego (pueden ser 2, 5 o los que sean) en un único .xlsx
+     para usar fuera de aquí. No alimenta el análisis de plantilla, el once ni la proyección de jóvenes de más abajo:
+     es una herramienta independiente con su propia memoria.`,
+  conv_cargar_btn:"Cargar CSV/Excel",
+  conv_club_placeholder:"Nombre del club (para el nombre del fichero)",
+  conv_vaciar_btn:"Vaciar",
+  conv_sin_archivos:"Sin archivos todavía.",
+  conv_descargar_btn:"Descargar Excel",
+  conv_estado_tpl:"{archivos} archivo(s) · {n} jugador(es) · {cols} columna(s) de atributos.",
+  conv_err_leer:"No he podido leer {file}: {err}",
+  conv_err_sin_jugador:"No he encontrado datos utilizables en {file} (¿falta la columna «Jugador»?).",
+  conv_descargado:"Excel descargado ({file}): {n} jugadores, {cols} columnas.",
+  conv_err_generar:"No se pudo generar el Excel: {err}",
+  p1_badge:"PASO 1 — CARGAR DATOS",
+  p1_title:"Plantilla",
+  p1_desc:`Carga un CSV, un Excel (.xlsx) o pega una tabla. Puedes cargar varias vistas seguidas: se cruzan por
+     el nombre del jugador.`,
+  p1_cargar_btn:"Cargar fichero",
+  demo_placeholder:"— o carga un ejemplo —",
+  club_placeholder:"Nombre del club",
+  p1_vaciar_todo_btn:"Vaciar todo",
+  p1_desc2:`El nombre del club agrupa las vistas: carga las que quieras de un club con
+     el mismo nombre (pueden ser 2, 4 o las que exportes) y se cruzan entre sí por el nombre del jugador. Cambia el
+     nombre para cargar otro club sin perder el anterior.`,
+  textarea_placeholder:"…o pega aquí una tabla. La primera fila debe ser la de cabeceras: Jugador, Edad, Marcaje, Remate…",
+  bAdd_btn:"Añadir tabla pegada",
+  estado_sin_datos:"Sin datos todavía.",
+  formato_esperado_summary:"Formato esperado",
+  formato_p1:`CSV/TSV: una fila de cabeceras y luego una fila por jugador. Separador coma, punto y coma o tabulador: se
+       detecta solo, y respeta las comillas y las comas decimales del español.`,
+  formato_p2:`Excel (.xlsx): se busca automáticamente la fila que contiene la cabecera <code>Jugador</code> en la primera
+       hoja cuyo nombre incluya «jugador» (o la primera hoja si ninguna coincide), así que no importa si hay una
+       fila de agrupación por encima (Físico / Mental / Técnica) como en la base de datos exportada antes.`,
+  formato_p3:`Obligatoria: <code>Jugador</code>. Para el once, <code>Mejor pos.</code>. Para la proyección,
+       <code>Edad</code>, <code>Potencial</code> y <code>Determinación</code>. Los nombres recortados del juego
+       («Mando en el…», «Concentrac…») se reconocen igual.`,
+  formato_p4:`Los nombres de columna (<code>Jugador</code>, <code>Marcaje</code>, <code>Remate</code>…) se mantienen
+       siempre en español, sea cual sea el idioma que elijas aquí — es el idioma que usa la exportación de FM. Esto
+       solo cambia el idioma de la propia interfaz, no el de tus datos.`,
+  club_pantalla_badge:"CLUB EN PANTALLA",
+  todos_btn:"Todos",
+  eliminar_confirm_tpl:"¿Eliminar todos los jugadores de «{club}»? No se puede deshacer.",
+  eliminar_title_tpl:"Eliminar «{club}»",
+  p2_badge:"PASO 2 — ALINEACIÓN",
+  p2_desc:`Para cada puesto se elige al jugador con mejor nota en ese perfil, respetando su mejor
+         posición real. Media del once: <b class="num" id="mediaOnce" style="color:var(--cal)"></b>`,
+  def3:"Defensa de 3", def4:"Defensa de 4", def5:"Defensa de 5",
+  form_4132:"4-1-2-1-2 (rombo)",
+  th_puesto:"Puesto", th_jugador:"Jugador", th_club:"Club", th_nota:"Nota", th_edad:"Edad",
+  btn_png:"Descargar el campo (PNG)",
+  btn_vaciar_once:"Vaciar el once manual",
+  p2_desc2:`Pulsa <b style="color:var(--tiza)">Cambiar</b> en cualquier puesto para
+         poner ahí al jugador que quieras, aunque sea de otro club. Los puestos fijados se marcan en amarillo y el
+         resto los sigue eligiendo la app.`,
+  cambiar_btn:"Cambiar",
+  p3_badge:"PASO 3 — PLANTILLA ORDENADA",
+  p3_title:"Notas por perfil",
+  p3_desc:`Nota = media de los diez atributos clave del perfil (cinco en portería). Verde 14 o más,
+     ámbar de 12 a 13,9, gris por debajo. En laterales y delanteros la nota de banda se calcula pero no decide.`,
+  th_num:"#", th_mejorpos:"Mejor pos.", th_perfil:"Perfil", th_todas_notas:"Todas las notas",
+  btn_csv:"Descargar CSV con las notas",
+  p4_badge:"PASO 4 — JÓVENES",
+  p4_title:"Proyección a los 24",
+  p4_desc:`Heurístico, no es el motor del juego. El crecimiento se multiplica por Determinación ÷ 13 y el
+     resultado se limita a 10 + 1,3 × estrellas de potencial. Casi todos chocan con ese techo, así que manda el
+     potencial. Profesionalidad y Consistencia son atributos ocultos que no salen en las vistas: sin ellos el riesgo
+     es orientativo y falla en los extremos.`,
+  th_pot:"Pot.", th_det:"Det.", th_riesgo:"Riesgo", th_hoy:"Hoy", th_a24:"A los 24", th_margen:"Margen",
+  jov_faltan:"Hacen falta Edad, Potencial y Determinación.",
+  riesgo_ALTO:"ALTO", riesgo_MEDIO:"MEDIO", riesgo_BAJO:"BAJO",
+  modal_titulo:"Elegir jugador",
+  modal_puesto_tpl:"Puesto {pos}",
+  modal_sub_tpl:"Perfil {perfil} · ordenados por su nota en ese perfil, de todos los clubes cargados",
+  modal_buscar_placeholder:"Buscar por nombre o club…",
+  modal_ya_alineado:"· ya alineado",
+  modal_linea_tpl:"{club} · {pos} · {edad} años",
+  modal_auto_btn:"Dejar que lo elija la app",
+  modal_cancelar_btn:"Cancelar",
+  modal_ninguno:"Ningún jugador con datos para este perfil.",
+  footer_txt:`Las notas salen de los atributos visibles. Las estrellas son relativas a tu plantilla y al criterio de tu
+  cuerpo técnico, así que dos clubes no se comparan sin tenerlo en cuenta.`,
+  diag_header:"Perfiles calculables (pasa el ratón para ver qué falta):",
+  diag_completo:"completo",
+  diag_faltan_tpl:" · faltan {n}",
+  diag_por_hint:" — son atributos de portero: en el juego están en su propia categoría («Portero»), no en Técnica/Física/Mental. Exporta esa vista aparte si quieres calcular POR.",
+  diag_aviso_tpl:"⚠ {n} jugador(es) aparecen bajo más de un nombre de club (p.ej. «{ejemplo}»). Si en realidad son el mismo club, vuelve a cargar esas vistas escribiendo el mismo nombre de club en el campo de arriba antes de cargarlas — si no, sus atributos no se cruzan y por eso salen perfiles «no calculables» de más.",
+  estado_jugadores_tpl:"{n} jugadores en memoria · {c} club{plural}.",
+  club_plural:"es",
+  estado_no_guardado:"No he podido guardar en este navegador: {err}",
+  err_sin_columna_jugador:"No encuentro la columna «Jugador» en la primera fila.",
+  estado_pega_datos:"Pega al menos una fila de cabeceras y una de datos.",
+  estado_anadido_tpl:"Añadido a {club}: {leidas} filas, {nuevos} jugadores nuevos.",
+  estado_no_leido_tpl:"No he podido leer {file}: {err}",
+  estado_sin_datos_utilizables_tpl:"No he encontrado datos utilizables en {file} (¿falta la columna «Jugador»?).",
+  estado_archivos_cargados_tpl:"{n} archivo(s) cargados en «{club}».",
+  estado_demo_cargado_tpl:"{nombre} cargado: {nuevos} jugadores.",
+  estado_demo_no_encontrado_tpl:"No encuentro {fich}. Debe estar junto a esta página y abierta desde un servidor web.",
+  estado_faltan_atributos:"Faltan atributos: carga una vista con columnas de atributos.",
+  estado_recuperado:"Recuperado de la última sesión.",
+  canvas_once_propuesto_tpl:"ONCE PROPUESTO · {club}",
+  canvas_media_once:"MEDIA DEL ONCE",
+  canvas_footer:"Nota = media de los atributos clave del perfil de cada puesto · Banquillo FM26",
+  combinado:"Combinado",
+  err_xlsx_no_cargado:"no se ha podido cargar el lector/escritor de Excel (sin conexión al CDN)"
+ },
+ en:{
+  title_html:`Load the squad.<br>Get the XI.`,
+  desc_html:`Calculates ratings per role, draws the lineup on the pitch, and projects young players.
+     Everything happens in your browser: nothing is sent to any server and no AI is involved.
+     <b style="color:var(--tiza)">It doesn't read screenshots</b>: it needs the data as text.`,
+  conv_badge:"SEPARATE TOOL · DOESN'T TOUCH THE SQUAD BELOW",
+  conv_title:"CSV/Excel → Excel converter",
+  conv_desc:`Just for merging the CSVs you export from the game (2, 5, however many) into a single .xlsx
+     to use outside here. It doesn't feed the squad analysis, the XI or the youth projection below:
+     it's a separate tool with its own memory.`,
+  conv_cargar_btn:"Load CSV/Excel",
+  conv_club_placeholder:"Club name (used for the file name)",
+  conv_vaciar_btn:"Clear",
+  conv_sin_archivos:"No files yet.",
+  conv_descargar_btn:"Download Excel",
+  conv_estado_tpl:"{archivos} file(s) · {n} player(s) · {cols} attribute column(s).",
+  conv_err_leer:"Couldn't read {file}: {err}",
+  conv_err_sin_jugador:"Couldn't find usable data in {file} (missing the «Jugador» column?).",
+  conv_descargado:"Excel downloaded ({file}): {n} players, {cols} columns.",
+  conv_err_generar:"Couldn't generate the Excel: {err}",
+  p1_badge:"STEP 1 — LOAD DATA",
+  p1_title:"Squad",
+  p1_desc:`Load a CSV, an Excel (.xlsx) or paste a table. You can load several views in a row: they get
+     cross-referenced by player name.`,
+  p1_cargar_btn:"Load file",
+  demo_placeholder:"— or load a sample —",
+  club_placeholder:"Club name",
+  p1_vaciar_todo_btn:"Clear all",
+  p1_desc2:`The club name groups the views: load as many as you want for a club with
+     the same name (2, 4, however many you export) and they get cross-referenced by player name. Change
+     the name to load another club without losing the previous one.`,
+  textarea_placeholder:"…or paste a table here. The first row must be the header row: Jugador, Edad, Marcaje, Remate…",
+  bAdd_btn:"Add pasted table",
+  estado_sin_datos:"No data yet.",
+  formato_esperado_summary:"Expected format",
+  formato_p1:`CSV/TSV: one header row followed by one row per player. Comma, semicolon or tab separated: it's
+       detected automatically, and it respects quotes and Spanish-style decimal commas.`,
+  formato_p2:`Excel (.xlsx): it automatically looks for the row containing the <code>Jugador</code> header in the
+       first sheet whose name includes «jugador» (or the first sheet if none match), so it doesn't matter if
+       there's a grouping row above it (Físico / Mental / Técnica) like in the database exported earlier.`,
+  formato_p3:`Required: <code>Jugador</code>. For the XI, <code>Mejor pos.</code>. For the projection,
+       <code>Edad</code>, <code>Potencial</code> and <code>Determinación</code>. The game's truncated column
+       names («Mando en el…», «Concentrac…») are recognised too.`,
+  formato_p4:`The column names themselves (<code>Jugador</code>, <code>Marcaje</code>, <code>Remate</code>…) always
+       stay in Spanish, whatever language you pick here — that's the language your FM export uses. This only
+       changes the language of the interface itself, not of your data.`,
+  club_pantalla_badge:"CLUB ON SCREEN",
+  todos_btn:"All",
+  eliminar_confirm_tpl:"Delete all players from «{club}»? This can't be undone.",
+  eliminar_title_tpl:"Delete «{club}»",
+  p2_badge:"STEP 2 — LINEUP",
+  p2_desc:`For each position, the player with the best rating for that role is picked, respecting his best
+         real position. XI average: <b class="num" id="mediaOnce" style="color:var(--cal)"></b>`,
+  def3:"3 at the back", def4:"4 at the back", def5:"5 at the back",
+  form_4132:"4-1-2-1-2 (diamond)",
+  th_puesto:"Pos.", th_jugador:"Player", th_club:"Club", th_nota:"Rating", th_edad:"Age",
+  btn_png:"Download the pitch (PNG)",
+  btn_vaciar_once:"Clear manual XI",
+  p2_desc2:`Click <b style="color:var(--tiza)">Change</b> on any position to
+         put whichever player you want there, even from another club. Pinned positions are marked in yellow and
+         the rest keep being picked by the app.`,
+  cambiar_btn:"Change",
+  p3_badge:"STEP 3 — RANKED SQUAD",
+  p3_title:"Ratings by role",
+  p3_desc:`Rating = average of the role's ten key attributes (five for goalkeepers). Green 14 or above,
+     amber 12 to 13.9, grey below that. For full-backs and forwards the wide-role rating is calculated but doesn't decide the group.`,
+  th_num:"#", th_mejorpos:"Best pos.", th_perfil:"Role", th_todas_notas:"All ratings",
+  btn_csv:"Download CSV with ratings",
+  p4_badge:"STEP 4 — YOUTH",
+  p4_title:"Projection at 24",
+  p4_desc:`A heuristic, not the game's own engine. Growth is multiplied by Determination ÷ 13 and the
+     result is capped at 10 + 1.3 × potential stars. Almost everyone hits that ceiling, so potential dominates.
+     Professionalism and Consistency are hidden attributes that don't show up in the views: without them the risk
+     rating is only indicative and gets it wrong at the extremes.`,
+  th_pot:"Pot.", th_det:"Det.", th_riesgo:"Risk", th_hoy:"Now", th_a24:"At 24", th_margen:"Margin",
+  jov_faltan:"Age, Potential and Determination are required.",
+  riesgo_ALTO:"HIGH", riesgo_MEDIO:"MEDIUM", riesgo_BAJO:"LOW",
+  modal_titulo:"Pick player",
+  modal_puesto_tpl:"Position {pos}",
+  modal_sub_tpl:"{perfil} role · sorted by rating for that role, across all loaded clubs",
+  modal_buscar_placeholder:"Search by name or club…",
+  modal_ya_alineado:"· already in XI",
+  modal_linea_tpl:"{club} · {pos} · {edad} yrs",
+  modal_auto_btn:"Let the app pick",
+  modal_cancelar_btn:"Cancel",
+  modal_ninguno:"No player has data for this role.",
+  footer_txt:`Ratings come from the visible attributes. Stars are relative to your squad and your coaching
+  staff's judgement, so two clubs shouldn't be compared without taking that into account.`,
+  diag_header:"Calculable roles (hover to see what's missing):",
+  diag_completo:"complete",
+  diag_faltan_tpl:" · missing {n}",
+  diag_por_hint:" — these are goalkeeper attributes: in the game they're in their own category («Portero»/Goalkeeping), not in Technical/Physical/Mental. Export that view separately if you want POR to be calculable.",
+  diag_aviso_tpl:"⚠ {n} player(s) show up under more than one club name (e.g. «{ejemplo}»). If they're actually the same club, reload those views typing the same club name in the field above before loading them — otherwise their attributes won't be cross-referenced and you'll get extra «not calculable» roles.",
+  estado_jugadores_tpl:"{n} players in memory · {c} club{plural}.",
+  club_plural:"s",
+  estado_no_guardado:"Couldn't save in this browser: {err}",
+  err_sin_columna_jugador:"Couldn't find the «Jugador» column in the first row.",
+  estado_pega_datos:"Paste at least a header row and one data row.",
+  estado_anadido_tpl:"Added to {club}: {leidas} rows, {nuevos} new players.",
+  estado_no_leido_tpl:"Couldn't read {file}: {err}",
+  estado_sin_datos_utilizables_tpl:"Couldn't find usable data in {file} (missing the «Jugador» column?).",
+  estado_archivos_cargados_tpl:"{n} file(s) loaded into «{club}».",
+  estado_demo_cargado_tpl:"{nombre} loaded: {nuevos} players.",
+  estado_demo_no_encontrado_tpl:"Can't find {fich}. It must be next to this page and opened from a web server.",
+  estado_faltan_atributos:"Missing attributes: load a view with attribute columns.",
+  estado_recuperado:"Restored from your last session.",
+  canvas_once_propuesto_tpl:"PROPOSED XI · {club}",
+  canvas_media_once:"XI AVERAGE",
+  canvas_footer:"Rating = average of the key attributes for each position's role · Banquillo FM26",
+  combinado:"Combined",
+  err_xlsx_no_cargado:"couldn't load the Excel reader/writer (no connection to the CDN)"
+ }
+};
+let IDIOMA="es"; try{ IDIOMA=localStorage.getItem("banquillo.idioma")||"es"; }catch(e){}
+function tr(key,vars){
+  let s=(I18N[IDIOMA]&&I18N[IDIOMA][key])??I18N.es[key]??key;
+  if(vars) for(const k in vars) s=s.replaceAll("{"+k+"}",vars[k]);
+  return s;
+}
+function aplicarIdioma(){
+  document.documentElement.lang=IDIOMA;
+  document.querySelectorAll("[data-i18n]").forEach(el=>el.textContent=tr(el.dataset.i18n));
+  document.querySelectorAll("[data-i18n-html]").forEach(el=>el.innerHTML=tr(el.dataset.i18nHtml));
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>el.placeholder=tr(el.dataset.i18nPlaceholder));
+  document.querySelectorAll("[data-i18n-label]").forEach(el=>el.label=tr(el.dataset.i18nLabel));
+  document.querySelectorAll("#idiomaSwitch .idbtn").forEach(b=>b.classList.toggle("act",b.dataset.lang===IDIOMA));
+}
+
 const PERFILES={
  POR:["Blocaje","Reflejos","Uno contra uno","Mando en el área","Alcance aéreo"],
  LAT:["Marcaje","Entradas","Aceleración","Velocidad","Resistencia","Colocación","Anticipación","Centros","Trabajo equipo","Regate"],
@@ -293,7 +547,7 @@ function filasDesdeAOA(aoa){
   return filas.length>1?filas:null;
 }
 async function leerXLSX(file){
-  if(typeof XLSX==="undefined") throw new Error("no se ha podido cargar el lector de Excel (sin conexión al CDN)");
+  if(typeof XLSX==="undefined") throw new Error(tr("err_xlsx_no_cargado"));
   const buf=await file.arrayBuffer();
   const wb=XLSX.read(buf,{type:"array"});
   const hoja=wb.SheetNames.find(n=>/jugador/i.test(n))||wb.SheetNames[0];
@@ -303,7 +557,7 @@ async function leerXLSX(file){
 let JUG={},VISTAS=[],CLUB_VER="__todos__",MANUAL={},ORDEN_COLS=[];
 const LLAVE="banquillo.v1";
 function guardar(){ try{ localStorage.setItem(LLAVE,JSON.stringify({JUG,VISTAS,MANUAL,CLUB_VER,ORDEN_COLS})); }
-  catch(e){ pintarEstado("No he podido guardar en este navegador: "+e.message); } }
+  catch(e){ pintarEstado(tr("estado_no_guardado",{err:e.message})); } }
 function recuperar(){ try{ const d=JSON.parse(localStorage.getItem(LLAVE)||"null");
   if(d&&d.JUG&&Object.keys(d.JUG).length){ JUG=d.JUG; VISTAS=d.VISTAS||[]; MANUAL=d.MANUAL||{};
     CLUB_VER=d.CLUB_VER||"__todos__"; ORDEN_COLS=d.ORDEN_COLS||[]; return true; } }catch(e){} return false; }
@@ -318,7 +572,7 @@ async function leerArchivoATablas(file){
 }
 function fusionarEnObjeto(filas,club,destino,ordenCols){
   const cab=filas[0].map(canon),iJ=cab.indexOf("Jugador");
-  if(iJ<0) return {ok:false,msg:"No encuentro la columna «Jugador» en la primera fila."};
+  if(iJ<0) return {ok:false,msg:tr("err_sin_columna_jugador")};
   club=(club||"Sin nombre").trim()||"Sin nombre";
   ordenCols.push(...cab.filter(c=>c!=="Jugador"&&!ordenCols.includes(c)));
   let nuevos=0,leidas=0;
@@ -342,7 +596,7 @@ function ingerir(filas,etq,club){
 const clubes=()=>[...new Set(Object.values(JUG).map(j=>j._club))].sort();
 const visibles=()=>Object.values(JUG).filter(j=>CLUB_VER==="__todos__"||j._club===CLUB_VER);
 function eliminarClub(club){
-  if(!confirm(`¿Eliminar todos los jugadores de «${club}»? No se puede deshacer.`)) return;
+  if(!confirm(tr("eliminar_confirm_tpl",{club}))) return;
   Object.keys(JUG).forEach(k=>{ if(JUG[k]._club===club) delete JUG[k]; });
   VISTAS=VISTAS.filter(v=>!v.endsWith("→ "+club));
   if(CLUB_VER===club) CLUB_VER="__todos__";
@@ -355,8 +609,8 @@ function pintarSelector(){
   const bot=(v,t,n)=>`<button class="cbtn ${CLUB_VER===v?'pri':''}" data-c="${v}">${t} <span
      style="opacity:.65;font-family:'IBM Plex Mono';font-size:12px">${n}</span></button>`;
   const botBorrable=(v,t,n)=>`<span class="cbtn-wrap">${bot(v,t,n)}<button class="cbtn-x" data-del="${v}"
-     title="Eliminar «${v}»">×</button></span>`;
-  cont.innerHTML=(cs.length>1?bot("__todos__","Todos",Object.keys(JUG).length):"")
+     title="${tr("eliminar_title_tpl",{club:v})}">×</button></span>`;
+  cont.innerHTML=(cs.length>1?bot("__todos__",tr("todos_btn"),Object.keys(JUG).length):"")
     + cs.map(c=>botBorrable(c,c,Object.values(JUG).filter(j=>j._club===c).length)).join("");
   cont.querySelectorAll(".cbtn").forEach(b=>b.onclick=()=>{CLUB_VER=b.dataset.c;guardar();pintarTodo();});
   cont.querySelectorAll(".cbtn-x").forEach(b=>b.onclick=e=>{e.stopPropagation();eliminarClub(b.dataset.del);});
@@ -371,22 +625,18 @@ function diagnostico(){
   const uno=visibles(); if(!uno.length){cel("diag").innerHTML="";return;}
   const html=Object.keys(PERFILES).map(p=>{
     const faltan=PERFILES[p].filter(a=>!uno.some(j=>typeof j[a]==="number"));
-    let tip=faltan.join(', ')||'completo';
-    if(p==="POR"&&faltan.length) tip+=" — son atributos de portero: en el juego están en su propia categoría "
-      +"(«Portero»), no en Técnica/Física/Mental. Exporta esa vista aparte si quieres calcular POR.";
-    return `<span class="chip ${faltan.length?'no':'ok'}" title="${tip}">${p}${faltan.length?' · faltan '+faltan.length:''}</span>`;}).join("");
+    let tip=faltan.join(', ')||tr("diag_completo");
+    if(p==="POR"&&faltan.length) tip+=tr("diag_por_hint");
+    return `<span class="chip ${faltan.length?'no':'ok'}" title="${tip}">${p}${faltan.length?tr("diag_faltan_tpl",{n:faltan.length}):''}</span>`;}).join("");
   let aviso="";
   if(clubes().length>1){
     const rep=nombresRepetidosEntreClubes();
-    if(rep.length) aviso=`<div class="estado" style="margin-top:8px;color:var(--rojo)">⚠ ${rep.length} jugador(es) aparecen
-      bajo más de un nombre de club (p.ej. «${rep[0]}»). Si en realidad son el mismo club, vuelve a cargar esas vistas
-      escribiendo el mismo nombre de club en el campo de arriba antes de cargarlas — si no, sus atributos no se cruzan
-      y por eso salen perfiles «no calculables» de más.</div>`;
+    if(rep.length) aviso=`<div class="estado" style="margin-top:8px;color:var(--rojo)">${tr("diag_aviso_tpl",{n:rep.length,ejemplo:rep[0]})}</div>`;
   }
-  cel("diag").innerHTML=`<div class="estado" style="margin-top:10px">Perfiles calculables (pasa el ratón para ver qué falta):</div>${html}${aviso}`;
+  cel("diag").innerHTML=`<div class="estado" style="margin-top:10px">${tr("diag_header")}</div>${html}${aviso}`;
 }
 function pintarEstado(m){const n=Object.keys(JUG).length,c=clubes().length;
-  cel("estado").textContent=m||(n?`${n} jugadores en memoria · ${c} club${c===1?"":"es"}.`:"Sin datos todavía.");
+  cel("estado").textContent=m||(n?tr("estado_jugadores_tpl",{n,c,plural:c===1?"":tr("club_plural")}):tr("estado_sin_datos"));
   cel("chips").innerHTML=VISTAS.map(v=>`<span class="chip ok">${v}</span>`).join("")+(n?`<span class="chip">${n} jugadores</span>`:"");
   diagnostico();}
 
@@ -487,11 +737,12 @@ function dibujarCampo(once,titulo,media,club){
   g.strokeRect(px+(pw-aW)/2,py+ph-aH,aW,aH);g.strokeRect(px+(pw-gW)/2,py+ph-gH,gW,gH);
   g.beginPath();g.arc(px+pw/2,py+aH*.66,6,0,7);g.fill();
   g.beginPath();g.arc(px+pw/2,py+ph-aH*.66,6,0,7);g.fill();
+  const clubMostrado=club==="__combinado__"?tr("combinado"):club;
   g.textAlign="left";g.fillStyle="#F2D06B";g.font="600 24px 'IBM Plex Mono', monospace";
-  g.fillText(("ONCE PROPUESTO · "+club).toUpperCase(),M,60);
+  g.fillText(tr("canvas_once_propuesto_tpl",{club:clubMostrado}).toUpperCase(),M,60);
   g.fillStyle="#E8EDE9";g.font="700 78px 'Barlow Condensed', sans-serif";g.fillText(titulo,M,132);
   g.textAlign="right";g.fillStyle="#7E938A";g.font="500 28px 'Barlow Condensed', sans-serif";
-  g.fillText("MEDIA DEL ONCE",W-M,88);
+  g.fillText(tr("canvas_media_once"),W-M,88);
   g.fillStyle=colorNota(media);g.font="600 48px 'IBM Plex Mono', monospace";
   g.fillText(media.toFixed(1).replace(".",","),W-M,134);
   once.forEach(o=>{
@@ -507,18 +758,18 @@ function dibujarCampo(once,titulo,media,club){
     g.fillStyle="rgba(11,20,17,.88)";g.fillRect(x-an/2-10,y+r+11,an+20,36);
     g.fillStyle="#E8EDE9";g.fillText(nm,x,y+r+37);
     g.fillStyle=o.fijo?"#F2D06B":"#7E938A";g.font="500 22px 'Barlow Condensed', sans-serif";
-    const pie=(club&&o.d.club!==club&&club!=="Combinado")?o.etq+" · "+o.d.club:o.etq;
+    const pie=(club&&o.d.club!==club&&club!=="__combinado__")?o.etq+" · "+o.d.club:o.etq;
     g.fillText(pie,x,y+r+64);});
   g.textAlign="left";g.fillStyle="#7E938A";g.font="400 20px 'IBM Plex Sans', sans-serif";
-  g.fillText("Nota = media de los atributos clave del perfil de cada puesto · Banquillo FM26",M,H-22);
+  g.fillText(tr("canvas_footer"),M,H-22);
 }
 
 const clase=v=>v>=14?"v":(v>=12?"a":"g"),f1=v=>v.toFixed(1).replace(".",",");
 let PICK=null;
 function abrirPicker(i){
   PICK=i; const F=FORMACIONES[window.__k], s=F.p[i];
-  cel("mTitulo").textContent="Puesto "+s[0];
-  cel("mSub").textContent="Perfil "+s[1]+" · ordenados por su nota en ese perfil, de todos los clubes cargados";
+  cel("mTitulo").textContent=tr("modal_puesto_tpl",{pos:s[0]});
+  cel("mSub").textContent=tr("modal_sub_tpl",{perfil:s[1]});
   cel("mBuscar").value=""; listarPicker(""); cel("velo").classList.add("on"); cel("mBuscar").focus();
 }
 function listarPicker(q){
@@ -529,10 +780,10 @@ function listarPicker(q){
     .filter(p=>!q||p.n.toLowerCase().includes(q)||p.club.toLowerCase().includes(q))
     .sort((a,b)=>b.todas[perf]-a.todas[perf]).slice(0,120);
   cel("mLista").innerHTML=l.map(p=>`<div class="opt" data-c="${p.clave}">
-     <span>${p.n} ${usados.has(p.clave)?'<small>· ya alineado</small>':''}<br>
-       <small>${p.club} · ${p.j["Mejor pos."]??"?"} · ${p.j.Edad??"?"} años</small></span>
+     <span>${p.n} ${usados.has(p.clave)?'<small>'+tr("modal_ya_alineado")+'</small>':''}<br>
+       <small>${tr("modal_linea_tpl",{club:p.club,pos:p.j["Mejor pos."]??"?",edad:p.j.Edad??"?"})}</small></span>
      <span class="num ${clase(p.todas[perf])}" style="font-weight:600">${f1(p.todas[perf])}</span></div>`).join("")
-   ||'<div class="opt"><small>Ningún jugador con datos para este perfil.</small></div>';
+   ||`<div class="opt"><small>${tr("modal_ninguno")}</small></div>`;
   cel("mLista").querySelectorAll(".opt[data-c]").forEach(e=>e.onclick=()=>{
     MANUAL[window.__k]=MANUAL[window.__k]||{}; MANUAL[window.__k][PICK]=e.dataset.c;
     cerrarPicker(); guardar(); pintarOnce(window.__d,window.__k);});
@@ -548,17 +799,17 @@ function pintarOnce(d,k){
     `<tr><td class="${o.fijo?'fijado':''}">${o.etq}${o.fijo?' ●':''}</td><td>${o.d.n}</td>
      <td><span class="tagclub">${o.d.club}</span></td>
      <td class="n ${clase(o.nota)}">${f1(o.nota)}</td><td class="n">${o.d.j.Edad??""}</td>
-     <td><button class="cambiar" data-i="${i}" style="font-size:13px;padding:3px 10px">Cambiar</button></td></tr>`);});
+     <td><button class="cambiar" data-i="${i}" style="font-size:13px;padding:3px 10px">${tr("cambiar_btn")}</button></td></tr>`);});
   tb.querySelectorAll(".cambiar").forEach(b=>b.onclick=()=>abrirPicker(+b.dataset.i));
   const media=s/once.length;
   cel("mediaOnce").textContent=f1(media);
-  const club=CLUB_VER==="__todos__"?(clubes().length>1?"Combinado":clubes()[0]||""):CLUB_VER;
+  const club=CLUB_VER==="__todos__"?(clubes().length>1?"__combinado__":clubes()[0]||""):CLUB_VER;
   const pintar=()=>dibujarCampo(once,FORMACIONES[k].nombre,media,club);
   pintar(); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(pintar);
 }
 function pintarTodo(){
   const d=analizar();
-  if(!d.length){pintarEstado("Faltan atributos: carga una vista con columnas de atributos.");return;}
+  if(!d.length){pintarEstado(tr("estado_faltan_atributos"));return;}
   cel("salida").classList.remove("oculto");
   const tb=cel("tPlantilla").querySelector("tbody");tb.innerHTML="";
   d.forEach((x,i)=>{const t=Object.entries(x.todas).sort((a,b)=>b[1]-a[1]).map(([p,v])=>`${p} ${f1(v)}`).join(" · ");
@@ -569,10 +820,10 @@ function pintarTodo(){
   const tj=cel("tJovenes").querySelector("tbody");tj.innerHTML="";
   const jov=d.filter(x=>typeof x.j.Edad==="number"&&x.j.Edad<=21&&typeof x.j.Potencial==="number"&&typeof x.j["Determinación"]==="number")
     .map(x=>({...x,pr:proyeccion(x.nota,x.j.Edad,x.j["Determinación"],x.j.Potencial)})).sort((a,b)=>b.pr-a.pr);
-  if(!jov.length) tj.innerHTML=`<tr><td colspan="8" style="color:var(--tenue)">Hacen falta Edad, Potencial y Determinación.</td></tr>`;
+  if(!jov.length) tj.innerHTML=`<tr><td colspan="8" style="color:var(--tenue)">${tr("jov_faltan")}</td></tr>`;
   else jov.forEach(x=>{const r=riesgo(x.j["Determinación"]);
     tj.insertAdjacentHTML("beforeend",`<tr><td>${x.n}</td><td class="n">${x.j.Edad}</td><td class="n">${x.j.Potencial}★</td>
-     <td class="n">${x.j["Determinación"]}</td><td class="r${r}">${r}</td><td class="n">${f1(x.nota)}</td>
+     <td class="n">${x.j["Determinación"]}</td><td class="r${r}">${tr("riesgo_"+r)}</td><td class="n">${f1(x.nota)}</td>
      <td class="n ${clase(x.pr)}">${f1(x.pr)}</td><td class="n">+${f1(x.pr-x.nota)}</td></tr>`);});
   window.__d=d;
   pintarSelector();
@@ -581,10 +832,10 @@ function pintarTodo(){
 }
 
 cel("bAdd").onclick=()=>{const f=partirCSV(cel("entrada").value);
-  if(!f){pintarEstado("Pega al menos una fila de cabeceras y una de datos.");return;}
+  if(!f){pintarEstado(tr("estado_pega_datos"));return;}
   const r=ingerir(f,"pegado",cel("clubNom").value); if(!r.ok){pintarEstado(r.msg);return;}
   cel("entrada").value="";CLUB_VER=r.club;cel("clubNom").value=r.club;guardar();pintarTodo();
-  pintarEstado(`Añadido a ${r.club}: ${r.leidas} filas, ${r.nuevos} jugadores nuevos.`);};
+  pintarEstado(tr("estado_anadido_tpl",{club:r.club,leidas:r.leidas,nuevos:r.nuevos}));};
 cel("fich").onchange=async e=>{
   if(!e.target.files.length) return;
   // un único nombre de club para TODO el lote seleccionado a la vez, aunque el campo esté vacío:
@@ -593,27 +844,27 @@ cel("fich").onchange=async e=>{
   let club=null,fallos=0;
   for(const f of e.target.files){let filas=null;
     try{ filas=await leerArchivoATablas(f); }
-    catch(err){ pintarEstado("No he podido leer "+f.name+": "+err.message); fallos++; continue; }
-    if(!filas){pintarEstado("No he encontrado datos utilizables en "+f.name+" (¿falta la columna «Jugador»?).");fallos++;continue;}
+    catch(err){ pintarEstado(tr("estado_no_leido_tpl",{file:f.name,err:err.message})); fallos++; continue; }
+    if(!filas){pintarEstado(tr("estado_sin_datos_utilizables_tpl",{file:f.name}));fallos++;continue;}
     const r=ingerir(filas,f.name,nomLote);if(!r.ok){pintarEstado(r.msg);fallos++;continue;}CLUB_VER=r.club;club=r.club;}
   if(club) cel("clubNom").value=club;
   guardar();pintarTodo();
-  if(club&&!fallos) pintarEstado(`${e.target.files.length} archivo(s) cargados en «${club}».`);
+  if(club&&!fallos) pintarEstado(tr("estado_archivos_cargados_tpl",{n:e.target.files.length,club}));
   e.target.value="";};
 cel("demo").onchange=async e=>{const val=e.target.value;if(!val)return;
   const [fich,nombre]=val.split("|");
   try{const r=await fetch(fich);if(!r.ok)throw 0;
     const f=partirCSV(await r.text());
     if(f){const res=ingerir(f,fich,nombre);CLUB_VER=res.club;guardar();pintarTodo();
-      pintarEstado(`${nombre} cargado: ${res.nuevos} jugadores.`);}}
-  catch{pintarEstado(`No encuentro ${fich}. Debe estar junto a esta página y abierta desde un servidor web.`);}
+      pintarEstado(tr("estado_demo_cargado_tpl",{nombre,nuevos:res.nuevos}));}}
+  catch{pintarEstado(tr("estado_demo_no_encontrado_tpl",{fich}));}
   e.target.value="";};
 cel("formacion").onchange=e=>{ if(window.__d) pintarOnce(window.__d,e.target.value); };
 cel("bReset").onclick=()=>{JUG={};VISTAS=[];MANUAL={};CLUB_VER="__todos__";ORDEN_COLS=[];
   try{localStorage.removeItem(LLAVE);}catch(e){}
   cel("salida").classList.add("oculto");pintarEstado();};
 function descargarExcelDesde(objDatos,ordenCols,nombreArchivo){
-  if(typeof XLSX==="undefined") throw new Error("no se ha podido cargar el lector/escritor de Excel (sin conexión al CDN)");
+  if(typeof XLSX==="undefined") throw new Error(tr("err_xlsx_no_cargado"));
   const datos=Object.values(objDatos);
   const cols=["Jugador","Club",...ordenCols.filter(c=>datos.some(j=>j[c]!==undefined))];
   const aoa=[cols,...datos.map(j=>cols.map(c=>{
@@ -633,7 +884,7 @@ function descargarExcelDesde(objDatos,ordenCols,nombreArchivo){
 let CONV_JUG={},CONV_COLS=[],CONV_ARCHIVOS=0;
 function pintarConvEstado(msg){
   const n=Object.keys(CONV_JUG).length;
-  cel("convEstado").textContent=msg||(n?`${CONV_ARCHIVOS} archivo(s) · ${n} jugador(es) · ${CONV_COLS.length} columna(s) de atributos.`:"Sin archivos todavía.");
+  cel("convEstado").textContent=msg||(n?tr("conv_estado_tpl",{archivos:CONV_ARCHIVOS,n,cols:CONV_COLS.length}):tr("conv_sin_archivos"));
   cel("convDescargar").disabled=!n;
 }
 cel("convFich").onchange=async e=>{
@@ -641,8 +892,8 @@ cel("convFich").onchange=async e=>{
   const nomLote=cel("convClubNom").value.trim()||e.target.files[0].name.replace(/\.[^.]+$/,"");
   for(const f of e.target.files){let filas=null;
     try{ filas=await leerArchivoATablas(f); }
-    catch(err){ pintarConvEstado("No he podido leer "+f.name+": "+err.message); continue; }
-    if(!filas){ pintarConvEstado("No he encontrado datos utilizables en "+f.name+" (¿falta la columna «Jugador»?)."); continue; }
+    catch(err){ pintarConvEstado(tr("conv_err_leer",{file:f.name,err:err.message})); continue; }
+    if(!filas){ pintarConvEstado(tr("conv_err_sin_jugador",{file:f.name})); continue; }
     const r=fusionarEnObjeto(filas,nomLote,CONV_JUG,CONV_COLS);
     if(!r.ok){ pintarConvEstado(r.msg); continue; }
     CONV_ARCHIVOS++;
@@ -655,8 +906,8 @@ cel("convDescargar").onclick=()=>{
   try{
     const nombre=(cel("convClubNom").value.trim()||"jugadores").toLowerCase().replace(/\s+/g,"_")+"_base_de_datos.xlsx";
     const res=descargarExcelDesde(CONV_JUG,CONV_COLS,nombre);
-    pintarConvEstado(`Excel descargado (${nombre}): ${res.jugadores} jugadores, ${res.columnas} columnas.`);
-  }catch(err){ pintarConvEstado("No se pudo generar el Excel: "+err.message); }
+    pintarConvEstado(tr("conv_descargado",{file:nombre,n:res.jugadores,cols:res.columnas}));
+  }catch(err){ pintarConvEstado(tr("conv_err_generar",{err:err.message})); }
 };
 cel("bPng").onclick=()=>{const a=document.createElement("a");
   a.href=cel("lienzo").toDataURL("image/png");a.download=(CLUB_VER==="__todos__"?"once":CLUB_VER.toLowerCase().replace(/\s+/g,"_"))+".png";a.click();};
@@ -676,8 +927,19 @@ cel("mAuto").onclick=()=>{ if(MANUAL[window.__k]) delete MANUAL[window.__k][PICK
   cerrarPicker(); guardar(); pintarOnce(window.__d,window.__k); };
 cel("bLibre").onclick=()=>{ MANUAL={}; guardar(); pintarOnce(window.__d,window.__k); };
 
-if(recuperar()){ pintarTodo(); pintarEstado("Recuperado de la última sesión."); }
+function cambiarIdioma(lang){
+  IDIOMA=lang;
+  try{ localStorage.setItem("banquillo.idioma",IDIOMA); }catch(e){}
+  aplicarIdioma();
+  if(Object.keys(JUG).length) pintarTodo(); else pintarEstado();
+  pintarConvEstado();
+}
+document.querySelectorAll("#idiomaSwitch .idbtn").forEach(b=>b.onclick=()=>cambiarIdioma(b.dataset.lang));
+
+aplicarIdioma();
+if(recuperar()){ pintarTodo(); pintarEstado(tr("estado_recuperado")); }
 else pintarEstado();
+pintarConvEstado();
 </script>
 </body>
 </html>
