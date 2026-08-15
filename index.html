@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Banquillo · análisis de plantillas FM26</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--cesped:#0E1A17;--panel:#16241F;--panel2:#1D2F28;--linea:#2C453B;--tiza:#E8EDE9;--tenue:#7E938A;
+  --verde:#4CAF6A;--ambar:#E0A340;--gris:#6B7A73;--cal:#F2D06B;--rojo:#D96B6B}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cesped);color:var(--tiza);font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:15px;line-height:1.55}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px 80px}
+h1,h2,.disp{font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.04em;margin:0}
+h1{font-size:clamp(38px,6vw,64px);font-weight:700;line-height:.95}
+h2{font-size:26px;font-weight:700;margin:0 0 4px}
+.num{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
+header{padding:56px 0 30px;border-bottom:1px solid var(--linea)}
+.marca{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.22em;color:var(--cal);margin-bottom:14px}
+header p{max-width:62ch;color:var(--tenue);margin:14px 0 0}
+section{padding:34px 0;border-bottom:1px solid var(--linea)}
+.paso{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--cal)}
+.sub{color:var(--tenue);font-size:14px;margin:6px 0 18px;max-width:76ch}
+textarea{width:100%;min-height:130px;background:var(--panel);color:var(--tiza);border:1px solid var(--linea);
+  border-radius:3px;padding:14px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;resize:vertical}
+textarea:focus,button:focus-visible,summary:focus-visible,select:focus-visible{outline:2px solid var(--cal);outline-offset:2px}
+.fila{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+button,select{font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.07em;font-size:16px;
+  font-weight:600;padding:9px 18px;border-radius:3px;border:1px solid var(--linea);background:var(--panel2);color:var(--tiza);cursor:pointer}
+button:hover{border-color:var(--cal)}
+button.pri{background:var(--cal);color:#14201C;border-color:var(--cal)}
+.estado{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--tenue);margin-top:12px}
+.chip{display:inline-block;background:var(--panel2);border:1px solid var(--linea);border-radius:2px;padding:2px 9px;
+  margin:3px 5px 3px 0;font-family:'IBM Plex Mono',monospace;font-size:11.5px}
+.chip.ok{border-color:var(--verde);color:var(--verde)}
+.chip.no{border-color:var(--rojo);color:var(--rojo)}
+#lienzo{width:100%;max-width:560px;display:block;margin:0 auto;border-radius:3px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}
+th{font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.05em;font-size:14px;text-align:left;
+  color:var(--tenue);border-bottom:1px solid var(--linea);padding:7px 9px;white-space:nowrap}
+td{padding:6px 9px;border-bottom:1px solid #1E322B}
+tbody tr:hover{background:var(--panel)}
+td.n{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;text-align:right}
+.v{color:var(--verde);font-weight:600}.a{color:var(--ambar)}.g{color:var(--gris)}
+.rALTO{color:var(--rojo)}.rMEDIO{color:var(--ambar)}.rBAJO{color:var(--verde)}
+.tabla-scroll{overflow-x:auto}
+.grid2{display:grid;grid-template-columns:1fr 1.05fr;gap:34px;align-items:start}
+@media(max-width:860px){.grid2{grid-template-columns:1fr}}
+details{margin-top:14px;background:var(--panel);border:1px solid var(--linea);border-radius:3px;padding:12px 16px}
+summary{cursor:pointer;font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.05em;font-size:15px}
+details p{font-size:13.5px;color:var(--tenue)}
+code{font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--panel2);padding:1px 5px;border-radius:2px}
+.oculto{display:none}
+footer{padding:30px 0;color:var(--tenue);font-size:12.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="marca">BANQUILLO · FM26</div>
+  <h1>Carga la plantilla.<br>Sale el once.</h1>
+  <p>Calcula las notas por perfil, dibuja la alineación sobre el campo y proyecta a los jóvenes.
+     Todo ocurre en tu navegador: no se envía nada a ningún servidor y no interviene ninguna IA.
+     <b style="color:var(--tiza)">No lee capturas de pantalla</b>: necesita los datos como texto.</p>
+</header>
+
+<section>
+  <div class="paso">PASO 1 — CARGAR DATOS</div>
+  <h2>Plantilla</h2>
+  <p class="sub">Carga un CSV o pega una tabla. Puedes cargar varias vistas seguidas: se cruzan por el nombre
+     del jugador.</p>
+
+  <div class="fila">
+    <button class="pri" onclick="document.getElementById('fich').click()">Cargar fichero</button>
+    <input type="file" id="fich" accept=".csv,.tsv,.txt,.htm,.html" multiple style="display:none">
+    <select id="demo">
+      <option value="">— o carga un ejemplo —</option>
+      <option value="brugge.csv">Club Brugge (84)</option>
+      <option value="leeds.csv">Leeds United (78)</option>
+      <option value="everton.csv">Everton (75)</option>
+    </select>
+    <button id="bReset">Vaciar</button>
+  </div>
+
+  <textarea id="entrada" spellcheck="false" placeholder="…o pega aquí una tabla. La primera fila debe ser la de cabeceras: Jugador, Edad, Marcaje, Remate…"></textarea>
+  <div class="fila"><button id="bAdd">Añadir tabla pegada</button></div>
+
+  <div class="estado" id="estado">Sin datos todavía.</div>
+  <div id="chips"></div>
+  <div id="diag"></div>
+
+  <details>
+    <summary>Formato esperado</summary>
+    <p>Una fila de cabeceras y luego una fila por jugador. Separador coma, punto y coma o tabulador: se detecta
+       solo, y respeta las comillas y las comas decimales del español.</p>
+    <p>Obligatoria: <code>Jugador</code>. Para el once, <code>Mejor pos.</code>. Para la proyección,
+       <code>Edad</code>, <code>Potencial</code> y <code>Determinación</code>. Los nombres recortados del juego
+       («Mando en el…», «Concentrac…») se reconocen igual.</p>
+  </details>
+</section>
+
+<div id="salida" class="oculto">
+
+<section>
+  <div class="paso">PASO 2 — ALINEACIÓN</div>
+  <div class="grid2">
+    <div>
+      <h2 id="tituloFormacion">4-2-3-1</h2>
+      <p class="sub">Para cada puesto se elige al jugador con mejor nota en ese perfil, respetando su mejor
+         posición real. Media del once: <b class="num" id="mediaOnce" style="color:var(--cal)"></b></p>
+      <div class="fila" style="margin-bottom:16px">
+        <button data-f="4231" class="pri fbtn">4-2-3-1</button>
+        <button data-f="433" class="fbtn">4-3-3</button>
+        <button data-f="3421" class="fbtn">3-4-2-1</button>
+        <button data-f="442" class="fbtn">4-4-2</button>
+      </div>
+      <div class="tabla-scroll"><table id="tOnce"><thead><tr><th>Puesto</th><th>Jugador</th><th>Perfil</th>
+        <th class="n">Nota</th><th class="n">Edad</th></tr></thead><tbody></tbody></table></div>
+      <div class="fila"><button id="bPng">Descargar el campo (PNG)</button></div>
+    </div>
+    <div><canvas id="lienzo" width="1120" height="1560"></canvas></div>
+  </div>
+</section>
+
+<section>
+  <div class="paso">PASO 3 — PLANTILLA ORDENADA</div>
+  <h2>Notas por perfil</h2>
+  <p class="sub">Nota = media de los diez atributos clave del perfil (cinco en portería). Verde 14 o más,
+     ámbar de 12 a 13,9, gris por debajo. En laterales y delanteros la nota de banda se calcula pero no decide.</p>
+  <div class="tabla-scroll"><table id="tPlantilla"><thead><tr><th>#</th><th>Jugador</th><th>Mejor pos.</th>
+    <th class="n">Edad</th><th class="n">Nota</th><th>Perfil</th><th>Todas las notas</th></tr></thead><tbody></tbody></table></div>
+  <div class="fila"><button id="bCsv">Descargar CSV con las notas</button></div>
+</section>
+
+<section>
+  <div class="paso">PASO 4 — JÓVENES</div>
+  <h2>Proyección a los 24</h2>
+  <p class="sub">Heurístico, no es el motor del juego. El crecimiento se multiplica por Determinación ÷ 13 y el
+     resultado se limita a 10 + 1,3 × estrellas de potencial. Casi todos chocan con ese techo, así que manda el
+     potencial. Profesionalidad y Consistencia son atributos ocultos que no salen en las vistas: sin ellos el riesgo
+     es orientativo y falla en los extremos.</p>
+  <div class="tabla-scroll"><table id="tJovenes"><thead><tr><th>Jugador</th><th class="n">Edad</th><th class="n">Pot.</th>
+    <th class="n">Det.</th><th>Riesgo</th><th class="n">Hoy</th><th class="n">A los 24</th><th class="n">Margen</th>
+    </tr></thead><tbody></tbody></table></div>
+</section>
+
+</div>
+
+<footer>Las notas salen de los atributos visibles. Las estrellas son relativas a tu plantilla y al criterio de tu
+  cuerpo técnico, así que dos clubes no se comparan sin tenerlo en cuenta.</footer>
+</div>
+
+<script>
+const PERFILES={
+ POR:["Blocaje","Reflejos","Uno contra uno","Mando en el área","Alcance aéreo"],
+ LAT:["Marcaje","Entradas","Aceleración","Velocidad","Resistencia","Colocación","Anticipación","Centros","Trabajo equipo","Regate"],
+ DFC:["Marcaje","Entradas","Cabeceo","Alcance de salto","Fuerza","Anticipación","Colocación","Concentración","Serenidad","Decisiones"],
+ MC :["Pases","Control","Técnica","Regate","Visión","Decisiones","Trabajo equipo","Sacrificio","Anticipación","Resistencia"],
+ MP :["Técnica","Regate","Control","Pases","Visión","Decisiones","Desmarques","Remate","Aceleración","Agilidad"],
+ BAN:["Aceleración","Velocidad","Resistencia","Regate","Centros","Control","Técnica","Desmarques","Sacrificio","Trabajo equipo"],
+ DL :["Remate","Control","Técnica","Cabeceo","Desmarques","Serenidad","Decisiones","Aceleración","Velocidad","Fuerza"]};
+const ALIAS={"mando en el":"Mando en el área","alcance aereo":"Alcance aéreo","uno contra uno":"Uno contra uno",
+ "saques de pu":"Saques de puerta","saques de e":"Saques de esquina","trabajo de":"Trabajo equipo",
+ "trabajo equipo":"Trabajo equipo","juego en equipo":"Trabajo equipo","concentrac":"Concentración",
+ "determinac":"Determinación","recuperacion fisica":"Recuperación física","alcance de salto":"Alcance de salto",
+ "saque con la":"Saque con la mano","mejor pos":"Mejor pos.","tiros lejanos":"Tiros lejanos","saques largos":"Saques largos"};
+const DIRECTO=["Jugador","Edad","Marcaje","Entradas","Regate","Técnica","Pases","Control","Remate","Centros","Cabeceo",
+ "Penaltis","Tiros libres","Aceleración","Velocidad","Resistencia","Fuerza","Agilidad","Equilibrio","Anticipación",
+ "Colocación","Decisiones","Serenidad","Valentía","Agresividad","Liderazgo","Desmarques","Visión","Sacrificio",
+ "Blocaje","Reflejos","Excentricidad","Comunicación","Puños","Potencial","Calidad","Posición","Mejor rol",
+ "Tiempo de juego","País","Sueldo","Final","Valor de traspaso","Inf","Salidas"];
+const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[.:]/g,"").trim();
+function canon(h){const n=norm(h);
+  for(const d of DIRECTO) if(norm(d)===n) return d;
+  for(const k in ALIAS) if(n.startsWith(k)) return ALIAS[k];
+  return h.trim();}
+const ESTRELLAS=t=>{const s=String(t),m=(s.match(/★/g)||[]).length;
+  if(m) return m+(/[½⯨]/.test(s)?0.5:0);
+  const n=parseFloat(s.replace(",",".")); return isNaN(n)?null:n;};
+
+function partirCSV(txt){
+  txt=txt.replace(/^\uFEFF/,"");
+  const cabecera=txt.split(/\r?\n/)[0]||"";
+  let fuera=true;const cnt={";":0,"\t":0,",":0};
+  for(const ch of cabecera){ if(ch==='"') fuera=!fuera; else if(fuera&&cnt[ch]!==undefined) cnt[ch]++; }
+  const sep=Object.keys(cnt).reduce((a,b)=>cnt[a]>=cnt[b]?a:b);
+  const filas=[];let campo="",fila=[],dentro=false;
+  for(let i=0;i<txt.length;i++){const c=txt[i];
+    if(dentro){ if(c==='"'){ if(txt[i+1]==='"'){campo+='"';i++;} else dentro=false; } else campo+=c; }
+    else if(c==='"') dentro=true;
+    else if(c===sep){ fila.push(campo.trim()); campo=""; }
+    else if(c==="\n"){ fila.push(campo.trim()); if(fila.some(x=>x!=="")) filas.push(fila); fila=[]; campo=""; }
+    else if(c!=="\r") campo+=c; }
+  fila.push(campo.trim()); if(fila.some(x=>x!=="")) filas.push(fila);
+  return filas.length>1?filas:null;
+}
+
+let JUG={},VISTAS=[];
+const cel=document.getElementById.bind(document);
+function ingerir(filas,etq){
+  const cab=filas[0].map(canon),iJ=cab.indexOf("Jugador");
+  if(iJ<0) return {ok:false,msg:"No encuentro la columna «Jugador» en la primera fila."};
+  let nuevos=0,leidas=0;
+  for(let f=1;f<filas.length;f++){const fl=filas[f];
+    const n=(fl[iJ]||"").replace(/\s+/g," ").trim();
+    if(!n||n.length<3) continue;
+    if(!JUG[n]){JUG[n]={Jugador:n};nuevos++;} leidas++;
+    cab.forEach((c,i)=>{ if(c==="Jugador"||i>=fl.length) return;
+      const v=fl[i]; if(v===""||v==="-") return;
+      if(c==="Calidad"||c==="Potencial"){const e=ESTRELLAS(v); if(e!==null) JUG[n][c]=e; return;}
+      JUG[n][c]=/^-?\d+([.,]\d+)?$/.test(v)?Number(v.replace(",",".")):v; });}
+  VISTAS.push(etq||("vista "+(VISTAS.length+1)));
+  return {ok:true,nuevos,leidas};
+}
+function diagnostico(){
+  const n=Object.keys(JUG).length; if(!n){cel("diag").innerHTML="";return;}
+  const uno=Object.values(JUG);
+  const html=Object.keys(PERFILES).map(p=>{
+    const faltan=PERFILES[p].filter(a=>!uno.some(j=>typeof j[a]==="number"));
+    return `<span class="chip ${faltan.length?'no':'ok'}" title="${faltan.join(', ')||'completo'}">${p}${faltan.length?' · faltan '+faltan.length:''}</span>`;}).join("");
+  cel("diag").innerHTML=`<div class="estado" style="margin-top:10px">Perfiles calculables (pasa el ratón para ver qué falta):</div>${html}`;
+}
+function pintarEstado(m){const n=Object.keys(JUG).length;
+  cel("estado").textContent=m||(n?`${n} jugadores en memoria.`:"Sin datos todavía.");
+  cel("chips").innerHTML=VISTAS.map(v=>`<span class="chip ok">${v}</span>`).join("")+(n?`<span class="chip">${n} jugadores</span>`:"");
+  diagnostico();}
+
+const nota=(j,p)=>{let s=0;for(const a of PERFILES[p]){const v=j[a];if(typeof v!=="number")return null;s+=v;}return s/PERFILES[p].length;};
+function grupo(mp){const m=String(mp||"").toUpperCase().replace(/\s/g,"");
+  if(m.startsWith("POR"))return"POR";
+  if(m.startsWith("DF(C)"))return"DFC";
+  if(m.startsWith("DF(D)")||m.startsWith("CR(D)"))return"LATD";
+  if(m.startsWith("DF(I)")||m.startsWith("CR(I)"))return"LATI";
+  if(m.startsWith("MC")||m.startsWith("ME(C)"))return"MC";
+  if(m.startsWith("MP(C)"))return"MPC";
+  if(m.startsWith("MP(D)")||m.startsWith("ME(D)"))return"MPD";
+  if(m.startsWith("MP(I)")||m.startsWith("ME(I)"))return"MPI";
+  if(m.startsWith("DL"))return"DL"; return"?";}
+const PERFIL_DE={POR:["POR"],DFC:["DFC"],LATD:["LAT"],LATI:["LAT"],MC:["MC","MP"],MPC:["MP","BAN"],
+  MPD:["BAN","MP"],MPI:["BAN","MP"],DL:["DL"],"?":["MC","MP","BAN","DFC","LAT","DL","POR"]};
+function analizar(){const out=[];
+  for(const n in JUG){const j=JUG[n],g=grupo(j["Mejor pos."]),todas={};
+    for(const p in PERFILES){const v=nota(j,p);if(v!==null)todas[p]=v;}
+    const cand={};for(const p of (PERFIL_DE[g]||[]))if(todas[p]!==undefined)cand[p]=todas[p];
+    const pool=Object.keys(cand).length?cand:todas;
+    let mejor=null,val=-1;for(const p in pool)if(pool[p]>val){val=pool[p];mejor=p;}
+    if(mejor)out.push({n,j,g,mejor,nota:val,todas});}
+  return out.sort((a,b)=>b.nota-a.nota);}
+const proyeccion=(nt,ed,det,pot)=>{const f=Math.min(Math.max(det/13,0.6),1.35);
+  const c=(ed<19?Math.max(0,19-ed)*0.8*f:0)+Math.max(0,24-Math.max(ed,19))*1.5*f;
+  return Math.min(nt+c,10+1.3*pot);};
+const riesgo=d=>d<=10?"ALTO":(d<=13?"MEDIO":"BAJO");
+
+const FORMACIONES={
+ 4231:{nombre:"4-2-3-1",p:[["POR","POR",["POR"],50,93],["LD","LAT",["LATD"],15,76],["DFC","DFC",["DFC"],37,81],
+   ["DFC","DFC",["DFC"],63,81],["LI","LAT",["LATI"],85,76],["MC","MC",["MC"],35,58],["MC","MC",["MC"],65,58],
+   ["ED","BAN",["MPD","MPI"],15,34],["MP","MP",["MPC","MC"],50,38],["EI","BAN",["MPI","MPD"],85,34],["DC","DL",["DL"],50,14]]},
+ 433:{nombre:"4-3-3",p:[["POR","POR",["POR"],50,93],["LD","LAT",["LATD"],15,76],["DFC","DFC",["DFC"],37,81],
+   ["DFC","DFC",["DFC"],63,81],["LI","LAT",["LATI"],85,76],["MC","MC",["MC"],50,62],["MC","MC",["MC"],27,48],
+   ["MC","MP",["MPC","MC"],73,48],["ED","BAN",["MPD","MPI"],16,24],["DC","DL",["DL"],50,14],["EI","BAN",["MPI","MPD"],84,24]]},
+ 3421:{nombre:"3-4-2-1",p:[["POR","POR",["POR"],50,93],["DFC","DFC",["DFC"],27,81],["DFC","DFC",["DFC"],50,83],
+   ["DFC","DFC",["DFC"],73,81],["CD","BAN",["LATD","MPD"],12,58],["MC","MC",["MC"],37,60],["MC","MC",["MC"],63,60],
+   ["CI","BAN",["LATI","MPI"],88,58],["MP","MP",["MPC","MPI"],34,32],["MP","MP",["MPD","MPC"],66,32],["DC","DL",["DL"],50,13]]},
+ 442:{nombre:"4-4-2",p:[["POR","POR",["POR"],50,93],["LD","LAT",["LATD"],15,78],["DFC","DFC",["DFC"],37,82],
+   ["DFC","DFC",["DFC"],63,82],["LI","LAT",["LATI"],85,78],["MD","BAN",["MPD"],14,50],["MC","MC",["MC"],37,53],
+   ["MC","MC",["MC"],63,53],["MI","BAN",["MPI"],86,50],["DC","DL",["DL"],37,17],["DC","DL",["DL"],63,17]]}};
+function elegirOnce(d,k){const F=FORMACIONES[k],u=new Set(),once=[];
+  for(const [etq,perf,grs,x,y] of F.p){let m=null;
+    for(const p of d){if(u.has(p.n)||!grs.includes(p.g)||p.todas[perf]===undefined)continue;
+      if(!m||p.todas[perf]>m.todas[perf])m=p;}
+    if(!m)for(const p of d){if(u.has(p.n)||p.todas[perf]===undefined)continue;
+      if(!m||p.todas[perf]>m.todas[perf])m=p;}
+    if(m){u.add(m.n);once.push({etq,perf,x,y,d:m,nota:m.todas[perf]});}}
+  return once;}
+
+const apellido=n=>{const t=n.replace(/-/g," ").split(" ").filter(Boolean);
+  const par=["de","van","der","den","el","al","da","dos","di"];
+  let i=t.length-1; if(t.length>2&&par.includes(t[t.length-2].toLowerCase()))i=t.length-2;
+  return t.slice(i).join(" ").toUpperCase();};
+const colorNota=v=>v>=14?"#4CAF6A":(v>=12?"#E0A340":"#93A79E");
+function dibujarCampo(once,titulo,media){
+  const c=cel("lienzo"),g=c.getContext("2d"),W=c.width,H=c.height;
+  const M=70,px=M,py=170,pw=W-2*M,ph=H-py-64;
+  g.fillStyle="#0E1A17";g.fillRect(0,0,W,H);
+  for(let i=0;i<10;i++){g.fillStyle=i%2?"#15271F":"#122219";g.fillRect(px,py+i*ph/10,pw,ph/10);}
+  g.strokeStyle="rgba(232,237,233,.5)";g.lineWidth=3;g.strokeRect(px,py,pw,ph);
+  g.beginPath();g.moveTo(px,py+ph/2);g.lineTo(px+pw,py+ph/2);g.stroke();
+  g.beginPath();g.arc(px+pw/2,py+ph/2,ph*.088,0,7);g.stroke();
+  g.fillStyle="rgba(232,237,233,.5)";g.beginPath();g.arc(px+pw/2,py+ph/2,6,0,7);g.fill();
+  const aW=pw*.58,aH=ph*.155,gW=pw*.26,gH=ph*.055;
+  g.strokeRect(px+(pw-aW)/2,py,aW,aH);g.strokeRect(px+(pw-gW)/2,py,gW,gH);
+  g.strokeRect(px+(pw-aW)/2,py+ph-aH,aW,aH);g.strokeRect(px+(pw-gW)/2,py+ph-gH,gW,gH);
+  g.beginPath();g.arc(px+pw/2,py+aH*.66,6,0,7);g.fill();
+  g.beginPath();g.arc(px+pw/2,py+ph-aH*.66,6,0,7);g.fill();
+  g.textAlign="left";g.fillStyle="#F2D06B";g.font="600 24px 'IBM Plex Mono', monospace";
+  g.fillText("ONCE PROPUESTO",M,60);
+  g.fillStyle="#E8EDE9";g.font="700 78px 'Barlow Condensed', sans-serif";g.fillText(titulo,M,132);
+  g.textAlign="right";g.fillStyle="#7E938A";g.font="500 28px 'Barlow Condensed', sans-serif";
+  g.fillText("MEDIA DEL ONCE",W-M,88);
+  g.fillStyle=colorNota(media);g.font="600 48px 'IBM Plex Mono', monospace";
+  g.fillText(media.toFixed(1).replace(".",","),W-M,134);
+  once.forEach(o=>{
+    const x=px+pw*o.x/100,y=py+ph*(100-o.y)/100,r=48;
+    g.beginPath();g.arc(x,y+5,r,0,7);g.fillStyle="rgba(0,0,0,.5)";g.fill();
+    g.beginPath();g.arc(x,y,r,0,7);g.fillStyle="#16241F";g.fill();
+    g.lineWidth=4;g.strokeStyle=colorNota(o.nota);g.stroke();
+    g.textAlign="center";g.fillStyle=colorNota(o.nota);g.font="600 34px 'IBM Plex Mono', monospace";
+    g.fillText(o.nota.toFixed(1).replace(".",","),x,y+12);
+    const nm=apellido(o.d.n);
+    g.font="700 31px 'Barlow Condensed', sans-serif";
+    const an=g.measureText(nm).width;
+    g.fillStyle="rgba(11,20,17,.88)";g.fillRect(x-an/2-10,y+r+11,an+20,36);
+    g.fillStyle="#E8EDE9";g.fillText(nm,x,y+r+37);
+    g.fillStyle="#7E938A";g.font="500 22px 'Barlow Condensed', sans-serif";g.fillText(o.etq,x,y+r+64);});
+  g.textAlign="left";g.fillStyle="#7E938A";g.font="400 20px 'IBM Plex Sans', sans-serif";
+  g.fillText("Nota = media de los atributos clave del perfil de cada puesto · Banquillo FM26",M,H-22);
+}
+
+const clase=v=>v>=14?"v":(v>=12?"a":"g"),f1=v=>v.toFixed(1).replace(".",",");
+function pintarOnce(d,k){
+  const once=elegirOnce(d,k); if(!once.length) return;
+  cel("tituloFormacion").textContent=FORMACIONES[k].nombre;
+  const tb=cel("tOnce").querySelector("tbody");tb.innerHTML="";let s=0;
+  once.forEach(o=>{s+=o.nota;tb.insertAdjacentHTML("beforeend",
+    `<tr><td>${o.etq}</td><td>${o.d.n}</td><td>${o.perf}</td>
+     <td class="n ${clase(o.nota)}">${f1(o.nota)}</td><td class="n">${o.d.j.Edad??""}</td></tr>`);});
+  const media=s/once.length;
+  cel("mediaOnce").textContent=f1(media);
+  const pintar=()=>dibujarCampo(once,FORMACIONES[k].nombre,media);
+  pintar(); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(pintar);
+}
+function pintarTodo(){
+  const d=analizar();
+  if(!d.length){pintarEstado("Faltan atributos: carga una vista con columnas de atributos.");return;}
+  cel("salida").classList.remove("oculto");
+  const tb=cel("tPlantilla").querySelector("tbody");tb.innerHTML="";
+  d.forEach((x,i)=>{const t=Object.entries(x.todas).sort((a,b)=>b[1]-a[1]).map(([p,v])=>`${p} ${f1(v)}`).join(" · ");
+    tb.insertAdjacentHTML("beforeend",`<tr><td class="n">${i+1}</td><td>${x.n}</td><td>${x.j["Mejor pos."]??""}</td>
+     <td class="n">${x.j.Edad??""}</td><td class="n ${clase(x.nota)}">${f1(x.nota)}</td><td>${x.mejor}</td>
+     <td style="color:var(--tenue);font-size:12px">${t}</td></tr>`);});
+  const tj=cel("tJovenes").querySelector("tbody");tj.innerHTML="";
+  const jov=d.filter(x=>typeof x.j.Edad==="number"&&x.j.Edad<=21&&typeof x.j.Potencial==="number"&&typeof x.j["Determinación"]==="number")
+    .map(x=>({...x,pr:proyeccion(x.nota,x.j.Edad,x.j["Determinación"],x.j.Potencial)})).sort((a,b)=>b.pr-a.pr);
+  if(!jov.length) tj.innerHTML=`<tr><td colspan="8" style="color:var(--tenue)">Hacen falta Edad, Potencial y Determinación.</td></tr>`;
+  else jov.forEach(x=>{const r=riesgo(x.j["Determinación"]);
+    tj.insertAdjacentHTML("beforeend",`<tr><td>${x.n}</td><td class="n">${x.j.Edad}</td><td class="n">${x.j.Potencial}★</td>
+     <td class="n">${x.j["Determinación"]}</td><td class="r${r}">${r}</td><td class="n">${f1(x.nota)}</td>
+     <td class="n ${clase(x.pr)}">${f1(x.pr)}</td><td class="n">+${f1(x.pr-x.nota)}</td></tr>`);});
+  window.__d=d;
+  pintarOnce(d,document.querySelector(".fbtn.pri")?.dataset.f||"4231");
+  pintarEstado();
+}
+
+cel("bAdd").onclick=()=>{const f=partirCSV(cel("entrada").value);
+  if(!f){pintarEstado("Pega al menos una fila de cabeceras y una de datos.");return;}
+  const r=ingerir(f); if(!r.ok){pintarEstado(r.msg);return;}
+  cel("entrada").value="";pintarTodo();pintarEstado(`Añadido: ${r.leidas} filas, ${r.nuevos} jugadores nuevos.`);};
+cel("fich").onchange=async e=>{
+  for(const f of e.target.files){const t=await f.text();let filas=null;
+    if(/<table/i.test(t)){const doc=new DOMParser().parseFromString(t,"text/html"),tb=doc.querySelector("table");
+      if(tb)filas=[...tb.querySelectorAll("tr")].map(tr=>[...tr.querySelectorAll("th,td")].map(c=>c.textContent.trim()));}
+    else filas=partirCSV(t);
+    if(filas){const r=ingerir(filas,f.name);if(!r.ok){pintarEstado(r.msg);continue;}}}
+  pintarTodo();e.target.value="";};
+cel("demo").onchange=async e=>{const v=e.target.value;if(!v)return;
+  try{const r=await fetch(v);if(!r.ok)throw 0;
+    JUG={};VISTAS=[];const f=partirCSV(await r.text());
+    if(f){ingerir(f,v);pintarTodo();}}
+  catch{pintarEstado(`No encuentro ${v}. Debe estar en la misma carpeta que esta página, y abierta desde un servidor web (no con doble clic).`);}
+  e.target.value="";};
+document.querySelectorAll(".fbtn").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".fbtn").forEach(x=>x.classList.remove("pri"));
+  b.classList.add("pri"); if(window.__d)pintarOnce(window.__d,b.dataset.f);});
+cel("bReset").onclick=()=>{JUG={};VISTAS=[];cel("salida").classList.add("oculto");pintarEstado();};
+cel("bPng").onclick=()=>{const a=document.createElement("a");
+  a.href=cel("lienzo").toDataURL("image/png");a.download="once.png";a.click();};
+cel("bCsv").onclick=()=>{const d=window.__d||[];if(!d.length)return;
+  const P=["POR","LAT","DFC","MC","MP","BAN","DL"];
+  const cab=["Jugador","Mejor pos.","Edad","Nota","Perfil",...P,"Calidad","Potencial","Determinación"];
+  const filas=d.map(x=>[x.n,x.j["Mejor pos."]??"",x.j.Edad??"",f1(x.nota),x.mejor,
+    ...P.map(p=>x.todas[p]!==undefined?f1(x.todas[p]):""),x.j.Calidad??"",x.j.Potencial??"",x.j["Determinación"]??""]);
+  const csv=[cab,...filas].map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(";")).join("\n");
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}));
+  a.download="notas.csv";a.click();};
+pintarEstado();
+</script>
+</body>
+</html>
