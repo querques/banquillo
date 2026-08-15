@@ -56,6 +56,7 @@ tbody tr:hover{background:var(--panel)}
 td.n{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;text-align:right}
 .v{color:var(--verde);font-weight:600}.a{color:var(--ambar)}.g{color:var(--gris)}
 .rALTO{color:var(--rojo)}.rMEDIO{color:var(--ambar)}.rBAJO{color:var(--verde)}
+.tipoVENDER{color:var(--rojo);font-weight:600}.tipoCEDER{color:var(--ambar);font-weight:600}
 .tabla-scroll{overflow-x:auto}
 .grid2{display:grid;grid-template-columns:1fr 1.05fr;gap:34px;align-items:start}
 @media(max-width:860px){.grid2{grid-template-columns:1fr}}
@@ -219,7 +220,12 @@ footer{padding:30px 0;color:var(--tenue);font-size:12.5px}
   <p class="sub" data-i18n="p3_desc">Nota = media de los diez atributos clave del perfil (cinco en portería). Verde 14 o más,
      ámbar de 12 a 13,9, gris por debajo. En laterales y delanteros la nota de banda se calcula pero no decide.</p>
   <div class="tabla-scroll"><table id="tPlantilla"><thead><tr><th data-i18n="th_num">#</th><th data-i18n="th_jugador">Jugador</th><th class="colClub" data-i18n="th_club">Club</th><th data-i18n="th_mejorpos">Mejor pos.</th>
-    <th class="n" data-i18n="th_edad">Edad</th><th class="n" data-i18n="th_nota">Nota</th><th data-i18n="th_perfil">Perfil</th><th data-i18n="th_todas_notas">Todas las notas</th></tr></thead><tbody></tbody></table></div>
+    <th class="n" data-i18n="th_edad">Edad</th><th class="n" data-i18n="th_nota">Nota</th><th data-i18n="th_perfil">Perfil</th>
+    <th class="n" data-i18n="th_prof">Prof.</th><th class="n" data-i18n="th_cons">Cons.</th><th data-i18n="th_cedal">Cedido al club</th>
+    <th data-i18n="th_decision">Decisión</th><th data-i18n="th_todas_notas">Todas las notas</th></tr></thead><tbody></tbody></table></div>
+  <p class="sub" style="margin-top:10px" data-i18n-html="p3_oculto_nota">Profesionalidad y Consistencia se introducen a mano (no salen en ninguna vista exportable) y
+     quedan guardadas en tu navegador. Mientras no las rellenes, el riesgo de los jóvenes y la regla de venta que las usa
+     quedan marcados como <b>sin verificar</b>.</p>
   <div class="fila"><button id="bCsv" data-i18n="btn_csv">Descargar CSV con las notas</button></div>
 </section>
 
@@ -233,6 +239,53 @@ footer{padding:30px 0;color:var(--tenue);font-size:12.5px}
   <div class="tabla-scroll"><table id="tJovenes"><thead><tr><th data-i18n="th_jugador">Jugador</th><th class="n" data-i18n="th_edad">Edad</th><th class="n" data-i18n="th_pot">Pot.</th>
     <th class="n" data-i18n="th_det">Det.</th><th data-i18n="th_riesgo">Riesgo</th><th class="n" data-i18n="th_hoy">Hoy</th><th class="n" data-i18n="th_a24">A los 24</th><th class="n" data-i18n="th_margen">Margen</th>
     </tr></thead><tbody></tbody></table></div>
+</section>
+
+<section>
+  <div class="paso" data-i18n="p5_badge">PASO 5 — RADIOGRAFÍA Y NECESIDADES</div>
+  <h2 data-i18n="p5_title">Quién tienes en cada puesto</h2>
+  <p class="sub" data-i18n="p5_desc">Por cada puesto: titular, suplente y cuántos llegan a nivel de titular (≥13). Si hay tres o
+     más, el puesto está cubierto y no aparece en necesidades aunque el titular flojee — es un problema de reparto,
+     no de plantilla.</p>
+  <div class="tabla-scroll"><table id="tRadiografia"><thead><tr><th data-i18n="th_puesto2">Puesto</th><th data-i18n="th_titular">Titular</th>
+    <th class="n" data-i18n="th_nota">Nota</th><th data-i18n="th_suplente">Suplente</th><th class="n" data-i18n="th_nota">Nota</th>
+    <th class="n" data-i18n="th_fondo">Fondo ≥13</th><th class="n" data-i18n="th_edadtit">Edad titular</th><th data-i18n="th_mejorjoven">Mejor joven</th>
+    </tr></thead><tbody></tbody></table></div>
+
+  <h2 style="margin-top:26px" data-i18n="p5_nec_title">Dónde invertir</h2>
+  <p class="sub" data-i18n="p5_nec_desc">Ordenado por urgencia. Los puestos cubiertos (3+ jugadores de nivel) se marcan como tal y no
+     puntúan, aunque tengan motivos listados.</p>
+  <div class="tabla-scroll"><table id="tNecesidades"><thead><tr><th data-i18n="th_puesto2">Puesto</th><th class="n" data-i18n="th_puntuacion">Puntuación</th>
+    <th data-i18n="th_motivos">Motivos</th></tr></thead><tbody></tbody></table></div>
+</section>
+
+<section>
+  <div class="paso" data-i18n="p6_badge">PASO 6 — VENTAS SUGERIDAS</div>
+  <h2 data-i18n="p6_title">Jugadores a plantearse vender</h2>
+  <p class="sub" data-i18n-html="p6_desc">Seis reglas automáticas, todas con su motivo explicado — la app <b>sugiere, no decide</b>. Antes de
+     vender a un veterano mira siempre quién viene detrás en «Radiografía».</p>
+  <div class="tabla-scroll"><table id="tVentas"><thead><tr><th data-i18n="th_jugador">Jugador</th><th data-i18n="th_club">Club</th>
+    <th data-i18n="th_puesto2">Puesto</th><th data-i18n="th_tipo">Tipo</th><th data-i18n="th_motivos">Motivos</th></tr></thead><tbody></tbody></table></div>
+</section>
+
+<section>
+  <div class="paso" data-i18n="p7_badge">PASO 7 — CESIONES Y CONTRATOS</div>
+  <h2 data-i18n="p7_title">Cesiones</h2>
+  <p class="sub" data-i18n="p7_desc">«Cedido al club» no se puede detectar automáticamente desde los CSV/Excel (el juego solo lo distingue
+     por el color del nombre, que no sale en la exportación): márcalo a mano en la tabla de la plantilla ordenada.</p>
+  <div class="tabla-scroll"><table id="tRepescar"><thead><tr><th data-i18n="th_repescar">Cedidos fuera que serían titulares o casi</th>
+    <th data-i18n="th_club">Club</th><th class="n" data-i18n="th_puesto2">Puesto</th><th class="n" data-i18n="th_nota">Nota</th></tr></thead><tbody></tbody></table></div>
+  <div class="tabla-scroll" style="margin-top:16px"><table id="tCesionMalUsada"><thead><tr><th data-i18n="th_cesionmal">Jóvenes cedidos a un nivel muy inferior al suyo</th>
+    <th class="n" data-i18n="th_edad">Edad</th><th class="n" data-i18n="th_hoy">Hoy</th><th class="n" data-i18n="th_a24">A los 24</th></tr></thead><tbody></tbody></table></div>
+  <div class="tabla-scroll" style="margin-top:16px"><table id="tComprarCesion"><thead><tr><th data-i18n="th_comprarcesion">Cedidos al club (marcados a mano): se van salvo compra</th>
+    <th class="n" data-i18n="th_nota">Nota</th><th class="n" data-i18n="th_pot">Pot.</th></tr></thead><tbody></tbody></table></div>
+
+  <h2 style="margin-top:26px" data-i18n="p7_contrato_title">Urgencias de contrato</h2>
+  <div class="fila" style="margin-top:0"><label class="sub" style="margin:0" data-i18n="fecha_ref_label">Fecha de referencia de tu partida:</label>
+    <input type="date" id="fechaRef" style="font-family:'IBM Plex Mono';font-size:13px;padding:6px 10px;border-radius:3px;
+      border:1px solid var(--linea);background:var(--panel);color:var(--tiza)"></div>
+  <div class="tabla-scroll"><table id="tContratos"><thead><tr><th data-i18n="th_jugador">Jugador</th><th class="n" data-i18n="th_meses">Meses</th>
+    <th class="n" data-i18n="th_nota">Nota</th><th data-i18n="th_accion">Acción</th></tr></thead><tbody></tbody></table></div>
 </section>
 
 </div>
@@ -361,7 +414,54 @@ const I18N={
   canvas_media_once:"MEDIA DEL ONCE",
   canvas_footer:"Nota = media de los atributos clave del perfil de cada puesto · Banquillo FM26",
   combinado:"Combinado",
-  err_xlsx_no_cargado:"no se ha podido cargar el lector/escritor de Excel (sin conexión al CDN)"
+  err_xlsx_no_cargado:"no se ha podido cargar el lector/escritor de Excel (sin conexión al CDN)",
+  th_prof:"Prof.", th_cons:"Cons.", th_cedal:"Cedido al club", th_decision:"Decisión",
+  p3_oculto_nota:`Profesionalidad y Consistencia se introducen a mano (no salen en ninguna vista exportable) y
+     quedan guardadas en tu navegador. Mientras no las rellenes, el riesgo de los jóvenes y la regla de venta que las usa
+     quedan marcados como <b>sin verificar</b>.`,
+  verificado:"verificado", sin_verificar:"sin verificar",
+  p5_badge:"PASO 5 — RADIOGRAFÍA Y NECESIDADES",
+  p5_title:"Quién tienes en cada puesto",
+  p5_desc:`Por cada puesto: titular, suplente y cuántos llegan a nivel de titular (≥13). Si hay tres o
+     más, el puesto está cubierto y no aparece en necesidades aunque el titular flojee — es un problema de reparto,
+     no de plantilla.`,
+  p5_nec_title:"Dónde invertir",
+  p5_nec_desc:"Ordenado por urgencia. Los puestos cubiertos (3+ jugadores de nivel) se marcan como tal y no puntúan, aunque tengan motivos listados.",
+  th_puesto2:"Puesto", th_titular:"Titular", th_suplente:"Suplente", th_fondo:"Fondo ≥13", th_edadtit:"Edad titular",
+  th_mejorjoven:"Mejor joven", th_puntuacion:"Puntuación", th_motivos:"Motivos",
+  sin_titular_tabla:"— sin titular —", cubierto_chip:"cubierto, no puntúa", sin_necesidades:"Ningún puesto con necesidad detectada.",
+  mot_sin_titular:"sin ningún jugador que llegue al perfil",
+  mot_titular_bajo:"titular por debajo del nivel ({nota})",
+  mot_sin_recambio:"sin recambio solvente",
+  mot_veterano_sin_relevo:"titular de {edad} años sin relevo a la vista",
+  mot_poco_fondo:"un solo jugador de nivel",
+  p6_badge:"PASO 6 — VENTAS SUGERIDAS",
+  p6_title:"Jugadores a plantearse vender",
+  p6_desc:`Seis reglas automáticas, todas con su motivo explicado — la app <b>sugiere, no decide</b>. Antes de
+     vender a un veterano mira siempre quién viene detrás en «Radiografía».`,
+  th_tipo:"Tipo", sin_ventas:"Ningún jugador activa una regla de venta.",
+  tipo_VENDER:"VENDER", tipo_CEDER:"CEDER", tipo_DESCARTE:"DESCARTE",
+  mv_a:"{edad} años, acaba en {meses} meses y es el {rango}º del puesto",
+  mv_b:"{rango}º en su puesto: buen jugador sin minutos",
+  mv_c:"de los sueldos más altos y no es titular",
+  mv_d:"el mercado paga sus estrellas, pero su desarrollo no acompaña",
+  mv_e:"no inscrito y con contrato corto",
+  mv_f:"no llega al nivel del club",
+  p7_badge:"PASO 7 — CESIONES Y CONTRATOS",
+  p7_title:"Cesiones",
+  p7_desc:"«Cedido al club» no se puede detectar automáticamente desde los CSV/Excel (el juego solo lo distingue por el color del nombre, que no sale en la exportación): márcalo a mano en la tabla de la plantilla ordenada.",
+  th_repescar:"Cedidos fuera que serían titulares o casi", th_cesionmal:"Jóvenes cedidos a un nivel muy inferior al suyo",
+  th_comprarcesion:"Cedidos al club (marcados a mano): se van salvo compra",
+  sin_repescar:"Ningún cedido fuera de nivel de titular ahora mismo.",
+  sin_cesionmal:"Ninguna cesión que parezca desaprovechada.",
+  sin_comprarcesion:"No has marcado a nadie como cedido al club.",
+  p7_contrato_title:"Urgencias de contrato",
+  fecha_ref_label:"Fecha de referencia de tu partida:",
+  th_meses:"Meses", th_accion:"Acción", sin_contratos:"Nadie con contrato corto y nivel suficiente ahora mismo.",
+  accion_renovar_vender:"renovar o vender ahora", accion_renovar_ceder:"renovar antes de ceder",
+  dec_TITULAR:"TITULAR", dec_SUPLENTE:"SUPLENTE", dec_ROTACION:"ROTACIÓN", dec_PROMOCIONAR:"PROMOCIONAR",
+  dec_CEDER:"CEDER", dec_VENDER:"VENDER", dec_DESCARTE:"DESCARTE", dec_REPESCAR_CESION:"REPESCAR CESIÓN",
+  dec_CEDER_VIGILAR:"CEDER Y VIGILAR", dec_COMPRAR_CESION:"COMPRAR CESIÓN", dec_SIN_DATOS:"sin datos de portero",
  },
  en:{
   title_html:`Load the squad.<br>Get the XI.`,
@@ -473,7 +573,54 @@ const I18N={
   canvas_media_once:"XI AVERAGE",
   canvas_footer:"Rating = average of the key attributes for each position's role · Banquillo FM26",
   combinado:"Combined",
-  err_xlsx_no_cargado:"couldn't load the Excel reader/writer (no connection to the CDN)"
+  err_xlsx_no_cargado:"couldn't load the Excel reader/writer (no connection to the CDN)",
+  th_prof:"Prof.", th_cons:"Cons.", th_cedal:"On loan at club", th_decision:"Decision",
+  p3_oculto_nota:`Professionalism and Consistency are entered by hand (they don't show up in any exportable view) and
+     get saved in your browser. Until you fill them in, youth risk and the sell rule that uses them stay
+     marked as <b>unverified</b>.`,
+  verificado:"verified", sin_verificar:"unverified",
+  p5_badge:"STEP 5 — SQUAD X-RAY AND NEEDS",
+  p5_title:"Who you have at each position",
+  p5_desc:`For each position: starter, backup, and how many reach starter level (≥13). If there are three or
+     more, the position is covered and won't show up under needs even if the starter is underperforming — it's a
+     distribution problem, not a squad one.`,
+  p5_nec_title:"Where to invest",
+  p5_nec_desc:"Sorted by urgency. Covered positions (3+ players at level) are marked as such and score zero, even if they still have motives listed.",
+  th_puesto2:"Position", th_titular:"Starter", th_suplente:"Backup", th_fondo:"Depth ≥13", th_edadtit:"Starter age",
+  th_mejorjoven:"Best youngster", th_puntuacion:"Score", th_motivos:"Reasons",
+  sin_titular_tabla:"— no starter —", cubierto_chip:"covered, scores zero", sin_necesidades:"No position with a detected need.",
+  mot_sin_titular:"no player at all reaches this role",
+  mot_titular_bajo:"starter below level ({nota})",
+  mot_sin_recambio:"no solid backup",
+  mot_veterano_sin_relevo:"{edad}-year-old starter with no successor in sight",
+  mot_poco_fondo:"only one player at level",
+  p6_badge:"STEP 6 — SUGGESTED SALES",
+  p6_title:"Players to consider selling",
+  p6_desc:`Six automatic rules, each with its reason explained — the app <b>suggests, it doesn't decide</b>. Before
+     selling a veteran, always check who's coming up behind him in «Squad X-ray».`,
+  th_tipo:"Type", sin_ventas:"No player triggers a sell rule.",
+  tipo_VENDER:"SELL", tipo_CEDER:"LOAN OUT", tipo_DESCARTE:"RELEASE",
+  mv_a:"{edad} years old, contract ends in {meses} months and is {rango}th choice for the role",
+  mv_b:"{rango}th choice for the role: good player without minutes",
+  mv_c:"one of the highest wages and isn't a starter",
+  mv_d:"the market pays for his stars, but his development isn't keeping up",
+  mv_e:"not registered and short contract",
+  mv_f:"doesn't reach the club's level",
+  p7_badge:"STEP 7 — LOANS AND CONTRACTS",
+  p7_title:"Loans",
+  p7_desc:"\"On loan at club\" can't be detected automatically from the CSV/Excel (the game only shows it via the name colour, which doesn't come through in the export): mark it by hand in the ranked squad table.",
+  th_repescar:"Loaned out players who'd be starters or close to it", th_cesionmal:"Youngsters loaned to a much lower level than their own",
+  th_comprarcesion:"On loan at the club (marked by hand): they'll leave unless bought",
+  sin_repescar:"No one loaned out is at starter level right now.",
+  sin_cesionmal:"No loan looks wasted.",
+  sin_comprarcesion:"You haven't marked anyone as on loan at the club.",
+  p7_contrato_title:"Contract urgencies",
+  fecha_ref_label:"Reference date for your save:",
+  th_meses:"Months", th_accion:"Action", sin_contratos:"No one with a short contract and enough level right now.",
+  accion_renovar_vender:"renew or sell now", accion_renovar_ceder:"renew before loaning out",
+  dec_TITULAR:"STARTER", dec_SUPLENTE:"BACKUP", dec_ROTACION:"ROTATION", dec_PROMOCIONAR:"PROMOTE",
+  dec_CEDER:"LOAN OUT", dec_VENDER:"SELL", dec_DESCARTE:"RELEASE", dec_REPESCAR_CESION:"RECALL FROM LOAN",
+  dec_CEDER_VIGILAR:"LOAN OUT, WATCH", dec_COMPRAR_CESION:"BUY FROM LOAN", dec_SIN_DATOS:"no goalkeeping data"
  }
 };
 let IDIOMA="es"; try{ IDIOMA=localStorage.getItem("banquillo.idioma")||"es"; }catch(e){}
@@ -554,7 +701,7 @@ async function leerXLSX(file){
   const aoa=XLSX.utils.sheet_to_json(wb.Sheets[hoja],{header:1,raw:true,defval:""});
   return filasDesdeAOA(aoa);
 }
-let JUG={},VISTAS=[],CLUB_VER="__todos__",MANUAL={},ORDEN_COLS=[];
+let JUG={},VISTAS=[],CLUB_VER="__todos__",MANUAL={},ORDEN_COLS=[],FECHA_REF=new Date();
 const LLAVE="banquillo.v1";
 function guardar(){ try{ localStorage.setItem(LLAVE,JSON.stringify({JUG,VISTAS,MANUAL,CLUB_VER,ORDEN_COLS})); }
   catch(e){ pintarEstado(tr("estado_no_guardado",{err:e.message})); } }
@@ -665,6 +812,117 @@ const proyeccion=(nt,ed,det,pot)=>{const f=Math.min(Math.max(det/13,0.6),1.35);
   const c=(ed<19?Math.max(0,19-ed)*0.8*f:0)+Math.max(0,24-Math.max(ed,19))*1.5*f;
   return Math.min(nt+c,10+1.3*pot);};
 const riesgo=d=>d<=10?"ALTO":(d<=13?"MEDIO":"BAJO");
+const indiceDesarrollo=(det,prof)=>0.45*det+0.55*prof;
+function riesgoDe(j){
+  const det=j["Determinación"]; if(typeof det!=="number") return null;
+  if(typeof j.Profesionalidad==="number"){
+    const idx=indiceDesarrollo(det,j.Profesionalidad);
+    return {nivel:idx<=10?"ALTO":(idx<=12.5?"MEDIO":"BAJO"),verificado:true};
+  }
+  return {nivel:riesgo(det),verificado:false};
+}
+function parseImporte(s){
+  if(s==null) return null;
+  const str=String(s); if(/N\s*\/?\s*D/i.test(str)) return null;
+  const nums=[...str.matchAll(/([\d.,]+)\s*([Mm])?\s*€/g)].map(m=>{
+    const v=parseFloat(m[1].replace(/\./g,"").replace(",","."));
+    if(isNaN(v)) return null;
+    return m[2]==="M"?v*1e6:(m[2]==="m"?v*1e3:v);
+  }).filter(v=>v!==null);
+  return nums.length?nums.reduce((a,b)=>a+b,0)/nums.length:null;
+}
+function mesesHasta(fechaStr,ref){
+  if(!fechaStr) return null;
+  const m=String(fechaStr).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); if(!m) return null;
+  const fin=new Date(+m[3],+m[2]-1,+m[1]), hoy=ref||FECHA_REF;
+  return (fin.getFullYear()-hoy.getFullYear())*12+(fin.getMonth()-hoy.getMonth());
+}
+function percentil(arr,p){
+  const s=arr.filter(v=>typeof v==="number").sort((a,b)=>a-b); if(!s.length) return null;
+  const idx=(p/100)*(s.length-1),lo=Math.floor(idx),hi=Math.ceil(idx);
+  return lo===hi?s[lo]:s[lo]+(s[hi]-s[lo])*(idx-lo);
+}
+const esCedidoFuera=j=>/cedido en otro club/i.test(String(j["Tiempo de juego"]||""));
+const ORDEN_GRUPOS=["POR","LATD","LATI","DFC","MC","MPC","MPD","MPI","DL"];
+const UMBRAL_TITULAR=13.0;
+function radiografiaPorGrupo(datos){
+  const pg={}; datos.forEach(x=>{(pg[x.g]=pg[x.g]||[]).push(x);});
+  for(const g in pg) pg[g].sort((a,b)=>b.nota-a.nota);
+  return pg;
+}
+function rangosDe(pg){
+  const r={}; for(const g in pg) pg[g].forEach((x,i)=>{r[x.clave]=i+1;}); return r;
+}
+function radiografia(pg,umbral=UMBRAL_TITULAR){
+  return Object.keys(pg).map(g=>{
+    const aptos=pg[g];
+    const jov=aptos.filter(x=>typeof x.j.Edad==="number"&&x.j.Edad<=21&&typeof x.j.Potencial==="number"&&typeof x.j["Determinación"]==="number")
+      .map(x=>({...x,pr:proyeccion(x.nota,x.j.Edad,x.j["Determinación"],x.j.Potencial)})).sort((a,b)=>b.pr-a.pr);
+    return {grupo:g,n:aptos.length,titular:aptos[0]||null,suplente:aptos[1]||null,
+      fondo:aptos.filter(x=>x.nota>=umbral).length,edadTit:aptos[0]?.j.Edad,mejorJoven:jov[0]||null};
+  }).sort((a,b)=>ORDEN_GRUPOS.indexOf(a.grupo)-ORDEN_GRUPOS.indexOf(b.grupo));
+}
+function urgencia(rad,refTitular=UMBRAL_TITULAR){
+  return rad.map(p=>{
+    let s=0; const motivos=[];
+    if(!p.titular){ s+=6; motivos.push({key:"mot_sin_titular"}); }
+    else if(p.titular.nota<refTitular){ s+=(refTitular-p.titular.nota)*3; motivos.push({key:"mot_titular_bajo",vars:{nota:f1(p.titular.nota)}}); }
+    if(!p.suplente||p.suplente.nota<refTitular-1.5){ s+=2; motivos.push({key:"mot_sin_recambio"}); }
+    if(p.edadTit>=30&&(!p.mejorJoven||p.mejorJoven.pr<(p.titular?p.titular.nota:0))){
+      s+=3; motivos.push({key:"mot_veterano_sin_relevo",vars:{edad:p.edadTit}}); }
+    if(p.fondo<=1){ s+=1.5; motivos.push({key:"mot_poco_fondo"}); }
+    const contenido=p.fondo>=3;
+    return {...p,puntuacion:contenido?0:s,motivos,contenido};
+  }).sort((a,b)=>b.puntuacion-a.puntuacion);
+}
+function motivosVenta(x,rango,stats){
+  const j=x.j, m=[], meses=mesesHasta(j.Final);
+  if(j.Edad>=30&&meses!==null&&meses<=12&&rango>=3) m.push({tipo:"VENDER",peso:5,key:"mv_a",vars:{edad:j.Edad,meses,rango}});
+  if(rango>=4&&j.Edad>=25&&x.nota>=13) m.push({tipo:"VENDER",peso:4,key:"mv_b",vars:{rango}});
+  const sueldo=parseImporte(j.Sueldo);
+  if(sueldo!==null&&stats.p90Sueldo!==null&&sueldo>=stats.p90Sueldo&&rango>=3) m.push({tipo:"VENDER",peso:4,key:"mv_c"});
+  const valor=parseImporte(j["Valor de traspaso"]);
+  const idx=typeof j.Profesionalidad==="number"?indiceDesarrollo(j["Determinación"],j.Profesionalidad):null;
+  if(j.Edad<=23&&j.Potencial>=4.5&&idx!==null&&idx<=10&&valor!==null&&stats.p80Valor!==null&&valor>=stats.p80Valor)
+    m.push({tipo:"VENDER",peso:5,key:"mv_d"});
+  if(String(j.Inf||"").includes("NoI")&&meses!==null&&meses<=18) m.push({tipo:"VENDER",peso:3,key:"mv_e"});
+  if(x.nota<10.3&&(j.Edad>=22||(j.Potencial??5)<=2.5)) m.push({tipo:j.Edad<=21?"CEDER":"DESCARTE",peso:3,key:"mv_f"});
+  return m;
+}
+function decision(x,rango,ventaMotivos){
+  const j=x.j;
+  if(j._cedidoAlClub) return "COMPRAR_CESION";
+  if(esCedidoFuera(j)&&rango<=2) return "REPESCAR_CESION";
+  if(esCedidoFuera(j)) return "CEDER_VIGILAR";
+  if(ventaMotivos.some(m=>m.tipo==="VENDER")) return "VENDER";
+  const pr=(typeof j.Edad==="number"&&j.Edad<=21&&typeof j.Potencial==="number"&&typeof j["Determinación"]==="number")
+    ?proyeccion(x.nota,j.Edad,j["Determinación"],j.Potencial):null;
+  if(j.Edad<=21&&pr!==null&&pr>=14) return "PROMOCIONAR";
+  if(j.Edad<=21&&x.nota<11) return "CEDER";
+  if(rango===1) return "TITULAR";
+  if(rango===2) return "SUPLENTE";
+  if(rango<=4) return "ROTACION";
+  return (j.Potencial??0)>=3.5?"PROMOCIONAR":"DESCARTE";
+}
+function cesiones(datos,rangos,mediaOnce){
+  const repescar=datos.filter(x=>esCedidoFuera(x.j))
+    .filter(x=>(rangos[x.clave]??99)<=2||x.nota>=mediaOnce-0.5)
+    .sort((a,b)=>b.nota-a.nota);
+  const comprarCesion=datos.filter(x=>x.j._cedidoAlClub)
+    .sort((a,b)=>((b.j.Potencial??0)-(a.j.Potencial??0))||(b.nota-a.nota));
+  const cesionMalUsada=datos.filter(x=>esCedidoFuera(x.j)&&typeof x.j.Edad==="number"&&x.j.Edad<=21
+    &&typeof x.j.Potencial==="number"&&typeof x.j["Determinación"]==="number"
+    &&proyeccion(x.nota,x.j.Edad,x.j["Determinación"],x.j.Potencial)>=13.5)
+    .sort((a,b)=>b.nota-a.nota);
+  return {repescar,comprarCesion,cesionMalUsada};
+}
+function urgenciasContrato(datos,mediaOnce){
+  return datos.filter(x=>{
+    const meses=mesesHasta(x.j.Final);
+    return meses!==null&&meses<=12&&(x.nota>=12||(x.j.Potencial??0)>=4);
+  }).map(x=>({...x,meses:mesesHasta(x.j.Final),accion:x.nota>=mediaOnce?"renovar_vender":"renovar_ceder"}))
+    .sort((a,b)=>a.meses-b.meses);
+}
 
 const D4=[["LD","LAT",["LATD"],15,78],["DFC","DFC",["DFC"],37,81],["DFC","DFC",["DFC"],63,81],["LI","LAT",["LATI"],85,78]];
 const D3=[["DFC","DFC",["DFC"],28,82],["DFC","DFC",["DFC"],50,84],["DFC","DFC",["DFC"],72,82]];
@@ -807,24 +1065,125 @@ function pintarOnce(d,k){
   const pintar=()=>dibujarCampo(once,FORMACIONES[k].nombre,media,club);
   pintar(); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(pintar);
 }
+const promedio=arr=>{const s=arr.filter(v=>typeof v==="number");return s.length?s.reduce((a,b)=>a+b,0)/s.length:0;};
+function pintarRadiografia(rad){
+  const tb=cel("tRadiografia").querySelector("tbody"); tb.innerHTML="";
+  rad.forEach(p=>{
+    const tit=p.titular?`${p.titular.n} <span class="tagclub">${p.titular.club}</span>`:`<span style="color:var(--tenue)">${tr("sin_titular_tabla")}</span>`;
+    const sup=p.suplente?`${p.suplente.n} <span class="tagclub">${p.suplente.club}</span>`:"—";
+    const mj=p.mejorJoven?`${p.mejorJoven.n} (${f1(p.mejorJoven.pr)})`:"—";
+    tb.insertAdjacentHTML("beforeend",`<tr><td>${p.grupo}</td><td>${tit}</td>
+      <td class="n ${p.titular?clase(p.titular.nota):''}">${p.titular?f1(p.titular.nota):""}</td>
+      <td>${sup}</td><td class="n ${p.suplente?clase(p.suplente.nota):''}">${p.suplente?f1(p.suplente.nota):""}</td>
+      <td class="n">${p.fondo}</td><td class="n">${p.edadTit??""}</td><td>${mj}</td></tr>`);
+  });
+}
+function pintarNecesidades(urg){
+  const tb=cel("tNecesidades").querySelector("tbody"); tb.innerHTML="";
+  const activos=urg.filter(p=>p.puntuacion>0||p.contenido);
+  if(!activos.length){ tb.innerHTML=`<tr><td colspan="3" style="color:var(--tenue)">${tr("sin_necesidades")}</td></tr>`; return; }
+  activos.forEach(p=>{
+    const motTxt=p.motivos.map(m=>tr(m.key,m.vars)).join(" · ");
+    const puntTxt=p.contenido?`<span style="color:var(--tenue)">${tr("cubierto_chip")}</span>`:f1(p.puntuacion);
+    tb.insertAdjacentHTML("beforeend",`<tr><td>${p.grupo}</td><td class="n">${puntTxt}</td><td style="color:var(--tenue);font-size:12px">${motTxt||"—"}</td></tr>`);
+  });
+}
+function pintarVentas(enriquecidos){
+  const tb=cel("tVentas").querySelector("tbody"); tb.innerHTML="";
+  const activos=enriquecidos.filter(x=>x.vm.length).sort((a,b)=>Math.max(...b.vm.map(m=>m.peso))-Math.max(...a.vm.map(m=>m.peso)));
+  if(!activos.length){ tb.innerHTML=`<tr><td colspan="5" style="color:var(--tenue)">${tr("sin_ventas")}</td></tr>`; return; }
+  activos.forEach(x=>{
+    const tipo=x.vm[0].tipo, motTxt=x.vm.map(m=>tr(m.key,m.vars)).join(" · ");
+    tb.insertAdjacentHTML("beforeend",`<tr><td>${x.n}</td><td><span class="tagclub">${x.club}</span></td>
+      <td>${x.g}</td><td class="tipo${tipo}">${tr("tipo_"+tipo)}</td>
+      <td style="color:var(--tenue);font-size:12px">${motTxt}</td></tr>`);
+  });
+}
+function pintarCesiones(ces){
+  const tb1=cel("tRepescar").querySelector("tbody"); tb1.innerHTML="";
+  if(!ces.repescar.length) tb1.innerHTML=`<tr><td colspan="4" style="color:var(--tenue)">${tr("sin_repescar")}</td></tr>`;
+  else ces.repescar.forEach(x=>tb1.insertAdjacentHTML("beforeend",
+    `<tr><td>${x.n}</td><td><span class="tagclub">${x.club}</span></td><td class="n">${x.g}</td><td class="n ${clase(x.nota)}">${f1(x.nota)}</td></tr>`));
+  const tb2=cel("tCesionMalUsada").querySelector("tbody"); tb2.innerHTML="";
+  if(!ces.cesionMalUsada.length) tb2.innerHTML=`<tr><td colspan="4" style="color:var(--tenue)">${tr("sin_cesionmal")}</td></tr>`;
+  else ces.cesionMalUsada.forEach(x=>{
+    const pr=proyeccion(x.nota,x.j.Edad,x.j["Determinación"],x.j.Potencial);
+    tb2.insertAdjacentHTML("beforeend",`<tr><td>${x.n}</td><td class="n">${x.j.Edad}</td><td class="n">${f1(x.nota)}</td><td class="n ${clase(pr)}">${f1(pr)}</td></tr>`);
+  });
+  const tb3=cel("tComprarCesion").querySelector("tbody"); tb3.innerHTML="";
+  if(!ces.comprarCesion.length) tb3.innerHTML=`<tr><td colspan="3" style="color:var(--tenue)">${tr("sin_comprarcesion")}</td></tr>`;
+  else ces.comprarCesion.forEach(x=>tb3.insertAdjacentHTML("beforeend",
+    `<tr><td>${x.n}</td><td class="n ${clase(x.nota)}">${f1(x.nota)}</td><td class="n">${x.j.Potencial??""}★</td></tr>`));
+}
+function pintarContratos(uc){
+  const tb=cel("tContratos").querySelector("tbody"); tb.innerHTML="";
+  if(!uc.length){ tb.innerHTML=`<tr><td colspan="4" style="color:var(--tenue)">${tr("sin_contratos")}</td></tr>`; return; }
+  uc.forEach(x=>tb.insertAdjacentHTML("beforeend",
+    `<tr><td>${x.n}</td><td class="n">${x.meses}</td><td class="n ${clase(x.nota)}">${f1(x.nota)}</td><td>${tr("accion_"+x.accion)}</td></tr>`));
+}
 function pintarTodo(){
   const d=analizar();
   if(!d.length){pintarEstado(tr("estado_faltan_atributos"));return;}
   cel("salida").classList.remove("oculto");
+
+  // Solo entran en las recomendaciones los jugadores cuya "mejor nota" corresponde de verdad a su
+  // grupo natural: si a un portero le faltan Blocaje/Reflejos/etc., su "mejor" cae en un perfil de
+  // campo irrelevante y no se puede usar para decidir nada sobre él (radiografía, ventas, cesiones...).
+  const datosFiables=d.filter(x=>(PERFIL_DE[x.g]||[]).includes(x.mejor));
+  const pg=radiografiaPorGrupo(datosFiables), rangos=rangosDe(pg), rad=radiografia(pg), urg=urgencia(rad);
+  const sueldos=datosFiables.map(x=>parseImporte(x.j.Sueldo)).filter(v=>v!==null);
+  const valores=datosFiables.map(x=>parseImporte(x.j["Valor de traspaso"])).filter(v=>v!==null);
+  const stats={p90Sueldo:percentil(sueldos,90),p80Valor:percentil(valores,80)};
+  const enriquecidos=datosFiables.map(x=>{const rango=rangos[x.clave];const vm=motivosVenta(x,rango,stats);
+    return {...x,rango,vm,dec:decision(x,rango,vm)};});
+  const mediaTitulares=promedio(rad.map(p=>p.titular?.nota));
+  const ces=cesiones(datosFiables,rangos,mediaTitulares);
+  const uc=urgenciasContrato(datosFiables,mediaTitulares);
+  // La tabla "Plantilla ordenada" sigue mostrando a TODOS (incluidos los porteros sin datos de portería),
+  // con Decisión calculada lo mejor posible aunque no tengan rango fiable (rango queda undefined y las
+  // reglas que lo usan simplemente no se disparan, sin romper nada).
+  const enriquecidosCompletos=d.map(x=>{
+    if(!(PERFIL_DE[x.g]||[]).includes(x.mejor)) return {...x,rango:undefined,vm:[],dec:"SIN_DATOS"};
+    const rango=rangos[x.clave],vm=motivosVenta(x,rango,stats);
+    return {...x,rango,vm,dec:decision(x,rango,vm)};});
+
   const tb=cel("tPlantilla").querySelector("tbody");tb.innerHTML="";
-  d.forEach((x,i)=>{const t=Object.entries(x.todas).sort((a,b)=>b[1]-a[1]).map(([p,v])=>`${p} ${f1(v)}`).join(" · ");
+  enriquecidosCompletos.forEach((x,i)=>{const t=Object.entries(x.todas).sort((a,b)=>b[1]-a[1]).map(([p,v])=>`${p} ${f1(v)}`).join(" · ");
     tb.insertAdjacentHTML("beforeend",`<tr><td class="n">${i+1}</td><td>${x.n}</td>
      <td class="colClub" style="color:var(--tenue)">${x.club}</td><td>${x.j["Mejor pos."]??""}</td>
      <td class="n">${x.j.Edad??""}</td><td class="n ${clase(x.nota)}">${f1(x.nota)}</td><td>${x.mejor}</td>
+     <td class="n"><input type="number" min="1" max="20" class="inProf" data-i="${i}" value="${x.j.Profesionalidad??""}"
+       style="width:52px;background:var(--panel2);border:1px solid var(--linea);border-radius:3px;color:var(--tiza);padding:3px 5px"></td>
+     <td class="n"><input type="number" min="1" max="20" class="inCons" data-i="${i}" value="${x.j.Consistencia??""}"
+       style="width:52px;background:var(--panel2);border:1px solid var(--linea);border-radius:3px;color:var(--tiza);padding:3px 5px"></td>
+     <td style="text-align:center"><input type="checkbox" class="chkCedido" data-i="${i}" ${x.j._cedidoAlClub?"checked":""}></td>
+     <td class="tipo${x.dec==="VENDER"?"VENDER":(x.dec==="CEDER"?"CEDER":"")}">${tr("dec_"+x.dec)}</td>
      <td style="color:var(--tenue);font-size:12px">${t}</td></tr>`);});
+  tb.querySelectorAll(".inProf,.inCons").forEach(inp=>inp.onchange=()=>{
+    const x=enriquecidosCompletos[+inp.dataset.i], campo=inp.classList.contains("inProf")?"Profesionalidad":"Consistencia";
+    const v=inp.value.trim();
+    if(v===""){ delete x.j[campo]; } else { x.j[campo]=Math.max(1,Math.min(20,Number(v))); }
+    guardar(); pintarTodo();});
+  tb.querySelectorAll(".chkCedido").forEach(chk=>chk.onchange=()=>{
+    const x=enriquecidosCompletos[+chk.dataset.i];
+    if(chk.checked) x.j._cedidoAlClub=true; else delete x.j._cedidoAlClub;
+    guardar(); pintarTodo();});
+
   const tj=cel("tJovenes").querySelector("tbody");tj.innerHTML="";
   const jov=d.filter(x=>typeof x.j.Edad==="number"&&x.j.Edad<=21&&typeof x.j.Potencial==="number"&&typeof x.j["Determinación"]==="number")
     .map(x=>({...x,pr:proyeccion(x.nota,x.j.Edad,x.j["Determinación"],x.j.Potencial)})).sort((a,b)=>b.pr-a.pr);
   if(!jov.length) tj.innerHTML=`<tr><td colspan="8" style="color:var(--tenue)">${tr("jov_faltan")}</td></tr>`;
-  else jov.forEach(x=>{const r=riesgo(x.j["Determinación"]);
+  else jov.forEach(x=>{const rd=riesgoDe(x.j);
     tj.insertAdjacentHTML("beforeend",`<tr><td>${x.n}</td><td class="n">${x.j.Edad}</td><td class="n">${x.j.Potencial}★</td>
-     <td class="n">${x.j["Determinación"]}</td><td class="r${r}">${tr("riesgo_"+r)}</td><td class="n">${f1(x.nota)}</td>
+     <td class="n">${x.j["Determinación"]}</td><td class="r${rd.nivel}" title="${rd.verificado?tr("verificado"):tr("sin_verificar")}">${tr("riesgo_"+rd.nivel)}${rd.verificado?"":" ‡"}</td><td class="n">${f1(x.nota)}</td>
      <td class="n ${clase(x.pr)}">${f1(x.pr)}</td><td class="n">+${f1(x.pr-x.nota)}</td></tr>`);});
+
+  pintarRadiografia(rad);
+  pintarNecesidades(urg);
+  pintarVentas(enriquecidos);
+  pintarCesiones(ces);
+  pintarContratos(uc);
+
   window.__d=d;
   pintarSelector();
   pintarOnce(d,cel("formacion").value||"4231");
@@ -935,6 +1294,11 @@ function cambiarIdioma(lang){
   pintarConvEstado();
 }
 document.querySelectorAll("#idiomaSwitch .idbtn").forEach(b=>b.onclick=()=>cambiarIdioma(b.dataset.lang));
+cel("fechaRef").onchange=e=>{ const v=e.target.value; if(!v) return;
+  const [y,m,dd]=v.split("-").map(Number); FECHA_REF=new Date(y,m-1,dd);
+  if(window.__d) pintarTodo(); };
+{ const hoy=new Date(); const iso=hoy.getFullYear()+"-"+String(hoy.getMonth()+1).padStart(2,"0")+"-"+String(hoy.getDate()).padStart(2,"0");
+  cel("fechaRef").value=iso; }
 
 aplicarIdioma();
 if(recuperar()){ pintarTodo(); pintarEstado(tr("estado_recuperado")); }
