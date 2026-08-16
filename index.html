@@ -429,6 +429,7 @@ const I18N={
      quedan guardadas en tu navegador. Mientras no las rellenes, el riesgo de los jóvenes y la regla de venta que las usa
      quedan marcados como <b>sin verificar</b>.`,
   verificado:"verificado", sin_verificar:"sin verificar",
+  volver_auto_title:"Volver a la decisión automática",
   p5_badge:"PASO 5 — RADIOGRAFÍA Y NECESIDADES",
   p5_title:"Quién tienes en cada puesto",
   p5_desc:`Por cada puesto: titular, suplente y cuántos llegan a nivel de titular (≥13). Si hay tres o
@@ -596,6 +597,7 @@ const I18N={
      get saved in your browser. Until you fill them in, youth risk and the sell rule that uses them stay
      marked as <b>unverified</b>.`,
   verificado:"verified", sin_verificar:"unverified",
+  volver_auto_title:"Back to the automatic decision",
   p5_badge:"STEP 5 — SQUAD X-RAY AND NEEDS",
   p5_title:"Who you have at each position",
   p5_desc:`For each position: starter, backup, and how many reach starter level (≥13). If there are three or
@@ -916,6 +918,7 @@ function motivosVenta(x,rango,stats){
   if(x.nota<10.3&&(j.Edad>=22||(j.Potencial??5)<=2.5)) m.push({tipo:j.Edad<=21?"CEDER":"DESCARTE",peso:3,key:"mv_f"});
   return m;
 }
+const DECISIONES=["TITULAR","SUPLENTE","ROTACION","PROMOCIONAR","CEDER","VENDER","DESCARTE","REPESCAR_CESION","CEDER_VIGILAR","COMPRAR_CESION","SIN_DATOS"];
 function decision(x,rango,ventaMotivos){
   const j=x.j;
   if(j._cedidoAlClub) return "COMPRAR_CESION";
@@ -1207,12 +1210,16 @@ function pintarTodo(){
   // con Decisión calculada lo mejor posible aunque no tengan rango fiable (rango queda undefined y las
   // reglas que lo usan simplemente no se disparan, sin romper nada).
   const enriquecidosCompletos=d.map(x=>{
-    if(!(PERFIL_DE[x.g]||[]).includes(x.mejor)) return {...x,rango:undefined,vm:[],dec:"SIN_DATOS"};
-    const rango=rangos[x.clave],vm=motivosVenta(x,rango,stats);
-    return {...x,rango,vm,dec:decision(x,rango,vm)};});
+    if(!(PERFIL_DE[x.g]||[]).includes(x.mejor)){
+      const decAuto="SIN_DATOS";
+      return {...x,rango:undefined,vm:[],decAuto,dec:x.j._decisionManual||decAuto,decManual:!!x.j._decisionManual};
+    }
+    const rango=rangos[x.clave],vm=motivosVenta(x,rango,stats),decAuto=decision(x,rango,vm);
+    return {...x,rango,vm,decAuto,dec:x.j._decisionManual||decAuto,decManual:!!x.j._decisionManual};});
 
   const tb=cel("tPlantilla").querySelector("tbody");tb.innerHTML="";
   enriquecidosCompletos.forEach((x,i)=>{const t=Object.entries(x.todas).sort((a,b)=>b[1]-a[1]).map(([p,v])=>`${p} ${f1(v)}`).join(" · ");
+    const opcionesDec=DECISIONES.map(c=>`<option value="${c}" ${x.dec===c?"selected":""}>${tr("dec_"+c)}</option>`).join("");
     tb.insertAdjacentHTML("beforeend",`<tr><td class="n">${i+1}</td><td>${x.n}</td>
      <td class="colClub" style="color:var(--tenue)">${x.club}</td><td>${x.j["Mejor pos."]??""}</td>
      <td class="n">${x.j.Edad??""}</td><td class="n ${clase(x.nota)}">${f1(x.nota)}</td><td>${x.mejor}</td>
@@ -1221,7 +1228,9 @@ function pintarTodo(){
      <td class="n"><input type="number" min="1" max="20" class="inCons" data-i="${i}" value="${x.j.Consistencia??""}"
        style="width:52px;background:var(--panel2);border:1px solid var(--linea);border-radius:3px;color:var(--tiza);padding:3px 5px"></td>
      <td style="text-align:center"><input type="checkbox" class="chkCedido" data-i="${i}" ${x.j._cedidoAlClub?"checked":""}></td>
-     <td class="tipo${x.dec==="VENDER"?"VENDER":(x.dec==="CEDER"?"CEDER":"")}">${tr("dec_"+x.dec)}</td>
+     <td><select class="selDecision tipo${x.dec==="VENDER"?"VENDER":(x.dec==="CEDER"?"CEDER":"")}" data-i="${i}"
+       style="font-size:12px;padding:4px 8px;${x.decManual?"border-color:var(--cal)":""}">${opcionesDec}</select>${x.decManual?
+       `<button class="btnResetDec" data-i="${i}" title="${tr("volver_auto_title")}" style="font-size:12px;padding:3px 7px;margin-left:4px">↺</button>`:""}</td>
      <td style="color:var(--tenue);font-size:12px">${t}</td></tr>`);});
   tb.querySelectorAll(".inProf,.inCons").forEach(inp=>inp.onchange=()=>{
     const x=enriquecidosCompletos[+inp.dataset.i], campo=inp.classList.contains("inProf")?"Profesionalidad":"Consistencia";
@@ -1231,6 +1240,14 @@ function pintarTodo(){
   tb.querySelectorAll(".chkCedido").forEach(chk=>chk.onchange=()=>{
     const x=enriquecidosCompletos[+chk.dataset.i];
     if(chk.checked) x.j._cedidoAlClub=true; else delete x.j._cedidoAlClub;
+    guardar(); pintarTodo();});
+  tb.querySelectorAll(".selDecision").forEach(sel=>sel.onchange=()=>{
+    const x=enriquecidosCompletos[+sel.dataset.i];
+    if(sel.value===x.decAuto){ delete x.j._decisionManual; } else { x.j._decisionManual=sel.value; }
+    guardar(); pintarTodo();});
+  tb.querySelectorAll(".btnResetDec").forEach(b=>b.onclick=()=>{
+    const x=enriquecidosCompletos[+b.dataset.i];
+    delete x.j._decisionManual;
     guardar(); pintarTodo();});
 
   const tj=cel("tJovenes").querySelector("tbody");tj.innerHTML="";
