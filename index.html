@@ -202,7 +202,11 @@ footer{padding:30px 0;color:var(--tenue);font-size:12.5px}
           </optgroup>
         </select>
       </div>
-      <div class="tabla-scroll"><table id="tOnce"><thead><tr><th data-i18n="th_puesto">Puesto</th><th data-i18n="th_jugador">Jugador</th><th data-i18n="th_club">Club</th><th class="n" data-i18n="th_nota">Nota</th>
+      <p class="sub" style="margin:0 0 8px" data-i18n="comp_desc">Formaciones comparadas por la media que darían con tu plantilla actual (sin tener en cuenta lo que
+         hayas fijado a mano). La marcada con ★ es la recomendada, pero puedes usar cualquiera.</p>
+      <div class="tabla-scroll"><table id="tCompFormaciones"><thead><tr><th data-i18n="th_formacion">Formación</th>
+        <th class="n" data-i18n="th_nota">Nota</th><th class="n" data-i18n="th_fueradepos">Fuera de posición</th><th></th></tr></thead><tbody></tbody></table></div>
+      <div class="tabla-scroll" style="margin-top:18px"><table id="tOnce"><thead><tr><th data-i18n="th_puesto">Puesto</th><th data-i18n="th_jugador">Jugador</th><th data-i18n="th_club">Club</th><th class="n" data-i18n="th_nota">Nota</th>
         <th class="n" data-i18n="th_edad">Edad</th><th></th></tr></thead><tbody></tbody></table></div>
       <div class="fila"><button id="bPng" data-i18n="btn_png">Descargar el campo (PNG)</button>
         <button id="bLibre" data-i18n="btn_vaciar_once">Vaciar el once manual</button></div>
@@ -366,6 +370,9 @@ const I18N={
          poner ahí al jugador que quieras, aunque sea de otro club. Los puestos fijados se marcan en amarillo y el
          resto los sigue eligiendo la app.`,
   cambiar_btn:"Cambiar",
+  comp_desc:"Formaciones comparadas por la media que darían con tu plantilla actual (sin tener en cuenta lo que hayas fijado a mano). La marcada con ★ es la recomendada, pero puedes usar cualquiera.",
+  th_formacion:"Formación", th_fueradepos:"Fuera de posición", usar_btn:"Usar", en_uso_chip:"en uso",
+  comp_faltan_tpl:"({n} puesto(s) sin cubrir)",
   p3_badge:"PASO 3 — PLANTILLA ORDENADA",
   p3_title:"Notas por perfil",
   p3_desc:`Nota = media de los diez atributos clave del perfil (cinco en portería). Verde 14 o más,
@@ -525,6 +532,9 @@ const I18N={
          put whichever player you want there, even from another club. Pinned positions are marked in yellow and
          the rest keep being picked by the app.`,
   cambiar_btn:"Change",
+  comp_desc:"Formations compared by the average they'd give with your current squad (ignoring anything you've pinned by hand). The one marked ★ is the recommended one, but you can use any of them.",
+  th_formacion:"Formation", th_fueradepos:"Out of position", usar_btn:"Use", en_uso_chip:"in use",
+  comp_faltan_tpl:"({n} position(s) unfilled)",
   p3_badge:"STEP 3 — RANKED SQUAD",
   p3_title:"Ratings by role",
   p3_desc:`Rating = average of the role's ten key attributes (five for goalkeepers). Green 14 or above,
@@ -967,19 +977,28 @@ const FORMACIONES={
    ["ED","BAN",["MPD","MPI"],18,27],["DC","DL",["DL"],50,16],["EI","BAN",["MPI","MPD"],82,27]]},
  541:{nombre:"5-4-1",p:[P,...D5,["MD","BAN",["MPD","MPI"],19,48],["MC","MC",["MC"],40,52],["MC","MC",["MC"],60,52],
    ["MI","BAN",["MPI","MPD"],81,48],["DC","DL",["DL"],50,16]]}};
-function elegirOnce(d,k,todos){const F=FORMACIONES[k],u=new Set(),once=new Array(F.p.length);
-  const fij=MANUAL[k]||{};
+function elegirOnce(d,k,todos,sinFijos){const F=FORMACIONES[k],u=new Set(),once=new Array(F.p.length);
+  const fij=sinFijos?{}:(MANUAL[k]||{});
   F.p.forEach((s,i)=>{ const cl=fij[i]; if(!cl) return;
     const p=(todos||d).find(x=>x.clave===cl); if(!p) return;
     u.add(p.clave); once[i]={etq:s[0],perf:s[1],x:s[3],y:s[4],d:p,nota:p.todas[s[1]]??p.nota,fijo:true}; });
   F.p.forEach((s,i)=>{ if(once[i]) return;
-    const [etq,perf,grs,x,y]=s; let m=null;
+    const [etq,perf,grs,x,y]=s; let m=null,natural=true;
     for(const p of d){if(u.has(p.clave)||!grs.includes(p.g)||p.todas[perf]===undefined)continue;
       if(!m||p.todas[perf]>m.todas[perf])m=p;}
-    if(!m)for(const p of d){if(u.has(p.clave)||p.todas[perf]===undefined)continue;
-      if(!m||p.todas[perf]>m.todas[perf])m=p;}
-    if(m){u.add(m.clave);once[i]={etq,perf,x,y,d:m,nota:m.todas[perf]};}});
+    if(!m){natural=false;for(const p of d){if(u.has(p.clave)||p.todas[perf]===undefined)continue;
+      if(!m||p.todas[perf]>m.todas[perf])m=p;}}
+    if(m){u.add(m.clave);once[i]={etq,perf,x,y,d:m,nota:m.todas[perf],fueraDePos:!natural};}});
   return once.filter(Boolean);}
+function evaluarFormaciones(d){
+  const todos=analizar(Object.values(JUG));
+  return Object.keys(FORMACIONES).map(k=>{
+    const once=elegirOnce(d,k,todos,true);
+    if(!once.length) return null;
+    return {k,nombre:FORMACIONES[k].nombre,media:promedio(once.map(o=>o.nota)),
+      fuera:once.filter(o=>o.fueraDePos).length,faltan:FORMACIONES[k].p.length-once.length};
+  }).filter(Boolean).sort((a,b)=>(a.faltan-b.faltan)||(b.media-a.media));
+}
 
 const apellido=n=>{const t=n.replace(/-/g," ").split(" ").filter(Boolean);
   const par=["de","van","der","den","el","al","da","dos","di"];
@@ -1052,10 +1071,24 @@ function listarPicker(q){
     cerrarPicker(); guardar(); pintarOnce(window.__d,window.__k);});
 }
 function cerrarPicker(){cel("velo").classList.remove("on");}
+function pintarCompFormaciones(d,kActual){
+  const comp=evaluarFormaciones(d);
+  const tb=cel("tCompFormaciones").querySelector("tbody"); tb.innerHTML="";
+  comp.forEach((c,i)=>{
+    const faltanTxt=c.faltan?` <span style="color:var(--rojo)">${tr("comp_faltan_tpl",{n:c.faltan})}</span>`:"";
+    tb.insertAdjacentHTML("beforeend",`<tr>
+      <td>${i===0?"★ ":""}${FORMACIONES[c.k].nombre}${c.k===kActual?` <span class="tagclub">${tr("en_uso_chip")}</span>`:""}${faltanTxt}</td>
+      <td class="n ${clase(c.media)}">${f1(c.media)}</td>
+      <td class="n">${c.fuera}</td>
+      <td><button class="usarForm" data-k="${c.k}" style="font-size:13px;padding:3px 10px" ${c.k===kActual?"disabled":""}>${tr("usar_btn")}</button></td></tr>`);
+  });
+  tb.querySelectorAll(".usarForm").forEach(b=>b.onclick=()=>{ cel("formacion").value=b.dataset.k; pintarOnce(window.__d,b.dataset.k); });
+}
 function pintarOnce(d,k){
   const todos=analizar(Object.values(JUG));
   const once=elegirOnce(d,k,todos); if(!once.length) return;
   window.__k=k; window.__todos=todos; window.__once=once;
+  pintarCompFormaciones(d,k);
   cel("tituloFormacion").textContent=FORMACIONES[k].nombre;
   const tb=cel("tOnce").querySelector("tbody");tb.innerHTML="";let s=0;
   once.forEach((o,i)=>{s+=o.nota;tb.insertAdjacentHTML("beforeend",
