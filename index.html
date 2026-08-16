@@ -259,8 +259,10 @@ footer{padding:30px 0;color:var(--tenue);font-size:12.5px}
   <h2 style="margin-top:26px" data-i18n="p5_nec_title">Dónde invertir</h2>
   <p class="sub" data-i18n="p5_nec_desc">Ordenado por urgencia. Los puestos cubiertos (3+ jugadores de nivel) se marcan como tal y no
      puntúan, aunque tengan motivos listados.</p>
+  <p class="sub" data-i18n-html="p5_cand_desc">Los candidatos salen de jugadores de <b style="color:var(--tiza)">otros clubes que tengas cargados</b> a
+     la vez (exploraciones, scouting…): no dice si son fichables, solo que su nivel encajaría en el hueco.</p>
   <div class="tabla-scroll"><table id="tNecesidades"><thead><tr><th data-i18n="th_puesto2">Puesto</th><th class="n" data-i18n="th_puntuacion">Puntuación</th>
-    <th data-i18n="th_motivos">Motivos</th></tr></thead><tbody></tbody></table></div>
+    <th data-i18n="th_motivos">Motivos</th><th data-i18n="th_candidatos">Candidatos</th></tr></thead><tbody></tbody></table></div>
 </section>
 
 <section>
@@ -437,6 +439,11 @@ const I18N={
   th_puesto2:"Puesto", th_titular:"Titular", th_suplente:"Suplente", th_fondo:"Fondo ≥13", th_edadtit:"Edad titular",
   th_mejorjoven:"Mejor joven", th_puntuacion:"Puntuación", th_motivos:"Motivos",
   sin_titular_tabla:"— sin titular —", cubierto_chip:"cubierto, no puntúa", sin_necesidades:"Ningún puesto con necesidad detectada.",
+  p5_cand_desc:`Los candidatos salen de jugadores de <b style="color:var(--tiza)">otros clubes que tengas cargados</b> a
+     la vez (exploraciones, scouting…): no dice si son fichables, solo que su nivel encajaría en el hueco.`,
+  th_candidatos:"Candidatos", cand_selecciona_club:"selecciona un club en «Club en pantalla» para ver candidatos",
+  cand_sin_otro_club:"carga otro club (scouting, exploración…) a la vez para ver candidatos aquí",
+  cand_linea_tpl:"{n} ({club}, {nota}, {edad}a)",
   mot_sin_titular:"sin ningún jugador que llegue al perfil",
   mot_titular_bajo:"titular por debajo del nivel ({nota})",
   mot_sin_recambio:"sin recambio solvente",
@@ -599,6 +606,11 @@ const I18N={
   th_puesto2:"Position", th_titular:"Starter", th_suplente:"Backup", th_fondo:"Depth ≥13", th_edadtit:"Starter age",
   th_mejorjoven:"Best youngster", th_puntuacion:"Score", th_motivos:"Reasons",
   sin_titular_tabla:"— no starter —", cubierto_chip:"covered, scores zero", sin_necesidades:"No position with a detected need.",
+  p5_cand_desc:`Candidates come from players in <b style="color:var(--tiza)">other clubs you have loaded</b> at the
+     same time (scouting, exploration…): it doesn't say they're signable, only that their level would fit the gap.`,
+  th_candidatos:"Candidates", cand_selecciona_club:"select a specific club in «Club on screen» to see candidates",
+  cand_sin_otro_club:"load another club (scouting, exploration…) at the same time to see candidates here",
+  cand_linea_tpl:"{n} ({club}, {nota}, age {edad})",
   mot_sin_titular:"no player at all reaches this role",
   mot_titular_bajo:"starter below level ({nota})",
   mot_sin_recambio:"no solid backup",
@@ -1116,14 +1128,28 @@ function pintarRadiografia(rad){
       <td class="n">${p.fondo}</td><td class="n">${p.edadTit??""}</td><td>${mj}</td></tr>`);
   });
 }
-function pintarNecesidades(urg){
+function candidatosPara(grupo,clubHogar){
+  if(clubHogar==="__todos__") return null;
+  const pool=Object.values(JUG).filter(j=>j._club!==clubHogar);
+  if(!pool.length) return [];
+  return analizar(pool).filter(x=>(PERFIL_DE[x.g]||[]).includes(x.mejor)&&x.g===grupo)
+    .sort((a,b)=>b.nota-a.nota).slice(0,5);
+}
+function pintarNecesidades(urg,clubHogar){
   const tb=cel("tNecesidades").querySelector("tbody"); tb.innerHTML="";
   const activos=urg.filter(p=>p.puntuacion>0||p.contenido);
-  if(!activos.length){ tb.innerHTML=`<tr><td colspan="3" style="color:var(--tenue)">${tr("sin_necesidades")}</td></tr>`; return; }
+  if(!activos.length){ tb.innerHTML=`<tr><td colspan="4" style="color:var(--tenue)">${tr("sin_necesidades")}</td></tr>`; return; }
   activos.forEach(p=>{
     const motTxt=p.motivos.map(m=>tr(m.key,m.vars)).join(" · ");
     const puntTxt=p.contenido?`<span style="color:var(--tenue)">${tr("cubierto_chip")}</span>`:f1(p.puntuacion);
-    tb.insertAdjacentHTML("beforeend",`<tr><td>${p.grupo}</td><td class="n">${puntTxt}</td><td style="color:var(--tenue);font-size:12px">${motTxt||"—"}</td></tr>`);
+    const cand=candidatosPara(p.grupo,clubHogar);
+    let candTxt;
+    if(cand===null) candTxt=`<span style="color:var(--tenue)">${tr("cand_selecciona_club")}</span>`;
+    else if(!cand.length) candTxt=`<span style="color:var(--tenue)">${tr("cand_sin_otro_club")}</span>`;
+    else candTxt=cand.map(c=>tr("cand_linea_tpl",{n:c.n,club:c.club,nota:f1(c.nota),edad:c.j.Edad??"?"})).join(" · ");
+    tb.insertAdjacentHTML("beforeend",`<tr><td>${p.grupo}</td><td class="n">${puntTxt}</td>
+      <td style="color:var(--tenue);font-size:12px">${motTxt||"—"}</td>
+      <td style="font-size:12px">${candTxt}</td></tr>`);
   });
 }
 function pintarVentas(enriquecidos){
@@ -1217,7 +1243,7 @@ function pintarTodo(){
      <td class="n ${clase(x.pr)}">${f1(x.pr)}</td><td class="n">+${f1(x.pr-x.nota)}</td></tr>`);});
 
   pintarRadiografia(rad);
-  pintarNecesidades(urg);
+  pintarNecesidades(urg,CLUB_VER);
   pintarVentas(enriquecidos);
   pintarCesiones(ces);
   pintarContratos(uc);
