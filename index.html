@@ -226,7 +226,8 @@ footer{padding:30px 0;color:var(--tenue);font-size:12.5px}
   <div class="tabla-scroll"><table id="tPlantilla"><thead><tr><th data-i18n="th_num">#</th><th data-i18n="th_jugador">Jugador</th><th class="colClub" data-i18n="th_club">Club</th><th data-i18n="th_mejorpos">Mejor pos.</th>
     <th class="n" data-i18n="th_edad">Edad</th><th class="n" data-i18n="th_nota">Nota</th><th data-i18n="th_perfil">Perfil</th>
     <th class="n" data-i18n="th_prof">Prof.</th><th class="n" data-i18n="th_cons">Cons.</th><th data-i18n="th_cedal">Cedido al club</th>
-    <th data-i18n="th_decision">Decisión</th><th data-i18n="th_todas_notas">Todas las notas</th></tr></thead><tbody></tbody></table></div>
+    <th data-i18n="th_decision">Decisión</th><th data-i18n="th_rolsugerido">Rol sugerido</th>
+    <th data-i18n="th_rolesgrupo">Roles del grupo</th><th data-i18n="th_todas_notas">Todas las notas</th></tr></thead><tbody></tbody></table></div>
   <p class="sub" style="margin-top:10px" data-i18n-html="p3_oculto_nota">Profesionalidad y Consistencia se introducen a mano (no salen en ninguna vista exportable) y
      quedan guardadas en tu navegador. Mientras no las rellenes, el riesgo de los jóvenes y la regla de venta que las usa
      quedan marcados como <b>sin verificar</b>.</p>
@@ -425,6 +426,25 @@ const I18N={
   combinado:"Combinado",
   err_xlsx_no_cargado:"no se ha podido cargar el lector/escritor de Excel (sin conexión al CDN)",
   th_prof:"Prof.", th_cons:"Cons.", th_cedal:"Cedido al club", th_decision:"Decisión",
+  th_rolsugerido:"Rol sugerido", th_rolesgrupo:"Roles del grupo", rol_sin_datos:"sin atributos suficientes",
+  rol_gk_trad:"Portero tradicional", rol_gk_sweeper:"Portero cierre",
+  rol_dfc_central:"Defensa central", rol_dfc_toque:"Defensa de toque", rol_dfc_sinconcesiones:"Defensa sin concesiones",
+  rol_dfc_libero:"Líbero", rol_dfc_abierto:"Defensa central abierto",
+  rol_lat_lateral:"Lateral", rol_lat_carrilero:"Carrilero", rol_lat_carrilero_completo:"Carrilero completo",
+  rol_lat_invertido:"Lateral invertido", rol_lat_carrilero_invertido:"Carrilero invertido", rol_lat_sinconcesiones:"Lateral sin concesiones",
+  rol_mc_pivote:"Pivote defensivo", rol_mc_pivote_organizador:"Pivote organizador", rol_mc_recuperador:"Centrocampista recuperador",
+  rol_mc_mediocierre:"Medio cierre", rol_mc_regista:"Pivote organizador retrasado", rol_mc_segundovolante:"Segundo volante",
+  rol_mc_ancla:"Mediopunta defensivo", rol_mc_base:"Centrocampista", rol_mc_boxtobox:"Centrocampista todoterreno",
+  rol_mc_itinerante:"Organizador itinerante", rol_mc_avanzado:"Organizador avanzado", rol_mc_mezzala:"Mezzala",
+  rol_mc_entretiempo:"Carrilero de entretiempo",
+  rol_ban_extremo:"Extremo", rol_ban_interior:"Delantero interior", rol_ban_extremo_invertido:"Extremo invertido",
+  rol_ban_organizador:"Organizador en banda", rol_ban_raumdeuter:"Buscador de espacios", rol_ban_mediocampista:"Centrocampista de banda",
+  rol_ban_defensivo:"Extremo defensivo", rol_ban_objetivo:"Delantero objetivo escorado",
+  rol_mpc_base:"Mediapunta", rol_mpc_avanzado:"Organizador avanzado", rol_mpc_enganche:"Enganche",
+  rol_mpc_sorpresa:"Delantero sorpresa", rol_mpc_trequartista:"Mediapunta creativo",
+  rol_dl_avanzado:"Delantero avanzado", rol_dl_ariete:"Ariete", rol_dl_completo:"Delantero completo",
+  rol_dl_segundo:"Segundo delantero", rol_dl_objetivo:"Delantero objetivo", rol_dl_falso9:"Falso nueve",
+  rol_dl_presionante:"Delantero presionante",
   p3_oculto_nota:`Profesionalidad y Consistencia se introducen a mano (no salen en ninguna vista exportable) y
      quedan guardadas en tu navegador. Mientras no las rellenes, el riesgo de los jóvenes y la regla de venta que las usa
      quedan marcados como <b>sin verificar</b>.`,
@@ -593,6 +613,25 @@ const I18N={
   combinado:"Combined",
   err_xlsx_no_cargado:"couldn't load the Excel reader/writer (no connection to the CDN)",
   th_prof:"Prof.", th_cons:"Cons.", th_cedal:"On loan at club", th_decision:"Decision",
+  th_rolsugerido:"Suggested role", th_rolesgrupo:"Group roles", rol_sin_datos:"not enough attributes",
+  rol_gk_trad:"Goalkeeper", rol_gk_sweeper:"Sweeper Keeper",
+  rol_dfc_central:"Central Defender", rol_dfc_toque:"Ball-Playing Defender", rol_dfc_sinconcesiones:"No-Nonsense Centre-Back",
+  rol_dfc_libero:"Libero", rol_dfc_abierto:"Wide Centre-Back",
+  rol_lat_lateral:"Full-Back", rol_lat_carrilero:"Wing-Back", rol_lat_carrilero_completo:"Complete Wing-Back",
+  rol_lat_invertido:"Inverted Full-Back", rol_lat_carrilero_invertido:"Inverted Wing-Back", rol_lat_sinconcesiones:"No-Nonsense Full-Back",
+  rol_mc_pivote:"Defensive Midfielder", rol_mc_pivote_organizador:"Deep-Lying Playmaker", rol_mc_recuperador:"Ball Winning Midfielder",
+  rol_mc_mediocierre:"Half Back", rol_mc_regista:"Regista", rol_mc_segundovolante:"Segundo Volante",
+  rol_mc_ancla:"Anchor", rol_mc_base:"Central Midfielder", rol_mc_boxtobox:"Box-to-Box Midfielder",
+  rol_mc_itinerante:"Roaming Playmaker", rol_mc_avanzado:"Advanced Playmaker", rol_mc_mezzala:"Mezzala",
+  rol_mc_entretiempo:"Carrilero",
+  rol_ban_extremo:"Winger", rol_ban_interior:"Inside Forward", rol_ban_extremo_invertido:"Inverted Winger",
+  rol_ban_organizador:"Wide Playmaker", rol_ban_raumdeuter:"Raumdeuter", rol_ban_mediocampista:"Wide Midfielder",
+  rol_ban_defensivo:"Defensive Winger", rol_ban_objetivo:"Wide Target Forward",
+  rol_mpc_base:"Attacking Midfielder", rol_mpc_avanzado:"Advanced Playmaker", rol_mpc_enganche:"Enganche",
+  rol_mpc_sorpresa:"Shadow Striker", rol_mpc_trequartista:"Trequartista",
+  rol_dl_avanzado:"Advanced Forward", rol_dl_ariete:"Poacher", rol_dl_completo:"Complete Forward",
+  rol_dl_segundo:"Deep-Lying Forward", rol_dl_objetivo:"Target Forward", rol_dl_falso9:"False Nine",
+  rol_dl_presionante:"Pressing Forward",
   p3_oculto_nota:`Professionalism and Consistency are entered by hand (they don't show up in any exportable view) and
      get saved in your browser. Until you fill them in, youth risk and the sell rule that uses them stay
      marked as <b>unverified</b>.`,
@@ -670,6 +709,68 @@ const PERFILES={
  MP :["Técnica","Regate","Control","Pases","Visión","Decisiones","Desmarques","Remate","Aceleración","Agilidad"],
  BAN:["Aceleración","Velocidad","Resistencia","Regate","Centros","Control","Técnica","Desmarques","Sacrificio","Trabajo equipo"],
  DL :["Remate","Control","Técnica","Cabeceo","Desmarques","Serenidad","Decisiones","Aceleración","Velocidad","Fuerza"]};
+const ROLES={
+ rol_gk_trad:{grupo:"POR",p:["Reflejos","Alcance aéreo","Comunicación","Mando en el área","Colocación"],s:["Agilidad","Concentración","Valentía"]},
+ rol_gk_sweeper:{grupo:"POR",p:["Reflejos","Salidas","Control","Pases","Agilidad"],s:["Visión","Velocidad","Aceleración","Serenidad","Excentricidad"]},
+ rol_dfc_central:{grupo:"DFC",p:["Entradas","Marcaje","Cabeceo","Colocación","Fuerza"],s:["Anticipación","Concentración","Serenidad","Alcance de salto"]},
+ rol_dfc_toque:{grupo:"DFC",p:["Pases","Técnica","Serenidad","Visión","Colocación","Entradas"],s:["Control","Anticipación","Decisiones","Fuerza"]},
+ rol_dfc_sinconcesiones:{grupo:"DFC",p:["Entradas","Marcaje","Fuerza","Valentía","Agresividad"],s:["Cabeceo","Colocación","Concentración"]},
+ rol_dfc_libero:{grupo:"DFC",p:["Visión","Pases","Técnica","Serenidad","Decisiones","Anticipación","Colocación"],s:["Control","Resistencia","Concentración","Velocidad"]},
+ rol_dfc_abierto:{grupo:"DFC",p:["Entradas","Colocación","Marcaje","Resistencia","Velocidad"],s:["Centros","Pases","Decisiones","Anticipación"]},
+ rol_lat_lateral:{grupo:"LAT",p:["Entradas","Marcaje","Colocación","Resistencia","Trabajo equipo"],s:["Centros","Anticipación","Velocidad","Aceleración"]},
+ rol_lat_carrilero:{grupo:"LAT",p:["Resistencia","Centros","Desmarques","Sacrificio","Velocidad","Aceleración"],s:["Entradas","Regate","Técnica","Decisiones"]},
+ rol_lat_carrilero_completo:{grupo:"LAT",p:["Regate","Centros","Técnica","Resistencia","Velocidad","Desmarques","Talento"],s:["Pases","Agilidad","Anticipación","Decisiones","Entradas"]},
+ rol_lat_invertido:{grupo:"LAT",p:["Entradas","Marcaje","Colocación","Fuerza","Concentración"],s:["Anticipación","Trabajo equipo","Pases"]},
+ rol_lat_carrilero_invertido:{grupo:"LAT",p:["Pases","Control","Técnica","Decisiones","Serenidad","Resistencia"],s:["Visión","Trabajo equipo","Colocación","Entradas"]},
+ rol_lat_sinconcesiones:{grupo:"LAT",p:["Entradas","Marcaje","Colocación","Fuerza","Agresividad"],s:["Concentración","Valentía","Resistencia"]},
+ rol_mc_pivote:{grupo:"MC",p:["Entradas","Colocación","Anticipación","Trabajo equipo","Resistencia"],s:["Marcaje","Pases","Concentración","Decisiones"]},
+ rol_mc_pivote_organizador:{grupo:"MC",p:["Pases","Técnica","Visión","Decisiones","Serenidad","Control"],s:["Colocación","Anticipación","Trabajo equipo"]},
+ rol_mc_recuperador:{grupo:"MC",p:["Entradas","Agresividad","Valentía","Sacrificio","Resistencia","Fuerza"],s:["Marcaje","Colocación","Anticipación","Velocidad"]},
+ rol_mc_mediocierre:{grupo:"MC",p:["Colocación","Anticipación","Entradas","Marcaje","Serenidad","Decisiones"],s:["Pases","Concentración","Fuerza","Control"]},
+ rol_mc_regista:{grupo:"MC",p:["Pases","Técnica","Visión","Talento","Decisiones","Serenidad","Control"],s:["Resistencia","Anticipación","Tiros lejanos"]},
+ rol_mc_segundovolante:{grupo:"MC",p:["Resistencia","Desmarques","Entradas","Fuerza","Sacrificio"],s:["Pases","Remate","Tiros lejanos","Colocación","Velocidad"]},
+ rol_mc_ancla:{grupo:"MC",p:["Colocación","Anticipación","Marcaje","Entradas","Concentración"],s:["Fuerza","Trabajo equipo","Decisiones"]},
+ rol_mc_base:{grupo:"MC",p:["Pases","Entradas","Trabajo equipo","Decisiones","Resistencia"],s:["Control","Colocación","Visión","Desmarques"]},
+ rol_mc_boxtobox:{grupo:"MC",p:["Resistencia","Sacrificio","Trabajo equipo","Entradas","Desmarques"],s:["Fuerza","Pases","Remate","Decisiones","Aceleración"]},
+ rol_mc_itinerante:{grupo:"MC",p:["Técnica","Regate","Pases","Visión","Agilidad","Aceleración","Resistencia"],s:["Talento","Serenidad","Decisiones","Control"]},
+ rol_mc_avanzado:{grupo:"MC",p:["Pases","Visión","Técnica","Control","Decisiones","Talento"],s:["Agilidad","Serenidad","Desmarques","Trabajo equipo"]},
+ rol_mc_mezzala:{grupo:"MC",p:["Desmarques","Regate","Técnica","Resistencia","Aceleración","Decisiones"],s:["Pases","Visión","Remate","Tiros lejanos"]},
+ rol_mc_entretiempo:{grupo:"MC",p:["Colocación","Trabajo equipo","Resistencia","Entradas","Decisiones"],s:["Marcaje","Pases","Concentración"]},
+ rol_ban_extremo:{grupo:"BAN",p:["Velocidad","Aceleración","Regate","Centros","Técnica","Agilidad"],s:["Desmarques","Control","Talento","Resistencia"]},
+ rol_ban_interior:{grupo:"BAN",p:["Regate","Remate","Velocidad","Aceleración","Desmarques","Agilidad"],s:["Técnica","Pases","Serenidad","Tiros lejanos"]},
+ rol_ban_extremo_invertido:{grupo:"BAN",p:["Regate","Centros","Técnica","Pases","Visión","Agilidad"],s:["Aceleración","Velocidad","Desmarques","Decisiones"]},
+ rol_ban_organizador:{grupo:"BAN",p:["Pases","Visión","Técnica","Control","Decisiones","Serenidad"],s:["Trabajo equipo","Talento","Resistencia"]},
+ rol_ban_raumdeuter:{grupo:"BAN",p:["Desmarques","Anticipación","Remate","Serenidad","Decisiones","Concentración"],s:["Control","Aceleración","Agilidad"]},
+ rol_ban_mediocampista:{grupo:"BAN",p:["Trabajo equipo","Sacrificio","Resistencia","Centros","Pases","Colocación"],s:["Entradas","Marcaje","Control","Decisiones"]},
+ rol_ban_defensivo:{grupo:"BAN",p:["Sacrificio","Resistencia","Trabajo equipo","Entradas","Colocación","Aceleración"],s:["Marcaje","Centros","Concentración"]},
+ rol_ban_objetivo:{grupo:"BAN",p:["Fuerza","Alcance de salto","Cabeceo","Equilibrio","Trabajo equipo"],s:["Control","Remate","Anticipación"]},
+ rol_mpc_base:{grupo:"MPC",p:["Desmarques","Técnica","Pases","Control","Visión","Agilidad"],s:["Remate","Serenidad","Decisiones","Aceleración"]},
+ rol_mpc_avanzado:{grupo:"MPC",p:["Pases","Visión","Técnica","Control","Decisiones","Talento"],s:["Agilidad","Serenidad","Desmarques","Trabajo equipo"]},
+ rol_mpc_enganche:{grupo:"MPC",p:["Visión","Pases","Técnica","Control","Decisiones","Serenidad"],s:["Talento","Anticipación"]},
+ rol_mpc_sorpresa:{grupo:"MPC",p:["Desmarques","Anticipación","Remate","Serenidad","Aceleración","Velocidad"],s:["Sacrificio","Trabajo equipo","Control","Decisiones"]},
+ rol_mpc_trequartista:{grupo:"MPC",p:["Talento","Visión","Técnica","Regate","Pases","Desmarques","Serenidad"],s:["Agilidad","Control","Decisiones","Remate"]},
+ rol_dl_avanzado:{grupo:"DL",p:["Remate","Desmarques","Velocidad","Aceleración","Serenidad","Agilidad"],s:["Regate","Técnica","Anticipación","Control"]},
+ rol_dl_ariete:{grupo:"DL",p:["Remate","Anticipación","Desmarques","Serenidad","Control"],s:["Cabeceo","Agilidad","Concentración"]},
+ rol_dl_completo:{grupo:"DL",p:["Remate","Fuerza","Desmarques","Técnica","Visión","Velocidad","Serenidad"],s:["Cabeceo","Alcance de salto","Regate","Pases","Agilidad"]},
+ rol_dl_segundo:{grupo:"DL",p:["Control","Pases","Técnica","Fuerza","Visión","Decisiones"],s:["Remate","Desmarques","Equilibrio","Trabajo equipo"]},
+ rol_dl_objetivo:{grupo:"DL",p:["Fuerza","Alcance de salto","Cabeceo","Equilibrio","Trabajo equipo"],s:["Anticipación","Control","Remate","Serenidad"]},
+ rol_dl_falso9:{grupo:"DL",p:["Regate","Técnica","Visión","Pases","Agilidad","Control","Talento"],s:["Desmarques","Serenidad","Decisiones","Aceleración"]},
+ rol_dl_presionante:{grupo:"DL",p:["Sacrificio","Resistencia","Agresividad","Valentía","Velocidad","Aceleración"],s:["Entradas","Trabajo equipo","Anticipación","Remate"]}
+};
+const GRUPO_ROL={POR:"POR",DFC:"DFC",LATD:"LAT",LATI:"LAT",MC:"MC",MPD:"BAN",MPI:"BAN",MPC:"MPC",DL:"DL"};
+function notaRol(j,rol){
+  let sp=0,sc=0;
+  for(const a of rol.p){ const v=j[a]; if(typeof v!=="number") return null; sp+=v*2; sc+=2; }
+  for(const a of rol.s){ const v=j[a]; if(typeof v!=="number") return null; sp+=v; sc+=1; }
+  return sp/sc;
+}
+function mejoresRoles(j,g){
+  const clave=GRUPO_ROL[g]; if(!clave) return [];
+  return Object.entries(ROLES).filter(([k,r])=>r.grupo===clave)
+    .map(([k,r])=>({key:k,nota:notaRol(j,r)}))
+    .filter(x=>x.nota!==null)
+    .sort((a,b)=>b.nota-a.nota);
+}
 const ALIAS={"mando en el":"Mando en el área","alcance aereo":"Alcance aéreo","uno contra uno":"Uno contra uno",
  "saques de pu":"Saques de puerta","saques de e":"Saques de esquina","trabajo de":"Trabajo equipo",
  "trabajo equipo":"Trabajo equipo","juego en equipo":"Trabajo equipo","concentrac":"Concentración",
@@ -1220,6 +1321,10 @@ function pintarTodo(){
   const tb=cel("tPlantilla").querySelector("tbody");tb.innerHTML="";
   enriquecidosCompletos.forEach((x,i)=>{const t=Object.entries(x.todas).sort((a,b)=>b[1]-a[1]).map(([p,v])=>`${p} ${f1(v)}`).join(" · ");
     const opcionesDec=DECISIONES.map(c=>`<option value="${c}" ${x.dec===c?"selected":""}>${tr("dec_"+c)}</option>`).join("");
+    const rs=mejoresRoles(x.j,x.g);
+    const rolSugerido=rs.length?`${tr(rs[0].key)} <span class="num ${clase(rs[0].nota)}">${f1(rs[0].nota)}</span>`
+      :`<span style="color:var(--tenue)">${tr("rol_sin_datos")}</span>`;
+    const rolesGrupo=rs.length?rs.map(r=>`${tr(r.key)} ${f1(r.nota)}`).join(" · "):"—";
     tb.insertAdjacentHTML("beforeend",`<tr><td class="n">${i+1}</td><td>${x.n}</td>
      <td class="colClub" style="color:var(--tenue)">${x.club}</td><td>${x.j["Mejor pos."]??""}</td>
      <td class="n">${x.j.Edad??""}</td><td class="n ${clase(x.nota)}">${f1(x.nota)}</td><td>${x.mejor}</td>
@@ -1231,6 +1336,8 @@ function pintarTodo(){
      <td><select class="selDecision tipo${x.dec==="VENDER"?"VENDER":(x.dec==="CEDER"?"CEDER":"")}" data-i="${i}"
        style="font-size:12px;padding:4px 8px;${x.decManual?"border-color:var(--cal)":""}">${opcionesDec}</select>${x.decManual?
        `<button class="btnResetDec" data-i="${i}" title="${tr("volver_auto_title")}" style="font-size:12px;padding:3px 7px;margin-left:4px">↺</button>`:""}</td>
+     <td>${rolSugerido}</td>
+     <td style="color:var(--tenue);font-size:12px">${rolesGrupo}</td>
      <td style="color:var(--tenue);font-size:12px">${t}</td></tr>`);});
   tb.querySelectorAll(".inProf,.inCons").forEach(inp=>inp.onchange=()=>{
     const x=enriquecidosCompletos[+inp.dataset.i], campo=inp.classList.contains("inProf")?"Profesionalidad":"Consistencia";
