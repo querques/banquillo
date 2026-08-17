@@ -170,6 +170,19 @@ footer{padding:30px 0;color:var(--tenue);font-size:12.5px}
 </section>
 
 <section>
+  <div class="paso" data-i18n="top_badge">TOP 50 POR ATRIBUTO</div>
+  <h2 data-i18n="top_title">Quién manda en cada atributo</h2>
+  <p class="sub" data-i18n="top_desc">Con un club concreto arriba, ordena tu plantilla por ese atributo. Con «Todos» seleccionado,
+     compara entre todos los clubes que tengas cargados a la vez (scouting, otros rivales…).</p>
+  <div class="fila">
+    <select id="selAtributo" style="width:100%;max-width:280px"></select>
+  </div>
+  <div class="tabla-scroll"><table id="tTopAtributo"><thead><tr><th data-i18n="th_num">#</th><th data-i18n="th_jugador">Jugador</th>
+    <th data-i18n="th_club">Club</th><th data-i18n="th_mejorpos">Mejor pos.</th><th class="n" data-i18n="th_edad">Edad</th>
+    <th class="n" id="thValorAtributo"></th></tr></thead><tbody></tbody></table></div>
+</section>
+
+<section>
   <div class="paso" data-i18n="p2_badge">PASO 2 — ALINEACIÓN</div>
   <div class="grid2">
     <div>
@@ -361,6 +374,10 @@ const I18N={
   todos_btn:"Todos",
   eliminar_confirm_tpl:"¿Eliminar todos los jugadores de «{club}»? No se puede deshacer.",
   eliminar_title_tpl:"Eliminar «{club}»",
+  top_badge:"TOP 50 POR ATRIBUTO",
+  top_title:"Quién manda en cada atributo",
+  top_desc:"Con un club concreto arriba, ordena tu plantilla por ese atributo. Con «Todos» seleccionado, compara entre todos los clubes que tengas cargados a la vez (scouting, otros rivales…).",
+  top_sin_datos:"Nadie tiene ese atributo en los datos cargados.",
   p2_badge:"PASO 2 — ALINEACIÓN",
   p2_desc:`Para cada puesto se elige al jugador con mejor nota en ese perfil, respetando su mejor
          posición real. Media del once: <b class="num" id="mediaOnce" style="color:var(--cal)"></b>`,
@@ -548,6 +565,10 @@ const I18N={
   todos_btn:"All",
   eliminar_confirm_tpl:"Delete all players from «{club}»? This can't be undone.",
   eliminar_title_tpl:"Delete «{club}»",
+  top_badge:"TOP 50 BY ATTRIBUTE",
+  top_title:"Who tops each attribute",
+  top_desc:"With one specific club selected above, ranks your squad by that attribute. With «All» selected, compares across every club you have loaded at the same time (scouting, other rivals…).",
+  top_sin_datos:"Nobody has that attribute in the loaded data.",
   p2_badge:"STEP 2 — LINEUP",
   p2_desc:`For each position, the player with the best rating for that role is picked, respecting his best
          real position. XI average: <b class="num" id="mediaOnce" style="color:var(--cal)"></b>`,
@@ -887,6 +908,27 @@ function pintarSelector(){
   cont.querySelectorAll(".cbtn").forEach(b=>b.onclick=()=>{CLUB_VER=b.dataset.c;guardar();pintarTodo();});
   cont.querySelectorAll(".cbtn-x").forEach(b=>b.onclick=e=>{e.stopPropagation();eliminarClub(b.dataset.del);});
   document.querySelectorAll(".colClub").forEach(e=>e.style.display=CLUB_VER==="__todos__"?"":"none");
+}
+function pintarTopAtributo(){
+  const sel=cel("selAtributo");
+  sel.onchange=()=>pintarTopAtributo();
+  const visiblesActuales=visibles();
+  const atributos=ORDEN_COLS.filter(c=>visiblesActuales.some(j=>typeof j[c]==="number")).sort((a,b)=>a.localeCompare(b,"es"));
+  const anterior=sel.value;
+  sel.innerHTML=atributos.map(a=>`<option value="${a}">${a}</option>`).join("");
+  sel.value=atributos.includes(anterior)?anterior:(atributos[0]||"");
+  const atrib=sel.value;
+  cel("thValorAtributo").textContent=atrib||"";
+  const tb=cel("tTopAtributo").querySelector("tbody"); tb.innerHTML="";
+  if(!atrib){ tb.innerHTML=`<tr><td colspan="6" style="color:var(--tenue)">${tr("top_sin_datos")}</td></tr>`; return; }
+  const top=visiblesActuales.filter(j=>typeof j[atrib]==="number").sort((a,b)=>b[atrib]-a[atrib]).slice(0,50);
+  if(!top.length){ tb.innerHTML=`<tr><td colspan="6" style="color:var(--tenue)">${tr("top_sin_datos")}</td></tr>`; return; }
+  top.forEach((j,i)=>{
+    const v=j[atrib];
+    tb.insertAdjacentHTML("beforeend",`<tr><td class="n">${i+1}</td><td>${j.Jugador}</td>
+      <td><span class="tagclub">${j._club}</span></td><td>${j["Mejor pos."]??""}</td>
+      <td class="n">${j.Edad??""}</td><td class="n" style="font-weight:600;color:var(--cal)">${Number.isInteger(v)?v:f1(v)}</td></tr>`);
+  });
 }
 function nombresRepetidosEntreClubes(){
   const porNombre={};
@@ -1381,6 +1423,7 @@ function pintarTodo(){
 
   window.__d=d;
   pintarSelector();
+  pintarTopAtributo();
   pintarOnce(d,cel("formacion").value||"4231");
   pintarEstado();
 }
