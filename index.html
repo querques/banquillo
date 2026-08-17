@@ -395,7 +395,7 @@ const I18N={
   modal_puesto_tpl:"Puesto {pos}",
   modal_sub_tpl:"Perfil {perfil} · ordenados por su nota en ese perfil, de todos los clubes cargados",
   modal_buscar_placeholder:"Buscar por nombre o club…",
-  modal_ya_alineado:"· ya alineado",
+  modal_ya_alineado:"· ya alineado", modal_cedido_fuera:"cedido fuera este año",
   modal_linea_tpl:"{club} · {pos} · {edad} años",
   modal_auto_btn:"Dejar que lo elija la app",
   modal_cancelar_btn:"Cancelar",
@@ -582,7 +582,7 @@ const I18N={
   modal_puesto_tpl:"Position {pos}",
   modal_sub_tpl:"{perfil} role · sorted by rating for that role, across all loaded clubs",
   modal_buscar_placeholder:"Search by name or club…",
-  modal_ya_alineado:"· already in XI",
+  modal_ya_alineado:"· already in XI", modal_cedido_fuera:"on loan out this year",
   modal_linea_tpl:"{club} · {pos} · {edad} yrs",
   modal_auto_btn:"Let the app pick",
   modal_cancelar_btn:"Cancel",
@@ -1100,9 +1100,9 @@ function elegirOnce(d,k,todos,sinFijos){const F=FORMACIONES[k],u=new Set(),once=
     u.add(p.clave); once[i]={etq:s[0],perf:s[1],x:s[3],y:s[4],d:p,nota:p.todas[s[1]]??p.nota,fijo:true}; });
   F.p.forEach((s,i)=>{ if(once[i]) return;
     const [etq,perf,grs,x,y]=s; let m=null,natural=true;
-    for(const p of d){if(u.has(p.clave)||!grs.includes(p.g)||p.todas[perf]===undefined)continue;
+    for(const p of d){if(u.has(p.clave)||esCedidoFuera(p.j)||!grs.includes(p.g)||p.todas[perf]===undefined)continue;
       if(!m||p.todas[perf]>m.todas[perf])m=p;}
-    if(!m){natural=false;for(const p of d){if(u.has(p.clave)||p.todas[perf]===undefined)continue;
+    if(!m){natural=false;for(const p of d){if(u.has(p.clave)||esCedidoFuera(p.j)||p.todas[perf]===undefined)continue;
       if(!m||p.todas[perf]>m.todas[perf])m=p;}}
     if(m){u.add(m.clave);once[i]={etq,perf,x,y,d:m,nota:m.todas[perf],fueraDePos:!natural};}});
   return once.filter(Boolean);}
@@ -1178,7 +1178,8 @@ function listarPicker(q){
     .filter(p=>!q||p.n.toLowerCase().includes(q)||p.club.toLowerCase().includes(q))
     .sort((a,b)=>b.todas[perf]-a.todas[perf]).slice(0,120);
   cel("mLista").innerHTML=l.map(p=>`<div class="opt" data-c="${p.clave}">
-     <span>${p.n} ${usados.has(p.clave)?'<small>'+tr("modal_ya_alineado")+'</small>':''}<br>
+     <span>${p.n} ${usados.has(p.clave)?'<small>'+tr("modal_ya_alineado")+'</small>':''}${esCedidoFuera(p.j)?
+       '<small style="color:var(--rojo)"> · '+tr("modal_cedido_fuera")+'</small>':''}<br>
        <small>${tr("modal_linea_tpl",{club:p.club,pos:p.j["Mejor pos."]??"?",edad:p.j.Edad??"?"})}</small></span>
      <span class="num ${clase(p.todas[perf])}" style="font-weight:600">${f1(p.todas[perf])}</span></div>`).join("")
    ||`<div class="opt"><small>${tr("modal_ninguno")}</small></div>`;
@@ -1298,24 +1299,30 @@ function pintarTodo(){
   // grupo natural: si a un portero le faltan Blocaje/Reflejos/etc., su "mejor" cae en un perfil de
   // campo irrelevante y no se puede usar para decidir nada sobre él (radiografía, ventas, cesiones...).
   const datosFiables=d.filter(x=>(PERFIL_DE[x.g]||[]).includes(x.mejor));
-  const pg=radiografiaPorGrupo(datosFiables), rangos=rangosDe(pg), rad=radiografia(pg), urg=urgencia(rad);
-  const sueldos=datosFiables.map(x=>parseImporte(x.j.Sueldo)).filter(v=>v!==null);
-  const valores=datosFiables.map(x=>parseImporte(x.j["Valor de traspaso"])).filter(v=>v!==null);
+  // Un cedido fuera no puede jugar esta temporada: no cuenta como titular/suplente ni entra en el once,
+  // aunque siga viéndose en la Plantilla ordenada y en el panel de Cesiones (por eso datosFiables, sin
+  // filtrar por cesión, sigue siendo lo que reciben cesiones() y el rango "de verdad" para Repescar).
+  const datosDisponibles=datosFiables.filter(x=>!esCedidoFuera(x.j));
+  const rangosTodos=rangosDe(radiografiaPorGrupo(datosFiables));
+  const pg=radiografiaPorGrupo(datosDisponibles), rangos=rangosDe(pg), rad=radiografia(pg), urg=urgencia(rad);
+  const sueldos=datosDisponibles.map(x=>parseImporte(x.j.Sueldo)).filter(v=>v!==null);
+  const valores=datosDisponibles.map(x=>parseImporte(x.j["Valor de traspaso"])).filter(v=>v!==null);
   const stats={p90Sueldo:percentil(sueldos,90),p80Valor:percentil(valores,80)};
-  const enriquecidos=datosFiables.map(x=>{const rango=rangos[x.clave];const vm=motivosVenta(x,rango,stats);
+  const enriquecidos=datosDisponibles.map(x=>{const rango=rangos[x.clave];const vm=motivosVenta(x,rango,stats);
     return {...x,rango,vm,dec:decision(x,rango,vm)};});
   const mediaTitulares=promedio(rad.map(p=>p.titular?.nota));
-  const ces=cesiones(datosFiables,rangos,mediaTitulares);
+  const ces=cesiones(datosFiables,rangosTodos,mediaTitulares);
   const uc=urgenciasContrato(datosFiables,mediaTitulares);
-  // La tabla "Plantilla ordenada" sigue mostrando a TODOS (incluidos los porteros sin datos de portería),
-  // con Decisión calculada lo mejor posible aunque no tengan rango fiable (rango queda undefined y las
-  // reglas que lo usan simplemente no se disparan, sin romper nada).
+  // La tabla "Plantilla ordenada" sigue mostrando a TODOS (incluidos los porteros sin datos de portería
+  // y los cedidos fuera), con Decisión calculada lo mejor posible: los cedidos fuera usan su rango "de
+  // verdad" (rangosTodos) para poder distinguir Repescar cesión de Ceder y vigilar.
   const enriquecidosCompletos=d.map(x=>{
     if(!(PERFIL_DE[x.g]||[]).includes(x.mejor)){
       const decAuto="SIN_DATOS";
       return {...x,rango:undefined,vm:[],decAuto,dec:x.j._decisionManual||decAuto,decManual:!!x.j._decisionManual};
     }
-    const rango=rangos[x.clave],vm=motivosVenta(x,rango,stats),decAuto=decision(x,rango,vm);
+    const rango=esCedidoFuera(x.j)?rangosTodos[x.clave]:rangos[x.clave];
+    const vm=motivosVenta(x,rango,stats),decAuto=decision(x,rango,vm);
     return {...x,rango,vm,decAuto,dec:x.j._decisionManual||decAuto,decManual:!!x.j._decisionManual};});
 
   const tb=cel("tPlantilla").querySelector("tbody");tb.innerHTML="";
