@@ -338,6 +338,35 @@ footer{padding:30px 0;color:var(--tenue);font-size:12.5px}
   </tr></thead><tbody></tbody></table></div>
 </section>
 
+<section>
+  <div class="paso" data-i18n="p9_badge">PASO 9 — RECOMENDACIONES DE FICHAJE</div>
+  <h2 data-i18n="p9_title">A quién merece la pena fichar, por puesto</h2>
+  <p class="sub" data-i18n-html="p9_desc">Combina <b style="color:var(--tiza)">nota actual</b>, <b style="color:var(--tiza)">proyección</b>
+     (potencial futuro) y, cuando hay datos fiables, <b style="color:var(--tiza)">rendimiento real</b> del Paso 8. Los
+     candidatos salen de <b style="color:var(--tiza)">otros clubes que tengas cargados</b>: selecciona tu club en «Club
+     en pantalla» para verlos.</p>
+  <p class="sub" data-i18n-html="p9_realismo_desc">El realismo del fichaje se calcula con <b style="color:var(--tiza)">Valor de traspaso</b> y
+     <b style="color:var(--tiza)">Sueldo</b> del candidato frente a tu propio nivel (o tu presupuesto, si lo indicas), y con su
+     estado actual ("Jugador importante" cuesta mucho más sacarlo que "Jugador de plantilla"). Los que no son realistas
+     se muestran atenuados, no se ocultan. Marca <span style="color:var(--cal)">💎</span> = barato para tu nivel y con
+     buen rendimiento o crecimiento por delante.</p>
+  <div class="fila" style="margin-top:0">
+    <label class="sub" style="margin:0" data-i18n="presupuesto_valor_label">Presupuesto de fichajes (opcional):</label>
+    <input id="presupuestoValor" placeholder="ej: 15M €" style="font-family:'IBM Plex Mono';font-size:13px;padding:6px 10px;
+      border-radius:3px;border:1px solid var(--linea);background:var(--panel);color:var(--tiza);width:140px">
+    <label class="sub" style="margin:0" data-i18n="presupuesto_sueldo_label">Tope salarial (opcional):</label>
+    <input id="presupuestoSueldo" placeholder="ej: 900m € p/a" style="font-family:'IBM Plex Mono';font-size:13px;padding:6px 10px;
+      border-radius:3px;border:1px solid var(--linea);background:var(--panel);color:var(--tiza);width:140px">
+  </div>
+  <p class="sub" id="nivelClubTxt" style="margin-top:10px"></p>
+  <div class="tabla-scroll"><table id="tFichajes"><thead><tr>
+    <th data-i18n="th_puesto2">Puesto</th><th data-i18n="th_jugador">Jugador</th><th data-i18n="th_club">Club</th>
+    <th class="n" data-i18n="th_edad">Edad</th><th class="n" data-i18n="th_nota">Nota</th><th class="n" data-i18n="th_proyeccion">Proy.</th>
+    <th class="n" data-i18n="th_rendimiento">Rend.</th><th class="n" data-i18n="th_valortraspaso">Valor</th>
+    <th class="n" data-i18n="th_sueldo">Sueldo</th><th data-i18n="th_estado">Estado</th>
+  </tr></thead><tbody></tbody></table></div>
+</section>
+
 </div>
 
 <div class="velo" id="velo"><div class="modal">
@@ -563,6 +592,22 @@ const I18N={
   sin_datos_grafico:"Sin jugadores fiables (≥360 min) para graficar.",
   sin_rendimiento_datos:"Nadie con datos para esta categoría en lo cargado.",
   muestra_pequena:"muestra pequeña (menos de 360 min.)",
+  p9_badge:"PASO 9 — RECOMENDACIONES DE FICHAJE",
+  p9_title:"A quién merece la pena fichar, por puesto",
+  p9_desc:`Combina <b style="color:var(--tiza)">nota actual</b>, <b style="color:var(--tiza)">proyección</b>
+     (potencial futuro) y, cuando hay datos fiables, <b style="color:var(--tiza)">rendimiento real</b> del Paso 8. Los
+     candidatos salen de <b style="color:var(--tiza)">otros clubes que tengas cargados</b>: selecciona tu club en «Club
+     en pantalla» para verlos.`,
+  p9_realismo_desc:`El realismo del fichaje se calcula con <b style="color:var(--tiza)">Valor de traspaso</b> y
+     <b style="color:var(--tiza)">Sueldo</b> del candidato frente a tu propio nivel (o tu presupuesto, si lo indicas), y con su
+     estado actual ("Jugador importante" cuesta mucho más sacarlo que "Jugador de plantilla"). Los que no son realistas
+     se muestran atenuados, no se ocultan. Marca <span style="color:var(--cal)">💎</span> = barato para tu nivel y con
+     buen rendimiento o crecimiento por delante.`,
+  presupuesto_valor_label:"Presupuesto de fichajes (opcional):",
+  presupuesto_sueldo_label:"Tope salarial (opcional):",
+  th_proyeccion:"Proy.", th_rendimiento:"Rend.", th_valortraspaso:"Valor", th_sueldo:"Sueldo", th_estado:"Estado",
+  nivel_club_tpl:"Tu nivel: valor medio {valor}, sueldo medio {sueldo} · techo de fichaje usado: {techoValor} de valor, {techoSueldo} de sueldo.",
+  joya_oculta_title:"Joya oculta: barato para tu nivel y con buen rendimiento o crecimiento",
   dec_TITULAR:"TITULAR", dec_SUPLENTE:"SUPLENTE", dec_ROTACION:"ROTACIÓN", dec_PROMOCIONAR:"PROMOCIONAR",
   dec_CEDER:"CEDER", dec_VENDER:"VENDER", dec_DESCARTE:"DESCARTE", dec_REPESCAR_CESION:"REPESCAR CESIÓN",
   dec_CEDER_VIGILAR:"CEDER Y VIGILAR", dec_COMPRAR_CESION:"COMPRAR CESIÓN", dec_SIN_DATOS:"sin datos de portero",
@@ -776,6 +821,22 @@ const I18N={
   sin_datos_grafico:"No reliable players (≥360 min) to chart.",
   sin_rendimiento_datos:"No one with data for this category in what's loaded.",
   muestra_pequena:"small sample (fewer than 360 min.)",
+  p9_badge:"STEP 9 — TRANSFER RECOMMENDATIONS",
+  p9_title:"Who's worth signing, by position",
+  p9_desc:`Combines <b style="color:var(--tiza)">current rating</b>, <b style="color:var(--tiza)">projection</b>
+     (future potential) and, when there's reliable data, <b style="color:var(--tiza)">real performance</b> from Step 8.
+     Candidates come from <b style="color:var(--tiza)">other clubs you have loaded</b>: select your club in «Club on
+     screen» to see them.`,
+  p9_realismo_desc:`How realistic a signing is gets computed from the candidate's <b style="color:var(--tiza)">Transfer
+     value</b> and <b style="color:var(--tiza)">Wage</b> against your own level (or your budget, if you set one), and their
+     current status ("Key player" is much harder to prise away than "Squad player"). Unrealistic ones are shown dimmed,
+     not hidden. <span style="color:var(--cal)">💎</span> mark = cheap for your level and with good performance or
+     growth ahead.`,
+  presupuesto_valor_label:"Transfer budget (optional):",
+  presupuesto_sueldo_label:"Wage cap (optional):",
+  th_proyeccion:"Proj.", th_rendimiento:"Perf.", th_valortraspaso:"Value", th_sueldo:"Wage", th_estado:"Status",
+  nivel_club_tpl:"Your level: median value {valor}, median wage {sueldo} · signing ceiling used: {techoValor} value, {techoSueldo} wage.",
+  joya_oculta_title:"Hidden gem: cheap for your level and with good performance or growth ahead",
   dec_TITULAR:"STARTER", dec_SUPLENTE:"BACKUP", dec_ROTACION:"ROTATION", dec_PROMOCIONAR:"PROMOTE",
   dec_CEDER:"LOAN OUT", dec_VENDER:"SELL", dec_DESCARTE:"RELEASE", dec_REPESCAR_CESION:"RECALL FROM LOAN",
   dec_CEDER_VIGILAR:"LOAN OUT, WATCH", dec_COMPRAR_CESION:"BUY FROM LOAN", dec_SIN_DATOS:"no goalkeeping data"
@@ -923,12 +984,14 @@ async function leerXLSX(file){
   return filasDesdeAOA(aoa);
 }
 let JUG={},VISTAS=[],CLUB_VER="__todos__",MANUAL={},ORDEN_COLS=[],FECHA_REF=new Date();
+let PRESUPUESTO_VALOR=null,PRESUPUESTO_SUELDO=null;
 const LLAVE="banquillo.v1";
-function guardar(){ try{ localStorage.setItem(LLAVE,JSON.stringify({JUG,VISTAS,MANUAL,CLUB_VER,ORDEN_COLS})); }
+function guardar(){ try{ localStorage.setItem(LLAVE,JSON.stringify({JUG,VISTAS,MANUAL,CLUB_VER,ORDEN_COLS,PRESUPUESTO_VALOR,PRESUPUESTO_SUELDO})); }
   catch(e){ pintarEstado(tr("estado_no_guardado",{err:e.message})); } }
 function recuperar(){ try{ const d=JSON.parse(localStorage.getItem(LLAVE)||"null");
   if(d&&d.JUG&&Object.keys(d.JUG).length){ JUG=d.JUG; VISTAS=d.VISTAS||[]; MANUAL=d.MANUAL||{};
-    CLUB_VER=d.CLUB_VER||"__todos__"; ORDEN_COLS=d.ORDEN_COLS||[]; return true; } }catch(e){} return false; }
+    CLUB_VER=d.CLUB_VER||"__todos__"; ORDEN_COLS=d.ORDEN_COLS||[];
+    PRESUPUESTO_VALOR=d.PRESUPUESTO_VALOR??null; PRESUPUESTO_SUELDO=d.PRESUPUESTO_SUELDO??null; return true; } }catch(e){} return false; }
 const cel=document.getElementById.bind(document);
 async function leerArchivoATablas(file){
   if(/\.xlsx?$/i.test(file.name)) return await leerXLSX(file);
@@ -1072,6 +1135,10 @@ function parseImporte(s){
     return m[2]==="M"?v*1e6:(m[2]==="m"?v*1e3:v);
   }).filter(v=>v!==null);
   return nums.length?nums.reduce((a,b)=>a+b,0)/nums.length:null;
+}
+function formatEuro(v){
+  if(typeof v!=="number") return "";
+  return v>=1e6?f1(v/1e6).replace(".",",")+"M €":Math.round(v/1e3)+"m €";
 }
 function mesesHasta(fechaStr,ref){
   if(!fechaStr) return null;
@@ -1416,6 +1483,57 @@ function candidatosPara(grupo,clubHogar){
   return analizar(pool).filter(x=>(PERFIL_DE[x.g]||[]).includes(x.mejor)&&x.g===grupo)
     .sort((a,b)=>b.nota-a.nota).slice(0,5);
 }
+function nivelClub(club){
+  const jugs=Object.values(JUG).filter(j=>j._club===club);
+  return {valor:percentil(jugs.map(j=>parseImporte(j["Valor de traspaso"])).filter(v=>v!==null),50),
+    sueldo:percentil(jugs.map(j=>parseImporte(j.Sueldo)).filter(v=>v!==null),50)};
+}
+function techoFichaje(clubHogar){
+  const jugs=Object.values(JUG).filter(j=>j._club===clubHogar);
+  const valores=jugs.map(j=>parseImporte(j["Valor de traspaso"])).filter(v=>v!==null);
+  const sueldos=jugs.map(j=>parseImporte(j.Sueldo)).filter(v=>v!==null);
+  const p90Valor=percentil(valores,90), p90Sueldo=percentil(sueldos,90);
+  // sin presupuesto explícito, el techo es un "estirón" (1,5x) sobre el fichaje más caro que ya tienes
+  return {techoValor:PRESUPUESTO_VALOR??(p90Valor!==null?p90Valor*1.5:null),
+    techoSueldo:PRESUPUESTO_SUELDO??(p90Sueldo!==null?p90Sueldo*1.5:null)};
+}
+// A qué categoría de Paso 8 (Rendimiento real) mirar según el perfil de la posición.
+const GRUPO_A_CATEGORIA={POR:"portero",LAT:"entradas",DFC:"entradas",MC:"pases",MP:"pases",BAN:"pases",DL:"gol"};
+function fichajesPara(grupo,clubHogar){
+  if(clubHogar==="__todos__") return null;
+  const pool=Object.values(JUG).filter(j=>j._club!==clubHogar);
+  if(!pool.length) return [];
+  const poolAnalizado=analizar(pool);
+  const {techoValor,techoSueldo}=techoFichaje(clubHogar);
+  const nivelHogar=nivelClub(clubHogar);
+  const rendCache={};
+  const rendDe=x=>{
+    const catId=GRUPO_A_CATEGORIA[x.mejor]; if(!catId) return null;
+    if(!rendCache[catId]){ const m={};
+      CATEGORIAS_RENDIMIENTO[catId].calc(poolAnalizado).forEach(y=>{ if(typeof y.diff==="number") m[y.clave]={diff:y.diff,fiable:y.fiable}; });
+      rendCache[catId]=m; }
+    return rendCache[catId][x.clave]||null;
+  };
+  return poolAnalizado.filter(x=>(PERFIL_DE[x.g]||[]).includes(x.mejor)&&x.g===grupo)
+    .map(x=>{
+      const j=x.j;
+      const valor=parseImporte(j["Valor de traspaso"]), sueldo=parseImporte(j.Sueldo);
+      const nivelOrigen=nivelClub(j._club);
+      const pr=(typeof j.Edad==="number"&&typeof j.Potencial==="number"&&typeof j["Determinación"]==="number")
+        ?proyeccion(x.nota,j.Edad,j["Determinación"],j.Potencial):x.nota;
+      const importante=/jugador importante|titular habitual/i.test(String(j["Tiempo de juego"]||""));
+      const superaValor=techoValor!==null&&valor!==null&&valor>techoValor;
+      const superaSueldo=techoSueldo!==null&&sueldo!==null&&sueldo>techoSueldo;
+      const clubMuchoMayor=nivelOrigen.valor!==null&&nivelHogar.valor!==null&&nivelHogar.valor>0&&nivelOrigen.valor>nivelHogar.valor*2.5;
+      const realista=!superaValor&&!superaSueldo&&!(clubMuchoMayor&&importante);
+      const barato=valor!==null&&nivelHogar.valor!==null&&valor<=nivelHogar.valor*0.6;
+      const rend=rendDe(x);
+      const joya=realista&&barato&&((rend&&rend.fiable&&rend.diff>0)||(pr-x.nota>=1.5));
+      return {...x,valor,sueldo,pr,importante,realista,joya,rend};
+    })
+    .sort((a,b)=>(b.realista-a.realista)||(b.pr-a.pr))
+    .slice(0,6);
+}
 function pintarNecesidades(urg,clubHogar){
   const tb=cel("tNecesidades").querySelector("tbody"); tb.innerHTML="";
   const activos=urg.filter(p=>p.puntuacion>0||p.contenido);
@@ -1512,6 +1630,45 @@ function pintarRendimiento(d){
   pintarGraficoRendimiento(lista);
   pintarTablaRendimiento(lista,cfg);
 }
+function pintarFichajes(clubHogar){
+  if(PRESUPUESTO_VALOR!==null) cel("presupuestoValor").value=formatEuro(PRESUPUESTO_VALOR);
+  if(PRESUPUESTO_SUELDO!==null) cel("presupuestoSueldo").value=formatEuro(PRESUPUESTO_SUELDO);
+  const tb=cel("tFichajes").querySelector("tbody"); tb.innerHTML="";
+  const nivelTxt=cel("nivelClubTxt");
+  if(clubHogar==="__todos__"){
+    nivelTxt.textContent="";
+    tb.innerHTML=`<tr><td colspan="10" style="color:var(--tenue)">${tr("cand_selecciona_club")}</td></tr>`;
+    return;
+  }
+  const nivel=nivelClub(clubHogar);
+  const {techoValor,techoSueldo}=techoFichaje(clubHogar);
+  nivelTxt.innerHTML=tr("nivel_club_tpl",{valor:formatEuro(nivel.valor)||"—",sueldo:formatEuro(nivel.sueldo)||"—",
+    techoValor:formatEuro(techoValor)||"—",techoSueldo:formatEuro(techoSueldo)||"—"});
+  let filas=[];
+  ORDEN_GRUPOS.forEach(g=>{
+    const cand=fichajesPara(g,clubHogar);
+    if(cand===null||!cand.length) return;
+    filas.push(...cand.map(x=>({...x,grupo:g})));
+  });
+  if(!filas.length){ tb.innerHTML=`<tr><td colspan="10" style="color:var(--tenue)">${tr("cand_sin_otro_club")}</td></tr>`; return; }
+  filas.forEach(x=>{
+    const atenuado=!x.realista;
+    const rendFiable=x.rend&&x.rend.fiable&&typeof x.rend.diff==="number";
+    const rendTxt=rendFiable?`${x.rend.diff>=0?"+":""}${f1(x.rend.diff)}`:"—";
+    const rendColor=rendFiable?(x.rend.diff>=0?'var(--verde)':'var(--rojo)'):'inherit';
+    tb.insertAdjacentHTML("beforeend",`<tr ${atenuado?'style="opacity:.5"':''}>
+      <td>${x.grupo}</td>
+      <td>${x.joya?`<span title="${tr("joya_oculta_title")}">💎</span> `:""}${x.n}</td>
+      <td><span class="tagclub">${x.club}</span></td>
+      <td class="n">${x.j.Edad??""}</td>
+      <td class="n ${clase(x.nota)}">${f1(x.nota)}</td>
+      <td class="n ${clase(x.pr)}">${f1(x.pr)}</td>
+      <td class="n" style="color:${rendColor}">${rendTxt}</td>
+      <td class="n">${formatEuro(x.valor)||"—"}</td>
+      <td class="n">${formatEuro(x.sueldo)||"—"}</td>
+      <td style="font-size:12px;color:var(--tenue)">${x.j["Tiempo de juego"]??""}</td></tr>`);
+  });
+}
 function pintarTodo(){
   const d=analizar();
   if(!d.length){pintarEstado(tr("estado_faltan_atributos"));return;}
@@ -1601,6 +1758,7 @@ function pintarTodo(){
   pintarCesiones(ces);
   pintarContratos(uc);
   pintarRendimiento(d);
+  pintarFichajes(CLUB_VER);
 
   window.__d=d;
   pintarSelector();
@@ -1717,6 +1875,8 @@ cel("fechaRef").onchange=e=>{ const v=e.target.value; if(!v) return;
   const [y,m,dd]=v.split("-").map(Number); FECHA_REF=new Date(y,m-1,dd);
   if(window.__d) pintarTodo(); };
 cel("selRendimiento").onchange=()=>pintarRendimiento();
+cel("presupuestoValor").onchange=e=>{ PRESUPUESTO_VALOR=parseImporte(e.target.value); guardar(); if(window.__d) pintarFichajes(CLUB_VER); };
+cel("presupuestoSueldo").onchange=e=>{ PRESUPUESTO_SUELDO=parseImporte(e.target.value); guardar(); if(window.__d) pintarFichajes(CLUB_VER); };
 { const hoy=new Date(); const iso=hoy.getFullYear()+"-"+String(hoy.getMonth()+1).padStart(2,"0")+"-"+String(hoy.getDate()).padStart(2,"0");
   cel("fechaRef").value=iso; }
 
