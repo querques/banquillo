@@ -311,37 +311,31 @@ footer{padding:30px 0;color:var(--tenue);font-size:12.5px}
 <section>
   <div class="paso" data-i18n="p8_badge">PASO 8 — RENDIMIENTO REAL</div>
   <h2 data-i18n="p8_title">Estadísticas de partido frente a lo que dicen los atributos</h2>
-  <p class="sub" data-i18n-html="p8_desc">Necesita una vista de estadísticas exportada del juego (Goles/xG/Disparos, y para porteros
-     Porcentaje de paradas/esperado), cruzada por nombre de jugador igual que el resto. No hay columna de minutos
-     jugados exportable, así que <b style="color:var(--tiza)">se exige un mínimo de 4 partidos como titular</b> (aprox.
-     360 minutos) antes de fiarse del dato — por debajo se marca como muestra pequeña en vez de ocultarse.</p>
+  <p class="sub" data-i18n-html="p8_desc">Necesita una vista de estadísticas exportada del juego cruzada por nombre de jugador igual que el resto.
+     Usa la columna <b style="color:var(--tiza)">Minutos</b> jugados: por debajo de 360 minutos el dato se marca como
+     muestra pequeña en vez de ocultarse.</p>
 
-  <h2 style="margin-top:10px;font-size:20px" data-i18n="p8_gol_title">Goles frente a xG</h2>
-  <p class="sub" data-i18n="p8_gol_desc">Positivo = marca más de lo que sus ocasiones valdrían (clínico, o suerte). Negativo = desperdicia
-     ocasiones pese al Remate que tenga. Solo entran jugadores con algún disparo registrado.</p>
-  <div class="tabla-scroll"><table id="tRendimientoGol"><thead><tr><th data-i18n="th_jugador">Jugador</th><th data-i18n="th_club">Club</th>
-    <th class="n" data-i18n="th_titularidades">Titular.</th><th class="n" data-i18n="th_goles">Goles</th><th class="n">xG</th>
-    <th class="n" data-i18n="th_g_xg">G−xG</th><th class="n" data-i18n="th_remate">Remate</th><th class="n" data-i18n="th_media">Med.</th></tr></thead><tbody></tbody></table></div>
+  <div class="fila" style="margin-top:0">
+    <select id="selRendimiento">
+      <option value="gol" data-i18n="opt_gol">Goles frente a xG</option>
+      <option value="portero" data-i18n="opt_portero">Porteros: paradas frente a lo esperado</option>
+      <option value="entradas" data-i18n="opt_entradas">Entradas</option>
+      <option value="pases" data-i18n="opt_pases">Pases</option>
+      <option value="cabezazos" data-i18n="opt_cabezazos">Juego aéreo</option>
+      <option value="centros" data-i18n="opt_centros">Centros</option>
+    </select>
+  </div>
+  <p class="sub" id="descRendimiento" style="margin-top:10px"></p>
 
-  <h2 style="margin-top:26px;font-size:20px" data-i18n="p8_por_title">Porteros: paradas frente a lo esperado</h2>
-  <p class="sub" data-i18n="p8_por_desc">Positivo = para más de lo que la calidad de los disparos recibidos sugeriría. Negativo = para menos
-     de lo esperado pese a sus atributos de portero.</p>
-  <div class="tabla-scroll"><table id="tRendimientoPortero"><thead><tr><th data-i18n="th_jugador">Jugador</th><th data-i18n="th_club">Club</th>
-    <th class="n" data-i18n="th_titularidades">Titular.</th><th class="n" data-i18n="th_paradas">Paradas %</th><th class="n" data-i18n="th_paradasesp">Esperado %</th>
-    <th class="n" data-i18n="th_diferencia">Dif.</th><th class="n" data-i18n="th_reflejos">Reflejos</th><th class="n" data-i18n="th_media">Med.</th></tr></thead><tbody></tbody></table></div>
+  <div id="graficoRendimiento" style="margin:16px 0"></div>
 
-  <h2 style="margin-top:26px;font-size:20px" data-i18n="p8_otras_title">Entradas, pases, juego aéreo y disciplina</h2>
-  <p class="sub" data-i18n="p8_otras_desc">Aquí el juego no da un "valor esperado" (no hay xG equivalente para entradas o pases), así que se muestra
-     el dato real junto al atributo que se supone que lo predice para que lo compares tú: por ejemplo, un central con
-     Entradas alto pero % de entrada real bajo puede estar mal entrenado, jugando fuera de posición o con mala suerte.</p>
-  <div class="tabla-scroll"><table id="tRendimientoOtras"><thead><tr><th data-i18n="th_jugador">Jugador</th><th data-i18n="th_club">Club</th>
-    <th class="n" data-i18n="th_titularidades">Titular.</th>
-    <th class="n" data-i18n="th_entradas_pct">Entradas %</th><th class="n" data-i18n="th_entradas_attr">Entradas (attr)</th>
-    <th class="n" data-i18n="th_pases_pct">Pases %</th><th class="n" data-i18n="th_pases_attr">Pases (attr)</th>
-    <th class="n" data-i18n="th_cabezazos_pct">Cabezazos %</th><th class="n" data-i18n="th_cabeceo_attr">Cabeceo (attr)</th>
-    <th class="n" data-i18n="th_centros_pct">Centros %</th><th class="n" data-i18n="th_centros_attr">Centros (attr)</th>
-    <th class="n" data-i18n="th_faltas">Faltas</th><th class="n" data-i18n="th_tarjetas">Tarj. (A/R)</th>
-    <th class="n" data-i18n="th_errores_gol">Errores→gol</th></tr></thead><tbody></tbody></table></div>
+  <div class="tabla-scroll"><table id="tRendimiento"><thead><tr>
+    <th data-i18n="th_jugador">Jugador</th><th data-i18n="th_club">Club</th>
+    <th class="n" data-i18n="th_minutos">Min.</th>
+    <th class="n" id="thValor">Valor</th><th class="n" id="thComparado">Comparado</th>
+    <th class="n" data-i18n="th_diferencia" id="thDiferencia">Dif.</th>
+    <th class="n" id="thAttr">Atributo</th><th class="n" data-i18n="th_media">Med.</th>
+  </tr></thead><tbody></tbody></table></div>
 </section>
 
 </div>
@@ -549,30 +543,26 @@ const I18N={
   accion_renovar_vender:"renovar o vender ahora", accion_renovar_ceder:"renovar antes de ceder",
   p8_badge:"PASO 8 — RENDIMIENTO REAL",
   p8_title:"Estadísticas de partido frente a lo que dicen los atributos",
-  p8_desc:`Necesita una vista de estadísticas exportada del juego (Goles/xG/Disparos, y para porteros
-     Porcentaje de paradas/esperado), cruzada por nombre de jugador igual que el resto. No hay columna de minutos
-     jugados exportable, así que <b style="color:var(--tiza)">se exige un mínimo de 4 partidos como titular</b> (aprox.
-     360 minutos) antes de fiarse del dato — por debajo se marca como muestra pequeña en vez de ocultarse.`,
-  p8_gol_title:"Goles frente a xG",
-  p8_gol_desc:"Positivo = marca más de lo que sus ocasiones valdrían (clínico, o suerte). Negativo = desperdicia ocasiones pese al Remate que tenga. Solo entran jugadores con algún disparo registrado.",
-  p8_por_title:"Porteros: paradas frente a lo esperado",
-  p8_por_desc:"Positivo = para más de lo que la calidad de los disparos recibidos sugeriría. Negativo = para menos de lo esperado pese a sus atributos de portero.",
-  th_titularidades:"Titular.", th_goles:"Goles", th_g_xg:"G−xG", th_diferencia:"Dif.", th_remate:"Remate", th_media:"Med.",
-  th_paradas:"Paradas %", th_paradasesp:"Esperado %", th_reflejos:"Reflejos",
-  sin_rendimiento_gol:"Nadie con disparos registrados en los datos cargados.",
-  sin_rendimiento_portero:"Ningún portero con datos de paradas cargados.",
-  p8_otras_title:"Entradas, pases, centros, juego aéreo y disciplina",
-  p8_otras_desc:`Aquí el juego no da un "valor esperado" (no hay xG equivalente para entradas o pases), así que se
-     muestra el dato real junto al atributo que se supone que lo predice para que lo compares tú: por ejemplo, un
-     central con Entradas alto pero % de entrada real bajo puede estar mal entrenado, jugando fuera de posición o
-     con mala suerte.`,
+  p8_desc:`Necesita una vista de estadísticas exportada del juego cruzada por nombre de jugador igual que el resto.
+     Usa la columna <b style="color:var(--tiza)">Minutos</b> jugados: por debajo de 360 minutos el dato se marca como
+     muestra pequeña en vez de ocultarse.`,
+  opt_gol:"Goles frente a xG", opt_portero:"Porteros: paradas frente a lo esperado",
+  opt_entradas:"Entradas", opt_pases:"Pases", opt_cabezazos:"Juego aéreo", opt_centros:"Centros",
+  desc_gol:"Positivo = marca más de lo que sus ocasiones valdrían (clínico, o suerte). Negativo = desperdicia ocasiones pese al Remate que tenga. Solo entran jugadores con algún disparo registrado.",
+  desc_portero:"Positivo = para más de lo que la calidad de los disparos recibidos sugeriría. Negativo = para menos de lo esperado pese a sus atributos de portero.",
+  desc_entradas:"El juego no calcula un \"esperado\" para entradas como sí hace con xG: \"Comparado\" es la media de tus jugadores fiables (≥360 min) en este dato, no un valor del juego. La columna Entradas (atributo) queda al lado para que la compares tú también.",
+  desc_pases:"Igual que con entradas: \"Comparado\" es la media de tus jugadores fiables (≥360 min), no un dato calculado por FM. Compara también con el atributo Pases.",
+  desc_cabezazos:"\"Comparado\" es la media de tus jugadores fiables (≥360 min) en duelos aéreos ganados, no un valor del juego. Compara también con el atributo Cabeceo.",
+  desc_centros:"\"Comparado\" es la media de tus jugadores fiables (≥360 min) en centros completados, no un valor del juego. Compara también con el atributo Centros.",
+  th_minutos:"Min.", th_goles:"Goles", th_g_xg:"G−xG", th_diferencia:"Dif.", th_remate:"Remate", th_media:"Med.",
+  th_paradas:"Paradas %", th_paradasesp:"Esperado %", th_reflejos:"Reflejos", th_media_grupo:"Media grupo",
   th_entradas_pct:"Entradas %", th_entradas_attr:"Entradas (attr)",
   th_pases_pct:"Pases %", th_pases_attr:"Pases (attr)",
   th_cabezazos_pct:"Cabezazos %", th_cabeceo_attr:"Cabeceo (attr)",
   th_centros_pct:"Centros %", th_centros_attr:"Centros (attr)",
-  th_faltas:"Faltas", th_tarjetas:"Tarj. (A/R)", th_errores_gol:"Errores→gol",
-  sin_rendimiento_otras:"Nadie con datos de entradas o pases cargados.",
-  muestra_pequena:"muestra pequeña (menos de 4 titularidades)",
+  sin_datos_grafico:"Sin jugadores fiables (≥360 min) para graficar.",
+  sin_rendimiento_datos:"Nadie con datos para esta categoría en lo cargado.",
+  muestra_pequena:"muestra pequeña (menos de 360 min.)",
   dec_TITULAR:"TITULAR", dec_SUPLENTE:"SUPLENTE", dec_ROTACION:"ROTACIÓN", dec_PROMOCIONAR:"PROMOCIONAR",
   dec_CEDER:"CEDER", dec_VENDER:"VENDER", dec_DESCARTE:"DESCARTE", dec_REPESCAR_CESION:"REPESCAR CESIÓN",
   dec_CEDER_VIGILAR:"CEDER Y VIGILAR", dec_COMPRAR_CESION:"COMPRAR CESIÓN", dec_SIN_DATOS:"sin datos de portero",
@@ -766,30 +756,26 @@ const I18N={
   accion_renovar_vender:"renew or sell now", accion_renovar_ceder:"renew before loaning out",
   p8_badge:"STEP 8 — REAL PERFORMANCE",
   p8_title:"Match stats against what the attributes say",
-  p8_desc:`Needs a stats view exported from the game (Goals/xG/Shots, and for goalkeepers Save %/Expected save %),
-     cross-referenced by player name like everything else. There's no exportable minutes-played column, so
-     <b style="color:var(--tiza)">at least 4 starts are required</b> (roughly 360 minutes) before trusting the
-     figure — below that it's marked as a small sample instead of being hidden.`,
-  p8_gol_title:"Goals against xG",
-  p8_gol_desc:"Positive = scores more than his chances would suggest (clinical, or lucky). Negative = wastes chances despite his Finishing attribute. Only players with a recorded shot are included.",
-  p8_por_title:"Goalkeepers: saves against expected",
-  p8_por_desc:"Positive = saves more than the quality of shots faced would suggest. Negative = saves less than expected despite his goalkeeping attributes.",
-  th_titularidades:"Starts", th_goles:"Goals", th_g_xg:"G−xG", th_diferencia:"Diff.", th_remate:"Finishing", th_media:"Rating",
-  th_paradas:"Save %", th_paradasesp:"Expected %", th_reflejos:"Reflexes",
-  sin_rendimiento_gol:"No one with a recorded shot in the loaded data.",
-  sin_rendimiento_portero:"No goalkeeper with save data loaded.",
-  p8_otras_title:"Tackles, passing, crossing, aerial play and discipline",
-  p8_otras_desc:`The game doesn't give an "expected value" here (there's no xG equivalent for tackles or passes),
-     so the real figure is shown next to the attribute that's supposed to predict it, for you to compare: for
-     example, a centre-back with high Tackling but a low real tackle success rate might be poorly coached, out of
-     position, or just unlucky.`,
+  p8_desc:`Needs a stats view exported from the game, cross-referenced by player name like everything else.
+     Uses the <b style="color:var(--tiza)">Minutes</b> played column: below 360 minutes the figure is marked
+     as a small sample instead of being hidden.`,
+  opt_gol:"Goals against xG", opt_portero:"Goalkeepers: saves against expected",
+  opt_entradas:"Tackles", opt_pases:"Passing", opt_cabezazos:"Aerial play", opt_centros:"Crossing",
+  desc_gol:"Positive = scores more than his chances would suggest (clinical, or lucky). Negative = wastes chances despite his Finishing attribute. Only players with a recorded shot are included.",
+  desc_portero:"Positive = saves more than the quality of shots faced would suggest. Negative = saves less than expected despite his goalkeeping attributes.",
+  desc_entradas:"The game doesn't compute an \"expected\" value for tackles like it does for xG: \"Compared\" is the average of your reliable players (≥360 min) for this stat, not a game figure. The Tackling (attr) column sits alongside for you to compare too.",
+  desc_pases:"Same as tackles: \"Compared\" is the average of your reliable players (≥360 min), not a value calculated by FM. Also compare against the Passing attribute.",
+  desc_cabezazos:"\"Compared\" is the average of your reliable players (≥360 min) for aerial duels won, not a game value. Also compare against the Heading attribute.",
+  desc_centros:"\"Compared\" is the average of your reliable players (≥360 min) for completed crosses, not a game value. Also compare against the Crossing attribute.",
+  th_minutos:"Min.", th_goles:"Goals", th_g_xg:"G−xG", th_diferencia:"Diff.", th_remate:"Finishing", th_media:"Rating",
+  th_paradas:"Save %", th_paradasesp:"Expected %", th_reflejos:"Reflexes", th_media_grupo:"Group avg",
   th_entradas_pct:"Tackle %", th_entradas_attr:"Tackling (attr)",
   th_pases_pct:"Pass %", th_pases_attr:"Passing (attr)",
   th_cabezazos_pct:"Aerial %", th_cabeceo_attr:"Heading (attr)",
   th_centros_pct:"Cross %", th_centros_attr:"Crossing (attr)",
-  th_faltas:"Fouls", th_tarjetas:"Cards (Y/R)", th_errores_gol:"Errors→goal",
-  sin_rendimiento_otras:"No one with tackle or pass data loaded.",
-  muestra_pequena:"small sample (fewer than 4 starts)",
+  sin_datos_grafico:"No reliable players (≥360 min) to chart.",
+  sin_rendimiento_datos:"No one with data for this category in what's loaded.",
+  muestra_pequena:"small sample (fewer than 360 min.)",
   dec_TITULAR:"STARTER", dec_SUPLENTE:"BACKUP", dec_ROTACION:"ROTATION", dec_PROMOCIONAR:"PROMOTE",
   dec_CEDER:"LOAN OUT", dec_VENDER:"SELL", dec_DESCARTE:"RELEASE", dec_REPESCAR_CESION:"RECALL FROM LOAN",
   dec_CEDER_VIGILAR:"LOAN OUT, WATCH", dec_COMPRAR_CESION:"BUY FROM LOAN", dec_SIN_DATOS:"no goalkeeping data"
@@ -1178,27 +1164,9 @@ function cesiones(datos,rangos,mediaOnce){
     .sort((a,b)=>b.nota-a.nota);
   return {repescar,comprarCesion,cesionMalUsada};
 }
-const MIN_TITULARIDADES=4; // proxy de "360 minutos": no hay columna de minutos exportable, así que cuenta solo titularidades
-function parseApariciones(v){
-  if(typeof v==="number") return {titular:v,supl:0,total:v};
-  const m=String(v??"").match(/^(\d+)(?:\s*\((\d+)\))?/);
-  if(!m) return {titular:0,supl:0,total:0};
-  const titular=+m[1],supl=+(m[2]||0);
-  return {titular,supl,total:titular+supl};
-}
-function rendimientoGoleador(datos){
-  return datos.filter(x=>typeof x.j.Goles==="number"&&typeof x.j.xG==="number"&&(x.j.Disparos??0)>0)
-    .map(x=>{const ap=parseApariciones(x.j.Disputados);
-      return {...x,partidos:ap.titular,fiable:ap.titular>=MIN_TITULARIDADES,diff:x.j.Goles-x.j.xG};})
-    .sort((a,b)=>b.diff-a.diff);
-}
-function rendimientoPortero(datos){
-  return datos.filter(x=>typeof x.j["Porcentaje de paradas"]==="number"&&typeof x.j["Porcentaje esperado de paradas"]==="number")
-    .map(x=>{const ap=parseApariciones(x.j.Disputados);
-      return {...x,partidos:ap.titular,fiable:ap.titular>=MIN_TITULARIDADES,
-        diff:x.j["Porcentaje de paradas"]-x.j["Porcentaje esperado de paradas"]};})
-    .sort((a,b)=>b.diff-a.diff);
-}
+const MIN_MINUTOS=360;
+const fiableDe=j=>typeof j.Minutos==="number"&&j.Minutos>=MIN_MINUTOS;
+const mediaDe=arr=>arr.length?arr.reduce((a,b)=>a+b,0)/arr.length:null;
 function parsePorcentaje(v){
   if(typeof v==="number") return v;
   const m=String(v??"").match(/(-?\d+(?:[.,]\d+)?)/);
@@ -1208,16 +1176,53 @@ function pctDe(completadas,intentadas){
   if(typeof completadas!=="number"||typeof intentadas!=="number"||intentadas<=0) return null;
   return completadas/intentadas*100;
 }
-function otrasEstadisticas(datos){
-  return datos.filter(x=>(x.j["Pases intentados"]??0)>0||(x.j["Entradas intentadas"]??0)>0)
-    .map(x=>{const ap=parseApariciones(x.j.Disputados);
-      return {...x,partidos:ap.titular,fiable:ap.titular>=MIN_TITULARIDADES,
-        entradasPct:pctDe(x.j["Entradas completadas"],x.j["Entradas intentadas"]),
-        pasesPct:parsePorcentaje(x.j["Porcentaje de pases completados"]),
-        cabezazosPct:pctDe(x.j["Cabezazos ganados"],x.j["Cabezazos intentados"]),
-        centrosPct:pctDe(x.j["Centros completados"],x.j["Centros intentados"])};})
-    .sort((a,b)=>b.partidos-a.partidos);
+function catGol(datos){
+  return datos.filter(x=>typeof x.j.Goles==="number"&&typeof x.j.xG==="number"&&(x.j.Disparos??0)>0)
+    .map(x=>({...x,minutos:x.j.Minutos,fiable:fiableDe(x.j),valor:x.j.Goles,comparado:x.j.xG,
+      diff:x.j.Goles-x.j.xG,attrValor:x.j.Remate}))
+    .sort((a,b)=>b.diff-a.diff);
 }
+function catPortero(datos){
+  return datos.filter(x=>typeof x.j["Porcentaje de paradas"]==="number"&&typeof x.j["Porcentaje esperado de paradas"]==="number")
+    .map(x=>({...x,minutos:x.j.Minutos,fiable:fiableDe(x.j),valor:x.j["Porcentaje de paradas"],comparado:x.j["Porcentaje esperado de paradas"],
+      diff:x.j["Porcentaje de paradas"]-x.j["Porcentaje esperado de paradas"],attrValor:x.j.Reflejos}))
+    .sort((a,b)=>b.diff-a.diff);
+}
+// Sin línea base del juego para entradas/pases/cabezazos/centros (no hay "esperado" como con xG):
+// el "comparado" es la media de los jugadores fiables cargados, no un dato calculado por FM.
+function catRatio(datos,campoOk,campoInt,campoAttr){
+  const base=datos.filter(x=>(x.j[campoInt]??0)>0)
+    .map(x=>({...x,minutos:x.j.Minutos,fiable:fiableDe(x.j),valor:pctDe(x.j[campoOk],x.j[campoInt]),attrValor:x.j[campoAttr]}))
+    .filter(x=>typeof x.valor==="number");
+  const media=mediaDe(base.filter(x=>x.fiable).map(x=>x.valor));
+  return base.map(x=>({...x,comparado:media,diff:media===null?null:x.valor-media}))
+    .sort((a,b)=>(b.diff??-999)-(a.diff??-999));
+}
+function catPases(datos){
+  const base=datos.filter(x=>(x.j["Pases intentados"]??0)>0)
+    .map(x=>({...x,minutos:x.j.Minutos,fiable:fiableDe(x.j),valor:parsePorcentaje(x.j["Porcentaje de pases completados"]),attrValor:x.j.Pases}))
+    .filter(x=>typeof x.valor==="number");
+  const media=mediaDe(base.filter(x=>x.fiable).map(x=>x.valor));
+  return base.map(x=>({...x,comparado:media,diff:media===null?null:x.valor-media}))
+    .sort((a,b)=>(b.diff??-999)-(a.diff??-999));
+}
+const CATEGORIAS_RENDIMIENTO={
+ gol:{calc:catGol,hValor:"th_goles",hComparadoLiteral:"xG",hAttr:"th_remate",desc:"desc_gol",
+   fmtValor:v=>v,fmtComparado:v=>f1(v),sufijo:""},
+ portero:{calc:catPortero,hValor:"th_paradas",hComparado:"th_paradasesp",hAttr:"th_reflejos",desc:"desc_portero",
+   fmtValor:v=>v,fmtComparado:v=>v,sufijo:"%"},
+ entradas:{calc:d=>catRatio(d,"Entradas completadas","Entradas intentadas","Entradas"),
+   hValor:"th_entradas_pct",hComparado:"th_media_grupo",hAttr:"th_entradas_attr",desc:"desc_entradas",
+   fmtValor:v=>Math.round(v),fmtComparado:v=>Math.round(v),sufijo:"%"},
+ pases:{calc:catPases,hValor:"th_pases_pct",hComparado:"th_media_grupo",hAttr:"th_pases_attr",desc:"desc_pases",
+   fmtValor:v=>Math.round(v),fmtComparado:v=>Math.round(v),sufijo:"%"},
+ cabezazos:{calc:d=>catRatio(d,"Cabezazos ganados","Cabezazos intentados","Cabeceo"),
+   hValor:"th_cabezazos_pct",hComparado:"th_media_grupo",hAttr:"th_cabeceo_attr",desc:"desc_cabezazos",
+   fmtValor:v=>Math.round(v),fmtComparado:v=>Math.round(v),sufijo:"%"},
+ centros:{calc:d=>catRatio(d,"Centros completados","Centros intentados","Centros"),
+   hValor:"th_centros_pct",hComparado:"th_media_grupo",hAttr:"th_centros_attr",desc:"desc_centros",
+   fmtValor:v=>Math.round(v),fmtComparado:v=>Math.round(v),sufijo:"%"},
+};
 function urgenciasContrato(datos,mediaOnce){
   return datos.filter(x=>{
     const meses=mesesHasta(x.j.Final);
@@ -1461,47 +1466,51 @@ function pintarContratos(uc){
   uc.forEach(x=>tb.insertAdjacentHTML("beforeend",
     `<tr><td>${x.n}</td><td class="n">${x.meses}</td><td class="n ${clase(x.nota)}">${f1(x.nota)}</td><td>${tr("accion_"+x.accion)}</td></tr>`));
 }
-function pintarRendimiento(d){
+function pintarGraficoRendimiento(lista){
+  const cont=cel("graficoRendimiento");
+  const items=lista.filter(x=>x.fiable&&typeof x.diff==="number");
+  if(!items.length){ cont.innerHTML=`<p class="sub" style="margin:0">${tr("sin_datos_grafico")}</p>`; return; }
+  const maxAbs=Math.max(...items.map(x=>Math.abs(x.diff)),0.01);
+  cont.innerHTML=items.map(x=>{
+    const pct=Math.abs(x.diff)/maxAbs*100, pos=x.diff>=0;
+    return `<div style="display:flex;align-items:center;gap:8px;margin:3px 0;font-size:12.5px">
+      <div style="width:150px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${x.n}">${x.n}</div>
+      <div style="flex:1;display:flex;height:14px">
+        <div style="flex:1;display:flex;justify-content:flex-end"><div style="height:100%;border-radius:2px 0 0 2px;background:${pos?'transparent':'var(--rojo)'};width:${pos?0:pct}%"></div></div>
+        <div style="width:1px;background:var(--linea)"></div>
+        <div style="flex:1;display:flex"><div style="height:100%;border-radius:0 2px 2px 0;background:${pos?'var(--verde)':'transparent'};width:${pos?pct:0}%"></div></div>
+      </div>
+      <div class="num" style="width:56px;text-align:right;font-weight:600;color:${pos?'var(--verde)':'var(--rojo)'}">${pos?"+":""}${f1(x.diff)}</div>
+    </div>`;
+  }).join("");
+}
+function pintarTablaRendimiento(lista,cfg){
   const fMed=v=>typeof v==="number"?f1(v).replace(".",","):"";
-  const filaMuestra=n=>`<tr><td colspan="8" style="color:var(--tenue)">${n}</td></tr>`;
-  const gol=rendimientoGoleador(d);
-  const tb1=cel("tRendimientoGol").querySelector("tbody"); tb1.innerHTML="";
-  if(!gol.length) tb1.innerHTML=filaMuestra(tr("sin_rendimiento_gol"));
-  else gol.forEach(x=>{
+  const tb=cel("tRendimiento").querySelector("tbody"); tb.innerHTML="";
+  if(!lista.length){ tb.innerHTML=`<tr><td colspan="8" style="color:var(--tenue)">${tr("sin_rendimiento_datos")}</td></tr>`; return; }
+  lista.forEach(x=>{
     const atenuado=!x.fiable;
-    tb1.insertAdjacentHTML("beforeend",`<tr ${atenuado?'style="opacity:.5"':''}><td>${x.n}${atenuado?` <span style="color:var(--tenue);font-size:11px">(${tr("muestra_pequena")})</span>`:""}</td>
-      <td><span class="tagclub">${x.club}</span></td><td class="n">${x.partidos}</td>
-      <td class="n">${x.j.Goles}</td><td class="n">${f1(x.j.xG)}</td>
-      <td class="n" style="font-weight:600;color:${x.diff>=0?'var(--verde)':'var(--rojo)'}">${x.diff>=0?"+":""}${f1(x.diff)}</td>
-      <td class="n">${x.j.Remate??""}</td><td class="n">${fMed(x.j["Med."])}</td></tr>`);
+    const diffTxt=typeof x.diff==="number"?`${x.diff>=0?"+":""}${f1(x.diff)}`:"—";
+    const diffColor=typeof x.diff==="number"?(x.diff>=0?'var(--verde)':'var(--rojo)'):'inherit';
+    tb.insertAdjacentHTML("beforeend",`<tr ${atenuado?'style="opacity:.5"':''}><td>${x.n}${atenuado?` <span style="color:var(--tenue);font-size:11px">(${tr("muestra_pequena")})</span>`:""}</td>
+      <td><span class="tagclub">${x.club}</span></td><td class="n">${typeof x.minutos==="number"?x.minutos:"—"}</td>
+      <td class="n">${typeof x.valor==="number"?cfg.fmtValor(x.valor)+cfg.sufijo:"—"}</td>
+      <td class="n">${typeof x.comparado==="number"?cfg.fmtComparado(x.comparado)+cfg.sufijo:"—"}</td>
+      <td class="n" style="font-weight:600;color:${diffColor}">${diffTxt}</td>
+      <td class="n">${x.attrValor??""}</td><td class="n">${fMed(x.j["Med."])}</td></tr>`);
   });
-  const por=rendimientoPortero(d);
-  const tb2=cel("tRendimientoPortero").querySelector("tbody"); tb2.innerHTML="";
-  if(!por.length) tb2.innerHTML=filaMuestra(tr("sin_rendimiento_portero"));
-  else por.forEach(x=>{
-    const atenuado=!x.fiable;
-    tb2.insertAdjacentHTML("beforeend",`<tr ${atenuado?'style="opacity:.5"':''}><td>${x.n}${atenuado?` <span style="color:var(--tenue);font-size:11px">(${tr("muestra_pequena")})</span>`:""}</td>
-      <td><span class="tagclub">${x.club}</span></td><td class="n">${x.partidos}</td>
-      <td class="n">${x.j["Porcentaje de paradas"]}</td><td class="n">${x.j["Porcentaje esperado de paradas"]}</td>
-      <td class="n" style="font-weight:600;color:${x.diff>=0?'var(--verde)':'var(--rojo)'}">${x.diff>=0?"+":""}${f1(x.diff)}</td>
-      <td class="n">${x.j.Reflejos??""}</td><td class="n">${fMed(x.j["Med."])}</td></tr>`);
-  });
-  const fPct=v=>typeof v==="number"?Math.round(v)+"%":"—";
-  const otras=otrasEstadisticas(d);
-  const tb3=cel("tRendimientoOtras").querySelector("tbody"); tb3.innerHTML="";
-  if(!otras.length) tb3.innerHTML=`<tr><td colspan="14" style="color:var(--tenue)">${tr("sin_rendimiento_otras")}</td></tr>`;
-  else otras.forEach(x=>{
-    const atenuado=!x.fiable;
-    tb3.insertAdjacentHTML("beforeend",`<tr ${atenuado?'style="opacity:.5"':''}><td>${x.n}${atenuado?` <span style="color:var(--tenue);font-size:11px">(${tr("muestra_pequena")})</span>`:""}</td>
-      <td><span class="tagclub">${x.club}</span></td><td class="n">${x.partidos}</td>
-      <td class="n">${fPct(x.entradasPct)}</td><td class="n">${x.j.Entradas??""}</td>
-      <td class="n">${fPct(x.pasesPct)}</td><td class="n">${x.j.Pases??""}</td>
-      <td class="n">${fPct(x.cabezazosPct)}</td><td class="n">${x.j.Cabeceo??""}</td>
-      <td class="n">${fPct(x.centrosPct)}</td><td class="n">${x.j.Centros??""}</td>
-      <td class="n">${x.j["Faltas cometidas"]??""}</td>
-      <td class="n">${x.j["Tarjetas amarillas"]??0}/${x.j["Tarjetas rojas"]??0}</td>
-      <td class="n">${x.j["Errores que han costado goles"]??0}</td></tr>`);
-  });
+}
+function pintarRendimiento(d){
+  if(d) window.__dRendimiento=d;
+  const datos=window.__dRendimiento||[];
+  const catId=cel("selRendimiento").value, cfg=CATEGORIAS_RENDIMIENTO[catId];
+  const lista=cfg.calc(datos);
+  cel("descRendimiento").textContent=tr(cfg.desc);
+  cel("thValor").textContent=tr(cfg.hValor);
+  cel("thComparado").textContent=cfg.hComparadoLiteral||tr(cfg.hComparado);
+  cel("thAttr").textContent=tr(cfg.hAttr);
+  pintarGraficoRendimiento(lista);
+  pintarTablaRendimiento(lista,cfg);
 }
 function pintarTodo(){
   const d=analizar();
@@ -1707,6 +1716,7 @@ document.querySelectorAll("#idiomaSwitch .idbtn").forEach(b=>b.onclick=()=>cambi
 cel("fechaRef").onchange=e=>{ const v=e.target.value; if(!v) return;
   const [y,m,dd]=v.split("-").map(Number); FECHA_REF=new Date(y,m-1,dd);
   if(window.__d) pintarTodo(); };
+cel("selRendimiento").onchange=()=>pintarRendimiento();
 { const hoy=new Date(); const iso=hoy.getFullYear()+"-"+String(hoy.getMonth()+1).padStart(2,"0")+"-"+String(hoy.getDate()).padStart(2,"0");
   cel("fechaRef").value=iso; }
 
